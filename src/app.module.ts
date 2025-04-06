@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { ConfigServiceImpl } from './config/config.service';
 import { PingModule } from './modules/ping.module';
 import { UserModule } from './modules/user.module';
 
@@ -16,14 +15,10 @@ import { UserModule } from './modules/user.module';
   ],
   providers: [
     {
-      provide: ConfigServiceImpl,
-      useClass: ConfigServiceImpl,
-    },
-    {
       provide: PrismaService,
       useClass: PrismaService,
     },
   ],
-  exports: [ConfigServiceImpl, PrismaService],
+  exports: [ PrismaService],
 })
 export class AppModule {}
