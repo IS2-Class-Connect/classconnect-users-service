@@ -6,10 +6,14 @@ import { PingModule } from './modules/ping.module';
 import { UserModule } from './modules/user.module';
 
 @Module({
-  imports: [PingModule,UserModule,    ConfigModule.forRoot({
-    isGlobal: true,  
-    envFilePath: '.env', 
-  }),],
+  imports: [
+    PingModule,
+    UserModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+  ],
   providers: [
     {
       provide: ConfigServiceImpl,
