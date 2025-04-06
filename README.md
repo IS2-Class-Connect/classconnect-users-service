@@ -40,7 +40,7 @@ Clone the repository and install dependencies:
 
 ```bash
 $ git clone <repository-url>
-$ cd classconnect-base-service
+$ cd classconnect-users-service
 $ npm install
 ```
 
