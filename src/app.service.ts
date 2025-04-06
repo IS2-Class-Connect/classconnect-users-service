@@ -9,11 +9,8 @@ export class AppService {
     private readonly configService: IConfig,
   ) {}
 
-  async getUsers() {
-    return await this.prismaService.prisma.user.findMany();
+  getHello(): string {
+    return 'Hello World!';
   }
 
-  getHello(): string {
-    return `App running in ${this.configService.environment} on ${this.configService.host}:${this.configService.port}`;
-  }
 }
