@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigServiceImpl } from './config/config.service';
+import { PingModule } from './modules/ping.module';
+import { UserModule } from './modules/user.module';
 
 @Module({
-  imports: [ConfigModule.forRoot()],
+  imports: [PingModule,UserModule, ConfigModule.forRoot()],
   providers: [
     {
       provide: ConfigServiceImpl,
