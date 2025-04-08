@@ -5,13 +5,15 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
+const PORT = 3001;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
 
   const host = configService.get<string>('HOST', '0.0.0.0');
-  const port = configService.get<number>('PORT', 3000);
+  const port = configService.get<number>('PORT', PORT);
   const databaseUrl = configService.get<string>('DATABASE_URL');
 
   app.get(PrismaService);
