@@ -12,6 +12,7 @@
 - [Support](#support)
 - [License](#license)
 - [Code Style](#code-style)
+- [Endpoints](#Endpoints)
 
 ## Description
 
@@ -163,3 +164,20 @@ $ npm run format
 ```bash
 $ npm run format:check
 ```
+## Endpoints
+- To test the API, you can use tools like Postman or send curl requests.
+
+- To create a user using curl:
+
+```bash
+    curl --location 'http://localhost:3001/user' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+    "email": "user@gmail.com",
+    "name": "Username",
+    "urlProfilePhoto": "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
+    "provider": "google.com"
+    }'
+```
+
+
