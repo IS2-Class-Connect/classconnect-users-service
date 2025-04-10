@@ -63,9 +63,9 @@ describe('UserRepository', () => {
             provider: "google.com",
           };
   
-        prismaService.prisma.user.create = jest.fn().mockRejectedValue(new Error('Failed to create user'));
+        prismaService.prisma.user.create = jest.fn().mockRejectedValue(new Error('Internal server error'));
   
-        await expect(userRepository.create(userData)).rejects.toThrowError('Failed to create user');
+        await expect(userRepository.create(userData)).rejects.toThrowError('Internal server error');
       });
     });
   });
