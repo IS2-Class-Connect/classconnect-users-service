@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../database/database'; 
 import { PrismaService } from '../../prisma/prisma.service'; 
 import { User } from '../models/user.model';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ConflictException } from '@nestjs/common';
 
 jest.mock('../../prisma/prisma.service');
 
@@ -67,5 +69,29 @@ describe('UserRepository', () => {
   
         await expect(userRepository.create(userData)).rejects.toThrowError('Internal server error');
       });
+    });
+
+    it('should throw ConflictException if email already exists', async () => {
+      const userData: User = {
+        id: 1,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+      };
+    
+      const prismaError = {
+        code: 'P2002',
+        meta: {
+          target: ['email'],
+        },
+        name: 'PrismaClientKnownRequestError',
+      };
+    
+      Object.setPrototypeOf(prismaError, PrismaClientKnownRequestError.prototype);
+    
+      prismaService.prisma.user.create = jest.fn().mockRejectedValue(prismaError);
+    
+      await expect(userRepository.create(userData)).rejects.toThrow(ConflictException);
     });
   });
