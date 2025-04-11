@@ -37,11 +37,11 @@ export class UserRepository implements IRepository<User> {
   async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {
     try {
       const user = await this.prisma.prisma.user.findUnique({ where: { id: userId } });
-  
+
       if (!user) {
         throw new NotFoundException(ERROR_USER);
       }
-  
+
       return await this.prisma.prisma.user.update({
         where: { id: userId },
         data: { latitude, longitude },
@@ -50,9 +50,8 @@ export class UserRepository implements IRepository<User> {
       if (error instanceof NotFoundException) {
         throw error;
       }
-  
+
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
-  
 }

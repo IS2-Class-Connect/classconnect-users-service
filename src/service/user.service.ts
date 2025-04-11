@@ -13,5 +13,5 @@ export class UserService implements IService<User> {
 
   async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {
     return this.userRepository.setLocation(userId, latitude, longitude);
-  }  
+  }
 }

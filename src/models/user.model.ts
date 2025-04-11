@@ -5,4 +5,5 @@ export interface User {
   urlProfilePhoto: string;
   provider: string;
   latitude: number | null;
-  longitude: number | null;}
+  longitude: number | null;
+}
