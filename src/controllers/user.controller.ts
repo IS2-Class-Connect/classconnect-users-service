@@ -3,7 +3,7 @@ import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
 
-@Controller('user')
+@Controller('users')
 export class UserController implements IController<User> {
   constructor(private readonly userService: UserService) {}
 

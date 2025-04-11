@@ -35,24 +35,24 @@ describe('UserController', () => {
     await app.init();
   });
 
-  it('/user (POST) should create a user', async () => {
+  it('/users (POST) should create a user', async () => {
     userService.create.mockResolvedValue(userData);
 
     const response = await request(app.getHttpServer() as Express)
-      .post('/user')
+      .post('/users')
       .send(userData)
       .expect(201);
 
     expect(response.body).toEqual(userData);
   });
 
-  it('/user/:id/location (PUT) should update user location', async () => {
+  it('/users/:id/location (PUT) should update user location', async () => {
     const updatedLocation = { latitude: 40.4168, longitude: -3.7038 };
 
     userService.setLocation.mockResolvedValue({ ...userData, ...updatedLocation });
 
     const response = await request(app.getHttpServer() as Express)
-      .put('/user/1/location')
+      .put('/users/1/location')
       .send(updatedLocation)
       .expect(200);
 

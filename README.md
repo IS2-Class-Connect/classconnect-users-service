@@ -170,7 +170,7 @@ $ npm run format:check
 - To create a user using curl:
 
 ```bash
-    curl --location 'http://localhost:3001/user' \
+    curl --location 'http://localhost:3001/users' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "email": "user@gmail.com",
