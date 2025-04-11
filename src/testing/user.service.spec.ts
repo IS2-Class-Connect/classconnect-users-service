@@ -29,7 +29,8 @@ describe('UserService', () => {
       email: 'user@gmail.com',
       urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
       provider: 'google.com',
-      location: null,
+      latitude: null,
+      longitude: null,
     };
 
     mockUserRepository.create.mockResolvedValue(userData);
