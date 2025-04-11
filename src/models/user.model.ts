@@ -1,3 +1,6 @@
+/**
+ * Represents a user entity with location and profile information.
+ */
 export interface User {
   id: number;
   email: string;

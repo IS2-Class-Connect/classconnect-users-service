@@ -7,6 +7,15 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 const PORT = 3001;
 
+/**
+ * The `bootstrap` function is responsible for initializing the NestJS application.
+ * It creates the app using `NestFactory.create` with the `AppModule`.
+ * Then, it retrieves configuration values (host, port, and database URL) using `ConfigService`.
+ * The `PrismaService` is accessed to ensure proper database initialization.
+ * After gathering the configuration, it attempts to start the server and listen on the specified host and port.
+ * If the application starts successfully, it logs the server's URL and the database connection string.
+ * If an error occurs during startup, it logs the error using `Logger`.
+ */
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

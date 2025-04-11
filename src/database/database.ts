@@ -14,10 +14,17 @@ const ERROR_EMAIL = 'Email already exists';
 const ERROR_SERVER = 'Internal server error';
 const ERROR_USER = 'User not found';
 
+/**
+ * Handles database operations related to users using Prisma.
+ */
 @Injectable()
 export class UserRepository implements IRepository<User> {
   constructor(private prisma: PrismaService) {}
 
+  /**
+   * Creates a new user in the database.
+   * Throws ConflictException if the email is already taken.
+   */
   async create(data: User): Promise<User> {
     try {
       const { ...userData } = data;
@@ -34,6 +41,10 @@ export class UserRepository implements IRepository<User> {
     }
   }
 
+  /**
+   * Updates the latitude and longitude of an existing user.
+   * Throws NotFoundException if the user does not exist.
+   */
   async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {
     try {
       const user = await this.prisma.prisma.user.findUnique({ where: { id: userId } });
