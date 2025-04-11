@@ -13,6 +13,7 @@
 - [License](#license)
 - [Code Style](#code-style)
 - [Endpoints](#Endpoints)
+- [Codecov](#Codecov)
 
 ## Description
 
@@ -189,3 +190,7 @@ $ npm run format:check
         "longitude" : 58.3816
         }'
 ```
+
+## Codecov
+
+[![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)
