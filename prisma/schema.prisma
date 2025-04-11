@@ -19,7 +19,8 @@ model User {
   name     String
   urlProfilePhoto String
   provider String
-  location        String?
+  latitude        Float?
+  longitude       Float?
   createdAt DateTime @default(now())
   lastSession DateTime @default(now())
 }

@@ -15,8 +15,9 @@ export class UserController implements IController<User> {
   @Put(':id/location')
   async updateLocation(
     @Param('id') userId: string,
-    @Body('location') location: string,
+    @Body('latitude') latitude: number,
+    @Body('longitude') longitude: number,
   ): Promise<User> {
-    return await this.userService.setLocation(Number(userId), location);
+    return await this.userService.setLocation(Number(userId), latitude, longitude);
   }
 }
