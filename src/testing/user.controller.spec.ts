@@ -6,10 +6,23 @@ import { INestApplication } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { Express } from 'express';
 
-describe('Test end to end user POST', () => {
+describe('UserController', () => {
   let app: INestApplication;
   const userService = {
     create: jest.fn((user: User) => Promise.resolve(user)),
+    setLocation: jest.fn((userId: number, latitude: number, longitude: number) =>
+      Promise.resolve({ ...userData, latitude, longitude })
+    ), 
+  };
+
+  const userData: User = {
+    id: 1,
+    name: 'Username',
+    email: 'user@gmail.com',
+    urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+    provider: 'google.com',
+    latitude: null,
+    longitude: null,
   };
 
   beforeAll(async () => {
@@ -23,16 +36,6 @@ describe('Test end to end user POST', () => {
   });
 
   it('/user (POST) should create a user', async () => {
-    const userData: User = {
-      id: 1,
-      name: 'Username',
-      email: 'user@gmail.com',
-      urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
-      provider: 'google.com',
-      latitude: null,
-      longitude: null,
-    };
-
     userService.create.mockResolvedValue(userData);
 
     const response = await request(app.getHttpServer() as Express)
@@ -41,6 +44,20 @@ describe('Test end to end user POST', () => {
       .expect(201);
 
     expect(response.body).toEqual(userData);
+  });
+
+  it('/user/:id/location (PUT) should update user location', async () => {
+    const updatedLocation = { latitude: 40.4168, longitude: -3.7038 };
+
+    userService.setLocation.mockResolvedValue({ ...userData, ...updatedLocation });
+
+    const response = await request(app.getHttpServer() as Express)
+      .put('/user/1/location')
+      .send(updatedLocation)
+      .expect(200);
+
+    expect(response.body.latitude).toBe(updatedLocation.latitude);
+    expect(response.body.longitude).toBe(updatedLocation.longitude);
   });
 
   afterAll(async () => {

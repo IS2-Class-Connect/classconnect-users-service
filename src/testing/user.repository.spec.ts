@@ -3,7 +3,7 @@ import { UserRepository } from '../database/database';
 import { PrismaService } from '../../prisma/prisma.service';
 import { User } from '../models/user.model';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 
 jest.mock('../../prisma/prisma.service');
 
@@ -15,6 +15,8 @@ describe('UserRepository', () => {
     const prismaMock = {
       user: {
         create: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
       },
     };
 
@@ -48,7 +50,6 @@ describe('UserRepository', () => {
       const result = await userRepository.create(userData);
 
       expect(result).toEqual(userData);
-
       expect(prismaService.prisma.user.create).toHaveBeenCalledWith({
         data: userData,
       });
@@ -65,9 +66,7 @@ describe('UserRepository', () => {
         longitude: null,
       };
 
-      prismaService.prisma.user.create = jest
-        .fn()
-        .mockRejectedValue(new Error('Internal server error'));
+      prismaService.prisma.user.create = jest.fn().mockRejectedValue(new Error('Internal server error'));
 
       await expect(userRepository.create(userData)).rejects.toThrowError('Internal server error');
     });
@@ -97,5 +96,78 @@ describe('UserRepository', () => {
     prismaService.prisma.user.create = jest.fn().mockRejectedValue(prismaError);
 
     await expect(userRepository.create(userData)).rejects.toThrow(ConflictException);
+  });
+
+  describe('setLocation', () => {
+    it('should update user location if user exists', async () => {
+      const userId = 1;
+      const latitude = 34.6037;
+      const longitude = 58.3816;
+
+      const userData: User = {
+        id: userId,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+      };
+
+      const updatedUser = { ...userData, latitude, longitude };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
+
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userRepository.setLocation(userId, latitude, longitude);
+
+      expect(result).toEqual(updatedUser);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { latitude, longitude },
+      });
+    });
+
+    it('should throw NotFoundException if user does not exist', async () => {
+      const userId = 1;
+      const latitude = 34.6037;
+      const longitude = 58.3816;
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      await expect(userRepository.setLocation(userId, latitude, longitude)).rejects.toThrow(NotFoundException);
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+
+    it('should throw InternalServerErrorException if update fails', async () => {
+      const userId = 1;
+      const latitude = 34.6037;
+      const longitude = 58.3816;
+
+      const userData: User = {
+        id: userId,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+      };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
+
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Database error'));
+
+      await expect(userRepository.setLocation(userId, latitude, longitude)).rejects.toThrow(InternalServerErrorException);
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { latitude, longitude },
+      });
+    });
   });
 });
