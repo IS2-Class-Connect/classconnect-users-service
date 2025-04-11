@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException,NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { IRepository } from './interface/database.interface';
 import { User } from '../models/user.model';
@@ -26,5 +26,18 @@ export class UserRepository implements IRepository<User> {
       }
       throw new InternalServerErrorException(ERROR_SERVER);
     }
+  }
+
+  async setLocation(userId: number, location: string): Promise<User> {
+    const user = await this.prisma.prisma.user.findUnique({ where: { id: userId } });
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    return await this.prisma.prisma.user.update({
+      where: { id: userId },
+      data: { location: location },
+    });
   }
 }

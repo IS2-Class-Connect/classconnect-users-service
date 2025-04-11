@@ -31,6 +31,7 @@ describe('Test end to end user POST', () => {
       email: "user@gmail.com",
       urlProfilePhoto: "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
       provider: "google.com",
+      location: null
     };
   
     userService.create.mockResolvedValue(userData);

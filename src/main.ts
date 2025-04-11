@@ -7,7 +7,7 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 const PORT = 3001;
 
-async function bootstrap() {
+export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);

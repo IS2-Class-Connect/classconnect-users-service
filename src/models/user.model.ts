@@ -4,4 +4,5 @@ export interface User {
   name: string;
   urlProfilePhoto: string;
   provider: string;
+  location: string | null;
 }

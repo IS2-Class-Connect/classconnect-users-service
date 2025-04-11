@@ -43,6 +43,7 @@ describe('UserRepository', () => {
             email: "user@gmail.com",
             urlProfilePhoto: "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
             provider: "google.com",
+            location: null
           };
   
         prismaService.prisma.user.create = jest.fn().mockResolvedValue(userData);
@@ -63,6 +64,7 @@ describe('UserRepository', () => {
             email: "user@gmail.com",
             urlProfilePhoto: "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
             provider: "google.com",
+            location: null
           };
   
         prismaService.prisma.user.create = jest.fn().mockRejectedValue(new Error('Internal server error'));
@@ -78,6 +80,7 @@ describe('UserRepository', () => {
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
         provider: 'google.com',
+        location: null
       };
     
       const prismaError = {

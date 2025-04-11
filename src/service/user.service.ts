@@ -10,4 +10,8 @@ export class UserService implements IService<User> {
   async create(data: User): Promise<User> {
     return this.userRepository.create(data);
   }
+
+  async setLocation(userId: number, location: string): Promise<User> {
+    return this.userRepository.setLocation(userId, location);
+  }
 }
