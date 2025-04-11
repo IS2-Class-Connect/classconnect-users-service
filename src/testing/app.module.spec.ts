@@ -10,9 +10,8 @@ describe('AppModule', () => {
   let appModule: TestingModule;
 
   beforeEach(async () => {
-
     appModule = await Test.createTestingModule({
-      imports: [AppModule], 
+      imports: [AppModule],
     }).compile();
   });
 
