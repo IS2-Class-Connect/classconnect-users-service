@@ -34,6 +34,7 @@ const mockUserRepository = {
         email: "user@gmail.com",
         urlProfilePhoto: "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
         provider: "google.com",
+        location:null
       };
       
       mockUserRepository.create.mockResolvedValue(userData);
