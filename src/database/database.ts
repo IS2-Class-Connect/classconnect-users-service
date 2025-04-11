@@ -7,6 +7,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 const UNIQUE_CONSTRAINT_FAILED = 'P2002';
 const ERROR_EMAIL = 'Email already exists';
 const ERROR_SERVER = 'Internal server error';
+const ERROR_USER = 'User not found';
 
 @Injectable()
 export class UserRepository implements IRepository<User> {
@@ -33,7 +34,7 @@ export class UserRepository implements IRepository<User> {
       const user = await this.prisma.prisma.user.findUnique({ where: { id: userId } });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException(ERROR_USER);
       }
 
       return await this.prisma.prisma.user.update({
