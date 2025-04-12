@@ -76,7 +76,7 @@ paths:
                     example: 500
 
   /users/{user_id}/location:
-    put:
+    patch:
       summary: Update user location.
       description: Updates the latitude and longitude for a user based on their ID.
       operationId: updateUserLocation
@@ -185,6 +185,61 @@ paths:
                   message:
                     type: string
                     example: Account is locked due to multiple failed attempts
+
+  /users/{id}/check-lock-status:
+    get:
+      summary: Check if a user's account is locked.
+      description: Returns lock status of the user account.
+      operationId: checkLockStatus
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user to check.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Lock status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account is not locked
+                  isLocked:
+                    type: integer
+                    description: 1 if locked, 0 if not, -1 if error
+                    example: 0
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+                  isLocked:
+                    type: integer
+                    example: -1
+        '500':
+          description: Error checking lock status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error checking lock status
+                  isLocked:
+                    type: integer
+                    example: -1
 components:
   schemas:
     User:

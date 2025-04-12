@@ -41,26 +41,33 @@ export class UserRepository implements IRepository<User> {
     }
   }
 
+  // Check if the user's account is locked
+  async isAccountLocked(userId: number): Promise<boolean> {
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(ERROR_USER);
+    }
+
+    return user.accountLocked;
+  }
 
   // Find a user by ID
-  async findById(userId:number):Promise<User | null>
-  {
+  async findById(userId: number): Promise<User | null> {
     return await this.prisma.prisma.user.findUnique({ where: { id: userId } });
-
   }
-    // Save method to update the user in the database
-    async save(user: User): Promise<User> {
-      return this.prisma.prisma.user.update({
-        where: { id: user.id },
-        data: {
-          failedAttempts: user.failedAttempts,
-          accountLocked: user.accountLocked,
-          lockUntil: user.lockUntil,
-          lastFailedAt: user.lastFailedAt,
-        },
-      });
-    }
-    
+  // Save method to update the user in the database
+  async save(user: User): Promise<User> {
+    return this.prisma.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        failedAttempts: user.failedAttempts,
+        accountLocked: user.accountLocked,
+        lockUntil: user.lockUntil,
+        lastFailedAt: user.lastFailedAt,
+      },
+    });
+  }
 
   /**
    * Updates the latitude and longitude of an existing user.

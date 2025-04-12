@@ -21,4 +21,9 @@ export interface IRepository<T> {
    * Finds and returns an entity by its ID.
    */
   findById(id: number): Promise<T | null>;
+
+  /**
+   * Checks whether the account of an entity is locked.
+   */
+  isAccountLocked(id: number): Promise<boolean>;
 }

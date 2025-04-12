@@ -198,6 +198,13 @@ curl --location --request PATCH 'http://localhost:3001/users/{user_id}/failed-at
 --data ''
 ```
 
+- To check if a user is blocked
+```bash
+curl --location 'http://localhost:3001/users/{user_id}/check-lock-status' \
+--header 'Content-Type: application/json' \
+--data ''
+```
+
 ## Codecov
 
 [![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)
