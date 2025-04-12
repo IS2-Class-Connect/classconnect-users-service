@@ -190,4 +190,97 @@ describe('UserRepository', () => {
       });
     });
   });
+
+  describe('findById', () => {
+    it('should return a user if found', async () => {
+      const userId = 1;
+      const userData: User = {
+        id: userId,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
+      };
+  
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
+  
+      const result = await userRepository.findById(userId);
+  
+      expect(result).toEqual(userData);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+  
+    it('should return null if user is not found', async () => {
+      const userId = 99;
+  
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+  
+      const result = await userRepository.findById(userId);
+  
+      expect(result).toBeNull();
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+  });
+  
+  describe('save', () => {
+    it('should update and return the user', async () => {
+      const userData: User = {
+        id: 1,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 2,
+        accountLocked: true,
+        lastFailedAt: new Date(),
+        lockUntil: new Date(Date.now() + 15 * 60 * 1000),
+      };
+  
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(userData);
+  
+      const result = await userRepository.save(userData);
+  
+      expect(result).toEqual(userData);
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userData.id },
+        data: {
+          failedAttempts: userData.failedAttempts,
+          accountLocked: userData.accountLocked,
+          lockUntil: userData.lockUntil,
+          lastFailedAt: userData.lastFailedAt,
+        },
+      });
+    });
+  
+it('should throw an Error if update fails', async () => {
+  const userData: User = {
+    id: 1,
+    name: 'Username',
+    email: 'user@gmail.com',
+    urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+    provider: 'google.com',
+    latitude: null,
+    longitude: null,
+    failedAttempts: 3,
+    accountLocked: true,
+    lastFailedAt: new Date(),
+    lockUntil: new Date(),
+  };
+
+  prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Update error'));
+
+  await expect(userRepository.save(userData)).rejects.toThrow('Update error');
 });
+
+  });
+  
+});
+
