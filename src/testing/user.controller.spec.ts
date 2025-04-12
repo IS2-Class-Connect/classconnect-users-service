@@ -23,6 +23,10 @@ describe('UserController', () => {
     provider: 'google.com',
     latitude: null,
     longitude: null,
+    failedAttempts: 0,
+    accountLocked: false,
+    lastFailedAt: null,
+    lockUntil: null,
   };
 
   beforeAll(async () => {

@@ -33,6 +33,10 @@ describe('UserService', () => {
       provider: 'google.com',
       latitude: null,
       longitude: null,
+      failedAttempts: 0,
+      accountLocked: false,
+      lastFailedAt: null,
+      lockUntil: null,
     };
 
     mockUserRepository.create.mockResolvedValue(userData);
@@ -57,6 +61,10 @@ describe('UserService', () => {
         provider: 'google.com',
         latitude,
         longitude,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
       };
 
       mockUserRepository.setLocation.mockResolvedValue(updatedUser);

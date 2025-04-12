@@ -43,6 +43,10 @@ describe('UserRepository', () => {
         provider: 'google.com',
         latitude: null,
         longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
       };
 
       prismaService.prisma.user.create = jest.fn().mockResolvedValue(userData);
@@ -64,6 +68,10 @@ describe('UserRepository', () => {
         provider: 'google.com',
         latitude: null,
         longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
       };
 
       prismaService.prisma.user.create = jest.fn().mockRejectedValue(new Error('Internal server error'));
@@ -81,6 +89,10 @@ describe('UserRepository', () => {
       provider: 'google.com',
       latitude: null,
       longitude: null,
+      failedAttempts: 0,
+      accountLocked: false,
+      lastFailedAt: null,
+      lockUntil: null,
     };
 
     const prismaError = {
@@ -112,6 +124,10 @@ describe('UserRepository', () => {
         provider: 'google.com',
         latitude: null,
         longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
       };
 
       const updatedUser = { ...userData, latitude, longitude };
@@ -155,6 +171,10 @@ describe('UserRepository', () => {
         provider: 'google.com',
         latitude: null,
         longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
       };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
