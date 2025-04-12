@@ -51,7 +51,7 @@ export class UserService implements IService<User> {
     if (user.lastFailedAt && user.lastFailedAt.getTime() > tenMinutesAgo) {
       user.failedAttempts += 1;
     } else {
-      user.failedAttempts = 1;  
+      user.failedAttempts = 0;  
     }
   
     user.lastFailedAt = new Date();  
