@@ -281,9 +281,10 @@ describe('UserRepository', () => {
         lockUntil: new Date(),
       };
 
-      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Update error'));
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new InternalServerErrorException('Internal server error'));
 
-      await expect(userRepository.save(userData)).rejects.toThrow('Update error');
+      await expect(userRepository.save(userData)).rejects.toThrow(InternalServerErrorException);
+      await expect(userRepository.save(userData)).rejects.toThrow('Internal server error');
     });
   });
   describe('isAccountLocked', () => {

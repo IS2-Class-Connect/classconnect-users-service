@@ -58,7 +58,7 @@ export class UserRepository implements IRepository<User> {
   // Save method to update the user in the database
   async save(user: User): Promise<User> {
     try {
-      return this.prisma.prisma.user.update({
+      return await this.prisma.prisma.user.update({
         where: { id: user.id },
         data: {
           failedAttempts: user.failedAttempts,
