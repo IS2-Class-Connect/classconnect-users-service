@@ -4,4 +4,5 @@
  */
 export interface IService<T> {
   create(data: T): Promise<T>;
+  setLocation(id: number, latitude: number, longitude: number): Promise<T>;
 }
