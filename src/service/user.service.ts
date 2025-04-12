@@ -52,12 +52,14 @@ export class UserService implements IService<User> {
       user.failedAttempts += 1;
     } else {
       user.failedAttempts = 0;  
+      user.accountLocked = false;
     }
   
     user.lastFailedAt = new Date();  
   
     if (user.failedAttempts >= MAX_FAILED_ATTEMPTS) {
       user.lockUntil = new Date(currentTime + LOCK_DURATION);
+      user.accountLocked = true;
     }
   
     return this.userRepository.save(user);
