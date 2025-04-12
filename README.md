@@ -200,7 +200,7 @@ curl --location --request PATCH 'http://localhost:3001/users/{user_id}/failed-at
 
 - To check if a user is blocked
 ```bash
-curl --location 'http://localhost:3001/users/4/check-lock-status' \
+curl --location 'http://localhost:3001/users/{user_id}/check-lock-status' \
 --header 'Content-Type: application/json' \
 --data ''
 ```

@@ -76,7 +76,7 @@ paths:
                     example: 500
 
   /users/{user_id}/location:
-    put:
+    patch:
       summary: Update user location.
       description: Updates the latitude and longitude for a user based on their ID.
       operationId: updateUserLocation
@@ -145,6 +145,46 @@ paths:
                   statusCode:
                     type: integer
                     example: 500
+  /users/{id}/failed-attempts:
+    patch:
+      summary: Increment the number of failed login attempts for a user.
+      description: Increases the failed login attempt counter and locks the account if needed.
+      operationId: increaseFailedAttempts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user to update failed attempts.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Failed attempts updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+        '403':
+          description: Account is locked due to multiple failed attempts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account is locked due to multiple failed attempts
 
   /users/{id}/check-lock-status:
     get:
@@ -200,7 +240,6 @@ paths:
                   isLocked:
                     type: integer
                     example: -1
-
 components:
   schemas:
     User:
