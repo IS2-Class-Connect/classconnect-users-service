@@ -41,13 +41,34 @@ export class UserRepository implements IRepository<User> {
     }
   }
 
+
+  // Find a user by ID
+  async findById(userId:number):Promise<User | null>
+  {
+    return await this.prisma.prisma.user.findUnique({ where: { id: userId } });
+
+  }
+    // Save method to update the user in the database
+    async save(user: User): Promise<User> {
+      return this.prisma.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          failedAttempts: user.failedAttempts,
+          accountLocked: user.accountLocked,
+          lockUntil: user.lockUntil,
+          lastFailedAt: user.lastFailedAt,
+        },
+      });
+    }
+    
+
   /**
    * Updates the latitude and longitude of an existing user.
    * Throws NotFoundException if the user does not exist.
    */
   async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {
     try {
-      const user = await this.prisma.prisma.user.findUnique({ where: { id: userId } });
+      const user = await this.findById(userId);
 
       if (!user) {
         throw new NotFoundException(ERROR_USER);
