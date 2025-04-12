@@ -19,10 +19,10 @@ export class UserController implements IController<User> {
   /* Update the location of a user.*/
   @Patch(':id/location')
   async updateLocation(
-    @Param('id') userId: string,
+    @Param('id') userId: number,
     @Body('latitude') latitude: number,
     @Body('longitude') longitude: number,
   ): Promise<User> {
-    return await this.userService.setLocation(Number(userId), latitude, longitude);
+    return await this.userService.setLocation(userId, latitude, longitude);
   }
 }
