@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Get, Param, NotFoundException } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
@@ -30,5 +30,31 @@ export class UserController implements IController<User> {
   @Patch(':id/failed-attempts')
   async increaseFailedAttempts(@Param('id') userId: string): Promise<User> {
     return await this.userService.increaseFailedAttempts(Number(userId));
+  }
+
+  /* Check if a user's account is locked. */
+  @Get(':id/check-lock-status')
+  async checkLockStatus(
+    @Param('id') userId: string,
+  ): Promise<{ message: string; isLocked: number }> {
+    try {
+      const isLocked = await this.userService.isAccountLocked(Number(userId));
+
+      return {
+        message: isLocked ? 'Account is locked' : 'Account is not locked',
+        isLocked: isLocked ? 1 : 0,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return {
+          message: 'User not found',
+          isLocked: -1,
+        };
+      }
+      return {
+        message: 'Error checking lock status',
+        isLocked: -1,
+      };
+    }
   }
 }

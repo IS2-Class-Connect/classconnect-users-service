@@ -16,4 +16,9 @@ export interface IController<T> {
    * Handles increasing and returning the failed login attempts of an entity.
    */
   increaseFailedAttempts(id: string): Promise<T>;
+
+  /**
+   * Checks whether the account of an entity is locked.
+   */
+  checkLockStatus(id: string): Promise<{ message: string }>;
 }

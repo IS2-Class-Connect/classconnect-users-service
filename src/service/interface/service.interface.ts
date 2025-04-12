@@ -16,4 +16,9 @@ export interface IService<T> {
    * Handles increasing and returning the failed login attempts of an entity.
    */
   increaseFailedAttempts(id: number): Promise<T>;
+
+  /**
+   * Checks if the entity is blocked.
+   */
+  isAccountLocked(id: number): Promise<boolean>;
 }
