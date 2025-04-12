@@ -16,7 +16,7 @@ describe('UserController', () => {
     increaseFailedAttempts: jest.fn((userId: number) =>
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
-  isAccountLocked: jest.fn((userId: number) => Promise.resolve(false)),
+    isAccountLocked: jest.fn((userId: number) => Promise.resolve(false)),
   };
 
   const userData: User = {
@@ -133,7 +133,6 @@ describe('UserController', () => {
       });
     });
   });
-
 
   afterAll(async () => {
     await app.close();

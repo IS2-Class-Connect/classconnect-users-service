@@ -219,29 +219,28 @@ describe('UserService', () => {
       lastFailedAt: null,
       lockUntil: null,
     };
-  
+
     it('should return true if the account is locked', async () => {
       mockUserRepository.findById.mockResolvedValue({ ...mockUser, accountLocked: true });
-  
+
       const result = await userService.isAccountLocked(1);
       expect(result).toBe(true);
       expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
     });
-  
+
     it('should return false if the account is not locked', async () => {
       mockUserRepository.findById.mockResolvedValue({ ...mockUser, accountLocked: false });
-  
+
       const result = await userService.isAccountLocked(1);
       expect(result).toBe(false);
       expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
     });
-  
+
     it('should throw NotFoundException if the user does not exist', async () => {
       mockUserRepository.findById.mockResolvedValue(null);
-  
+
       await expect(userService.isAccountLocked(1)).rejects.toThrow(NotFoundException);
       expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
     });
   });
-  
 });

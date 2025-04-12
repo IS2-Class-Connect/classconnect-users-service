@@ -344,5 +344,4 @@ describe('UserRepository', () => {
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
     });
   });
-
 });
