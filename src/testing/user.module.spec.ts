@@ -3,7 +3,6 @@ import { UserModule } from '../modules/user.module';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
 import { UserRepository } from '../database/database';
-import { Logger } from '@nestjs/common';
 
 jest.mock('../../prisma/prisma.service');
 jest.mock('../database/database');

@@ -171,7 +171,7 @@ $ npm run format:check
 - To create a user using curl:
 
 ```bash
-    curl --location 'http://localhost:3001/user' \
+    curl --location 'http://localhost:3001/users' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "email": "user@gmail.com",
@@ -179,6 +179,16 @@ $ npm run format:check
     "urlProfilePhoto": "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
     "provider": "google.com"
     }'
+```
+
+- To add user's location
+```bash
+    curl --location --request PATCH 'http://localhost:3001/users/1/location' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "latitude" : 34.6037,
+        "longitude" : 58.3816
+        }'
 ```
 
 ## Codecov

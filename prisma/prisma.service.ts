@@ -2,6 +2,10 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { IPrismaService } from './prisma.interface';
 
+/**
+ * PrismaService provides the Prisma client and manages the database connection lifecycle.
+ * It connects to the database when the module is initialized and disconnects when the module is destroyed.
+ */
 @Injectable()
 export class PrismaService implements IPrismaService, OnModuleInit {
   private _prisma: PrismaClient;
