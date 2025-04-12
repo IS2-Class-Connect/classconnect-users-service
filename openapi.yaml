@@ -146,39 +146,6 @@ paths:
                     type: integer
                     example: 500
 
-components:
-  schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        email:
-          type: string
-          format: email
-          example: user@gmail.com
-        name:
-          type: string
-          example: Username
-        urlProfilePhoto:
-          type: string
-          format: uri
-          example: https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg
-        provider:
-          type: string
-          example: google.com
-        latitude:
-          type: number
-          format: float
-          nullable: true
-          example: 34.6037
-        longitude:
-          type: number
-          format: float
-          nullable: true
-          example: 58.3816
-
   /users/{id}/check-lock-status:
     get:
       summary: Check if a user's account is locked.
@@ -233,3 +200,52 @@ components:
                   isLocked:
                     type: integer
                     example: -1
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          format: email
+          example: user@gmail.com
+        name:
+          type: string
+          example: Username
+        urlProfilePhoto:
+          type: string
+          format: uri
+          example: https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg
+        provider:
+          type: string
+          example: google.com
+        latitude:
+          type: number
+          format: float
+          nullable: true
+          example: 34.6037
+        longitude:
+          type: number
+          format: float
+          nullable: true
+          example: 58.3816
+        failedAttempts:
+          type: integer
+          example: 3
+        accountLocked:
+          type: boolean
+          example: true
+        lockUntil:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-04-13T12:00:00Z"
+        lastFailedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-04-12T14:00:00Z"
