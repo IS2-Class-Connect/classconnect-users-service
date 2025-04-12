@@ -185,6 +185,22 @@ paths:
                   message:
                     type: string
                     example: Account is locked due to multiple failed attempts
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+                  error:
+                    type: string
+                    example: "Internal Server Error"
+                  statusCode:
+                    type: integer
+                    example: 500
 
   /users/{id}/check-lock-status:
     get:
