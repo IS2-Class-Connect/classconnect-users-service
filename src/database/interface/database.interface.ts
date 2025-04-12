@@ -1,10 +1,24 @@
-/** 
- * The `IRepository` interface defines a contract for repository services, requiring a `create` method 
- * to create and return an entity of type `T`.
+/**
+ * Defines a contract for repository operations on an entity of type `T`.
  */
 export interface IRepository<T> {
+  /**
+   * Creates and returns a new entity.
+   */
   create(data: T): Promise<T>;
+
+  /**
+   * Updates and returns the location of an existing entity.
+   */
   setLocation(id: number, latitude: number, longitude: number): Promise<T>;
+
+  /**
+   * Saves and returns an updated entity.
+   */
   save(data: T): Promise<T>;
-  findById(id:number):Promise<T | null>;
+
+  /**
+   * Finds and returns an entity by its ID.
+   */
+  findById(id: number): Promise<T | null>;
 }
