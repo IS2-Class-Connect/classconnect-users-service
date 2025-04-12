@@ -13,6 +13,9 @@ describe('UserController', () => {
     setLocation: jest.fn((userId: number, latitude: number, longitude: number) =>
       Promise.resolve({ ...userData, latitude, longitude })
     ), 
+    increaseFailedAttempts: jest.fn((userId: number) =>
+      Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 })
+    ),
   };
 
   const userData: User = {
@@ -23,6 +26,10 @@ describe('UserController', () => {
     provider: 'google.com',
     latitude: null,
     longitude: null,
+    failedAttempts: 0,
+    accountLocked: false,
+    lastFailedAt: null,
+    lockUntil: null,
   };
 
   beforeAll(async () => {
@@ -58,6 +65,18 @@ describe('UserController', () => {
 
     expect(response.body.latitude).toBe(updatedLocation.latitude);
     expect(response.body.longitude).toBe(updatedLocation.longitude);
+  });
+
+
+  it('/users/:id/failed-attempts (PATCH) should increment failed login attempts', async () => {
+    const updatedUser = { ...userData, failedAttempts: userData.failedAttempts + 1 };
+    userService.increaseFailedAttempts.mockResolvedValue(updatedUser);
+
+    const response = await request(app.getHttpServer() as Express)
+      .patch('/users/1/failed-attempts')
+      .expect(200);
+
+    expect(response.body.failedAttempts).toBe(updatedUser.failedAttempts);
   });
 
   afterAll(async () => {

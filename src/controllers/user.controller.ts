@@ -25,4 +25,10 @@ export class UserController implements IController<User> {
   ): Promise<User> {
     return await this.userService.setLocation(Number(userId), latitude, longitude);
   }
+
+  /* Increment the number of failed login attempts for a user. */
+  @Patch(':id/failed-attempts')
+  async increaseFailedAttempts(@Param('id') userId: string): Promise<User> {
+    return await this.userService.increaseFailedAttempts(Number(userId));
+  }
 }

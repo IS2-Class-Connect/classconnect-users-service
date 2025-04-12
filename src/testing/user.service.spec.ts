@@ -2,11 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../service/user.service';
 import { UserRepository } from '../database/database';
 import { User } from '../models/user.model';
-import { NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { NotFoundException, InternalServerErrorException, ForbiddenException } from '@nestjs/common';
 
 const mockUserRepository = {
   create: jest.fn(),
   setLocation: jest.fn(),
+  findById: jest.fn(),
+  save: jest.fn(),
 };
 
 describe('UserService', () => {
@@ -33,6 +35,10 @@ describe('UserService', () => {
       provider: 'google.com',
       latitude: null,
       longitude: null,
+      failedAttempts: 0,
+      accountLocked: false,
+      lastFailedAt: null,
+      lockUntil: null,
     };
 
     mockUserRepository.create.mockResolvedValue(userData);
@@ -57,6 +63,10 @@ describe('UserService', () => {
         provider: 'google.com',
         latitude,
         longitude,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
       };
 
       mockUserRepository.setLocation.mockResolvedValue(updatedUser);
@@ -90,4 +100,100 @@ describe('UserService', () => {
       expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userId, latitude, longitude);
     });
   });
+
+describe('increaseFailedAttempts', () => {
+  const baseUser: User = {
+    id: 1,
+    name: 'Username',
+    email: 'user@gmail.com',
+    urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+    provider: 'google.com',
+    latitude: null,
+    longitude: null,
+    failedAttempts: 0,
+    accountLocked: false,
+    lastFailedAt: null,
+    lockUntil: null,
+  };
+
+  it('should throw NotFoundException if user is not found', async () => {
+    mockUserRepository.findById.mockResolvedValue(null);
+
+    await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(NotFoundException);
+    expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
+  });
+
+  it('should throw ForbiddenException if account is locked', async () => {
+    const lockedUser = {
+      ...baseUser,
+      lockUntil: new Date(Date.now() + 5 * 60 * 1000), 
+    };
+
+    mockUserRepository.findById.mockResolvedValue(lockedUser);
+
+    await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(ForbiddenException);
+  });
+
+  it('should reset failedAttempts if lastFailedAt was more than 10 minutes ago', async () => {
+    const oldFailUser = {
+      ...baseUser,
+      failedAttempts: 3,
+      lastFailedAt: new Date(Date.now() - 11 * 60 * 1000), 
+    };
+
+    const expectedUser = {
+      ...oldFailUser,
+      failedAttempts: 0,
+      lastFailedAt: expect.any(Date),
+    };
+
+    mockUserRepository.findById.mockResolvedValue(oldFailUser);
+    mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
+
+    const result = await userService.increaseFailedAttempts(1);
+
+    expect(result.failedAttempts).toBe(0);
+    expect(mockUserRepository.save).toHaveBeenCalled();
+  });
+
+  it('should increment failedAttempts if within 10 minutes', async () => {
+    const recentFailUser = {
+      ...baseUser,
+      failedAttempts: 2,
+      lastFailedAt: new Date(Date.now() - 5 * 60 * 1000), 
+    };
+
+    const expectedUser = {
+      ...recentFailUser,
+      failedAttempts: 3,
+      lastFailedAt: expect.any(Date),
+    };
+
+    mockUserRepository.findById.mockResolvedValue(recentFailUser);
+    mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
+
+    const result = await userService.increaseFailedAttempts(1);
+
+    expect(result.failedAttempts).toBe(3);
+    expect(mockUserRepository.save).toHaveBeenCalled();
+  });
+
+  it('should lock the account if failedAttempts exceed max allowed', async () => {
+    const userNearLimit = {
+      ...baseUser,
+      failedAttempts: 5,
+      lastFailedAt: new Date(Date.now() - 1 * 60 * 1000), 
+    };
+
+    mockUserRepository.findById.mockResolvedValue(userNearLimit);
+    mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
+
+    const result = await userService.increaseFailedAttempts(1);
+
+    expect(result.lockUntil).toBeInstanceOf(Date);
+    expect(result.failedAttempts).toBeGreaterThanOrEqual(5);
+    expect(mockUserRepository.save).toHaveBeenCalled();
+  });
+});
+
 });

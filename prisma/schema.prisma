@@ -21,6 +21,10 @@ model User {
   provider String
   latitude        Float?
   longitude       Float?
+  failedAttempts   Int       @default(0)
+  lastFailedAt     DateTime? 
+  lockUntil        DateTime? 
+  accountLocked  Boolean   @default(false)
   createdAt DateTime @default(now())
   lastSession DateTime @default(now())
 }
