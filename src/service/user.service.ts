@@ -8,8 +8,8 @@ import { User } from '../models/user.model';
  * It delegates data persistence to the UserRepository.
  */
 const ERROR_USER = 'User not found';
-const ERROR_LOCKED_ACCOUNT = 'Account is locked. Please try again later.';
-const LOCK_DURATION = 10 * 60 * 1000; 
+const ERROR_LOCKED_ACCOUNT = 'Account is locked. Please try again later or contact support to unblock it. ';
+const LOCK_DURATION = 240 * 60 * 1000; 
 const MAX_FAILED_ATTEMPTS = 5; 
 
 @Injectable()
