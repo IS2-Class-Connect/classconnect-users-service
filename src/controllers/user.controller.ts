@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Param } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
@@ -17,7 +17,7 @@ export class UserController implements IController<User> {
   }
 
   /* Update the location of a user.*/
-  @Put(':id/location')
+  @Patch(':id/location')
   async updateLocation(
     @Param('id') userId: string,
     @Body('latitude') latitude: number,

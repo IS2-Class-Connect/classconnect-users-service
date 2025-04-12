@@ -183,7 +183,7 @@ $ npm run format:check
 
 - To add user's location
 ```bash
-    curl --location --request PUT 'http://localhost:3001/users/1/location' \
+    curl --location --request PATCH 'http://localhost:3001/users/1/location' \
     --header 'Content-Type: application/json' \
     --data '{
         "latitude" : 34.6037,
