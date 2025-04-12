@@ -46,13 +46,13 @@ describe('UserController', () => {
     expect(response.body).toEqual(userData);
   });
 
-  it('/users/:id/location (PUT) should update user location', async () => {
+  it('/users/:id/location (PATCH) should update user location', async () => {
     const updatedLocation = { latitude: 40.4168, longitude: -3.7038 };
 
     userService.setLocation.mockResolvedValue({ ...userData, ...updatedLocation });
 
     const response = await request(app.getHttpServer() as Express)
-      .put('/users/1/location')
+      .patch('/users/1/location')
       .send(updatedLocation)
       .expect(200);
 
