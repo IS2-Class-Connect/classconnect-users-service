@@ -8,11 +8,10 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { IRepository } from './interface/database.interface';
 import { User } from '../models/user.model';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ERROR_SERVER, ERROR_USER } from '../constants/error.constants';
 
 const UNIQUE_CONSTRAINT_FAILED = 'P2002';
 const ERROR_EMAIL = 'Email already exists';
-const ERROR_SERVER = 'Internal server error';
-const ERROR_USER = 'User not found';
 
 /**
  * Handles database operations related to users using Prisma.
@@ -58,6 +57,7 @@ export class UserRepository implements IRepository<User> {
   }
   // Save method to update the user in the database
   async save(user: User): Promise<User> {
+    try{
     return this.prisma.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -67,6 +67,9 @@ export class UserRepository implements IRepository<User> {
         lastFailedAt: user.lastFailedAt,
       },
     });
+  } catch (error) {
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
   }
 
   /**
