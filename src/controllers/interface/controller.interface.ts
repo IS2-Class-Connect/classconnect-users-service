@@ -4,5 +4,5 @@
  */
 export interface IController<T> {
   create(data: T): Promise<T>;
-  updateLocation(id: number, latitude: number, longitude: number): Promise<T>;
+  updateLocation(id: string, latitude: number, longitude: number): Promise<T>;
 }
