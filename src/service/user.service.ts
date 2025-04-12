@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException,InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { IService } from './interface/service.interface';
 import { UserRepository } from '../database/database';
 import { User } from '../models/user.model';
@@ -37,46 +42,46 @@ export class UserService implements IService<User> {
    */
   async increaseFailedAttempts(userId: number): Promise<User> {
     let user: User | null;
-  
+
     try {
       user = await this.userRepository.findById(userId);
     } catch (error) {
       throw new InternalServerErrorException(ERROR_SERVER);
     }
-  
+
     if (!user) {
       throw new NotFoundException(ERROR_USER);
     }
-  
+
     const currentTime = Date.now();
-  
+
     if (user.lockUntil && user.lockUntil > new Date()) {
       throw new ForbiddenException(ERROR_LOCKED_ACCOUNT);
     }
-  
+
     const tenMinutesAgo = currentTime - 10 * 60 * 1000;
-  
+
     if (user.lastFailedAt && user.lastFailedAt.getTime() > tenMinutesAgo) {
       user.failedAttempts += 1;
     } else {
-      user.failedAttempts = 0; 
+      user.failedAttempts = 0;
       user.accountLocked = false;
     }
-  
+
     user.lastFailedAt = new Date();
-  
+
     if (user.failedAttempts >= MAX_FAILED_ATTEMPTS) {
       user.lockUntil = new Date(currentTime + LOCK_DURATION);
       user.accountLocked = true;
     }
-  
+
     try {
       return await this.userRepository.save(user);
     } catch (error) {
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
-  
+
   /**
    *  Check if a user is blocked
    */
