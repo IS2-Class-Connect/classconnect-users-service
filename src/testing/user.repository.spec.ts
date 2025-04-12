@@ -286,4 +286,63 @@ describe('UserRepository', () => {
       await expect(userRepository.save(userData)).rejects.toThrow('Update error');
     });
   });
+  describe('isAccountLocked', () => {
+    it('should return true if account is locked', async () => {
+      const userId = 1;
+      const user: User = {
+        id: userId,
+        name: 'Test User',
+        email: 'locked@example.com',
+        urlProfilePhoto: '',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 3,
+        accountLocked: true,
+        lastFailedAt: null,
+        lockUntil: null,
+      };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
+
+      const result = await userRepository.isAccountLocked(userId);
+
+      expect(result).toBe(true);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+
+    it('should return false if account is not locked', async () => {
+      const userId = 2;
+      const user: User = {
+        id: userId,
+        name: 'Unlocked User',
+        email: 'unlocked@example.com',
+        urlProfilePhoto: '',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 1,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
+      };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
+
+      const result = await userRepository.isAccountLocked(userId);
+
+      expect(result).toBe(false);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+
+    it('should throw NotFoundException if user does not exist', async () => {
+      const userId = 999;
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      await expect(userRepository.isAccountLocked(userId)).rejects.toThrow(NotFoundException);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+  });
+
 });
