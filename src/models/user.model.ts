@@ -9,8 +9,8 @@ export interface User {
   provider: string;
   latitude: number | null;
   longitude: number | null;
-  failedAttempts: number;        
-  accountLocked: boolean;       
-  lockUntil: Date | null;      
-  lastFailedAt: Date | null;   
+  failedAttempts: number;
+  accountLocked: boolean;
+  lockUntil: Date | null;
+  lastFailedAt: Date | null;
 }

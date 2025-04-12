@@ -11,10 +11,10 @@ describe('UserController', () => {
   const userService = {
     create: jest.fn((user: User) => Promise.resolve(user)),
     setLocation: jest.fn((userId: number, latitude: number, longitude: number) =>
-      Promise.resolve({ ...userData, latitude, longitude })
-    ), 
+      Promise.resolve({ ...userData, latitude, longitude }),
+    ),
     increaseFailedAttempts: jest.fn((userId: number) =>
-      Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 })
+      Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
   };
 
@@ -66,7 +66,6 @@ describe('UserController', () => {
     expect(response.body.latitude).toBe(updatedLocation.latitude);
     expect(response.body.longitude).toBe(updatedLocation.longitude);
   });
-
 
   it('/users/:id/failed-attempts (PATCH) should increment failed login attempts', async () => {
     const updatedUser = { ...userData, failedAttempts: userData.failedAttempts + 1 };
