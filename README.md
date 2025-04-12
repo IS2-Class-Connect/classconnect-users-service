@@ -193,7 +193,7 @@ $ npm run format:check
 
 - To update number of failed attempts when a user logs in
 ```bash
-curl --location --request PATCH 'http://localhost:3001/users/1/failed-attempts' \
+curl --location --request PATCH 'http://localhost:3001/users/{user_id}/failed-attempts' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
