@@ -206,9 +206,13 @@ describe('UserService', () => {
     });
 
     it('should throw InternalServerErrorException if findById throws', async () => {
-      mockUserRepository.findById.mockRejectedValue(new InternalServerErrorException('Internal server error'));
-    
-      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(InternalServerErrorException);
+      mockUserRepository.findById.mockRejectedValue(
+        new InternalServerErrorException('Internal server error'),
+      );
+
+      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
 
     it('should throw InternalServerErrorException if save throws', async () => {
@@ -222,18 +226,21 @@ describe('UserService', () => {
         longitude: null,
         failedAttempts: 2,
         accountLocked: false,
-        lastFailedAt: new Date(Date.now() - 5 * 60 * 1000), 
+        lastFailedAt: new Date(Date.now() - 5 * 60 * 1000),
         lockUntil: null,
       };
-    
+
       mockUserRepository.findById.mockResolvedValue(userData);
-      mockUserRepository.save.mockRejectedValue(new InternalServerErrorException('Internal server error'));
-    
-      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(InternalServerErrorException);
+      mockUserRepository.save.mockRejectedValue(
+        new InternalServerErrorException('Internal server error'),
+      );
+
+      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
-    
   });
-  
+
   describe('isAccountLocked', () => {
     const mockUser: User = {
       id: 1,
