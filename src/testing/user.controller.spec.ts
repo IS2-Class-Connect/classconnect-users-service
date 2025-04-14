@@ -17,7 +17,7 @@ describe('UserController', () => {
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
     isAccountLocked: jest.fn((userId: number) => Promise.resolve(false)),
-    getById: jest.fn((userId: number) => Promise.resolve(userData)),
+    findById: jest.fn((userId: number) => Promise.resolve(userData)),
   };
 
   const userData: User = {
@@ -134,27 +134,27 @@ describe('UserController', () => {
       });
     });
   });
-  xdescribe('/users/:id (GET)', () => {
+  describe('/users/:id (GET)', () => {
     it('should return the user when the user exists', async () => {
-      userService.getById = jest.fn().mockResolvedValue(userData);
+      userService.findById = jest.fn().mockResolvedValue(userData);
   
       const response = await request(app.getHttpServer() as Express)
         .get('/users/1')
         .expect(200);
   
       expect(response.body).toEqual(userData);
-      expect(userService.getById).toHaveBeenCalledWith(1);
+      expect(userService.findById).toHaveBeenCalledWith(1);
     });
   
     it('should return 404 when the user does not exist', async () => {
-      userService.getById = jest.fn().mockResolvedValue(null);
+      userService.findById = jest.fn().mockResolvedValue(null);
   
       const response = await request(app.getHttpServer() as Express)
         .get('/users/999')
         .expect(404);
   
-      expect(response.body.message).toBe('User with ID 999 not found');
-      expect(userService.getById).toHaveBeenCalledWith(999);
+      expect(response.body.message).toBe('User not found');
+      expect(userService.findById).toHaveBeenCalledWith(999);
     });
   });
   afterAll(async () => {

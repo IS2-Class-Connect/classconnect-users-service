@@ -26,6 +26,12 @@ export class UserService implements IService<User> {
   }
 
   /**
+   * Retrieves a user by their ID.
+   */
+  async findById(userId: number): Promise<User | null> {
+    return await this.userRepository.findById(userId);
+  }
+  /**
    * Sets the location for a user.
    */
   async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {

@@ -8,6 +8,11 @@ export interface IService<T> {
   create(data: T): Promise<T>;
 
   /**
+   * Handles retrieving and returning an entity by its ID.
+   */
+  findById(id: number): Promise<T | null>;
+
+  /**
    * Handles updating and returning the location of an existing entity.
    */
   setLocation(id: number, latitude: number, longitude: number): Promise<T>;

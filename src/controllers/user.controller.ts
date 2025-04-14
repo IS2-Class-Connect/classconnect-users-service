@@ -16,6 +16,15 @@ export class UserController implements IController<User> {
     return await this.userService.create(body);
   }
 
+  @Get(':id')
+  async getById(@Param('id') userId: string): Promise<User> {
+    const user = await this.userService.findById(Number(userId));
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+    return user;
+  }
+
   /* Update the location of a user.*/
   @Patch(':id/location')
   async updateLocation(
