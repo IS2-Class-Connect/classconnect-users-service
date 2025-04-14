@@ -1,8 +1,21 @@
 version: '3.8'
 
 services:
-  postgres:
+  app:
+    container_name: classconnect_container
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://user:pass@db:5432/classconnect
+  db:
     image: postgres:15
+    container_name: classconnect_postgres
     restart: always
     ports:
       - "5432:5432"
