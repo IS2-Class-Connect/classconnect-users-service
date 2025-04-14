@@ -181,6 +181,16 @@ $ npm run format:check
     }'
 ```
 
+- To get a user by id using curl:
+
+```bash
+    curl --location --request GET 'http://localhost:3001/users/{user_id}' \
+    --header 'Content-Type: application/json' \
+    --data '' 
+    
+```
+
+
 - To add user's location
 ```bash
     curl --location --request PATCH 'http://localhost:3001/users/{user_id}/location' \
