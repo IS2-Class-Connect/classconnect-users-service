@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [deployment]
   pull_request:
-    branches: [main]
+    branches: [deployment]
 
 jobs:
   test:
@@ -25,6 +25,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run Prisma Migrate Deploy
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Run tests with coverage
         run: npm run test:cov
