@@ -204,7 +204,43 @@ describe('UserService', () => {
       expect(result.failedAttempts).toBeGreaterThanOrEqual(5);
       expect(mockUserRepository.save).toHaveBeenCalled();
     });
+
+    it('should throw InternalServerErrorException if findById throws', async () => {
+      mockUserRepository.findById.mockRejectedValue(
+        new InternalServerErrorException('Internal server error'),
+      );
+
+      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should throw InternalServerErrorException if save throws', async () => {
+      const userData: User = {
+        id: 1,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 2,
+        accountLocked: false,
+        lastFailedAt: new Date(Date.now() - 5 * 60 * 1000),
+        lockUntil: null,
+      };
+
+      mockUserRepository.findById.mockResolvedValue(userData);
+      mockUserRepository.save.mockRejectedValue(
+        new InternalServerErrorException('Internal server error'),
+      );
+
+      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
   });
+
   describe('isAccountLocked', () => {
     const mockUser: User = {
       id: 1,
