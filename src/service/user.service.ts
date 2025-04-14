@@ -12,6 +12,7 @@ const ERROR_LOCKED_ACCOUNT =
   'Account is locked. Please try again later or contact support to unblock it. ';
 const LOCK_DURATION = 240 * 60 * 1000;
 const MAX_FAILED_ATTEMPTS = 5;
+const TEN_MINUTES = 600000;
 
 @Injectable()
 export class UserService implements IService<User> {
@@ -47,7 +48,7 @@ export class UserService implements IService<User> {
       throw new ForbiddenException(ERROR_LOCKED_ACCOUNT);
     }
 
-    const tenMinutesAgo = currentTime - 600000;
+    const tenMinutesAgo = currentTime - TEN_MINUTES;
     if (user.lastFailedAt && user.lastFailedAt.getTime() > tenMinutesAgo) {
       user.failedAttempts += 1;
     } else {
