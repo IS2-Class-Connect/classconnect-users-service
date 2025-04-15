@@ -39,6 +39,13 @@ export class UserService implements IService<User> {
   }
 
   /**
+   * Updates the email for a user.
+   */
+  async setEmail(userId: number, newEmail: string): Promise<User> {
+    return this.userRepository.setEmail(userId, newEmail);
+  }
+
+  /**
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
    */

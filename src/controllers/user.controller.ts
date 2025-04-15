@@ -35,6 +35,15 @@ export class UserController implements IController<User> {
     return await this.userService.setLocation(Number(userId), latitude, longitude);
   }
 
+    /* Update the email of a user. */
+  @Patch(':id/email')
+  async updateEmail(
+    @Param('id') userId: string,
+    @Body('email') newEmail: string,
+  ): Promise<User> {
+    return await this.userService.setEmail(Number(userId), newEmail);
+  }
+
   /* Increment the number of failed login attempts for a user. */
   @Patch(':id/failed-attempts')
   async increaseFailedAttempts(@Param('id') userId: string): Promise<User> {
