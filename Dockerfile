@@ -19,6 +19,8 @@ RUN npm install -g prisma
 # Copy the rest of the application code to the working directory
 COPY . .
 
+RUN npx prisma migrate deploy
+
 # Generate Prisma Client
 RUN npx prisma generate
 
@@ -26,7 +28,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 3001
 
 # Define the command to run the application
 CMD ["npm", "run", "start:dev"]
