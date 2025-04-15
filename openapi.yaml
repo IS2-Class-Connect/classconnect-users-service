@@ -17,6 +17,9 @@ paths:
             schema:
               type: object
               properties:
+                uuid:
+                  type: string
+                  example: "123e4567-e89b-12d3-a456-426614174000"
                 email:
                   type: string
                   format: email
@@ -35,6 +38,7 @@ paths:
                 - email
                 - name
                 - provider
+                - uuid
       responses:
         '201':
           description: User created successfully.
@@ -75,7 +79,7 @@ paths:
                     type: integer
                     example: 500
 
-  /users/{user_id}/location:
+  /users/{user_uuid}/location:
     patch:
       summary: Update user location.
       description: Updates the latitude and longitude for a user based on their ID.
@@ -145,7 +149,7 @@ paths:
                   statusCode:
                     type: integer
                     example: 500
-  /users/{id}/failed-attempts:
+  /users/{user_uuid}/failed-attempts:
     patch:
       summary: Increment the number of failed login attempts for a user.
       description: Increases the failed login attempt counter and locks the account if needed.
@@ -202,7 +206,7 @@ paths:
                     type: integer
                     example: 500
 
-  /users/{id}/check-lock-status:
+  /users/{user_uuid}/check-lock-status:
     get:
       summary: Check if a user's account is locked.
       description: Returns lock status of the user account.
@@ -261,9 +265,9 @@ components:
     User:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
+        uuid:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
         email:
           type: string
           format: email
