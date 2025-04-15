@@ -17,6 +17,9 @@ paths:
             schema:
               type: object
               properties:
+                uuid:
+                  type: string
+                  example: "123e4567-e89b-12d3-a456-426614174000"
                 email:
                   type: string
                   format: email
@@ -35,6 +38,7 @@ paths:
                 - email
                 - name
                 - provider
+                - uuid
       responses:
         '201':
           description: User created successfully.
@@ -43,21 +47,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '409':
-          description: Email already exists.
+          description: Email or UUID already exists.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Email already exists"
-                  error:
-                    type: string
-                    example: "Conflict"
-                  statusCode:
-                    type: integer
-                    example: 409
+                $ref: "#/components/schemas/ERROR_CREATE_USER"
+              examples:
+                EMAIL_ERROR:
+                  value:
+                    message: Email already exists
+                    error: Conflict
+                    statusCode: 409              
+                UUID_ERROR:
+                  value:
+                    message: UUID already exists
+                    error: Conflict
+                    statusCode: 409  
         '500':
           description: Internal server error.
           content:
@@ -75,19 +80,19 @@ paths:
                     type: integer
                     example: 500
 
-  /users/{user_id}/location:
+  /users/{user_uuid}/location:
     patch:
       summary: Update user location.
       description: Updates the latitude and longitude for a user based on their ID.
       operationId: updateUserLocation
       parameters:
         - in: path
-          name: id
+          name: user_uuid
           required: true
-          description: ID of the user to update.
+          description: UUID of the user to update.
           schema:
-            type: integer
-            example: 1
+            type: string
+            example: "123e4567-e89b-12d3-a456-426614174000"
       requestBody:
         description: Location data to update the user's location.
         content:
@@ -145,19 +150,20 @@ paths:
                   statusCode:
                     type: integer
                     example: 500
-  /users/{id}/failed-attempts:
+
+  /users/{user_uuid}/failed-attempts:
     patch:
       summary: Increment the number of failed login attempts for a user.
       description: Increases the failed login attempt counter and locks the account if needed.
       operationId: increaseFailedAttempts
       parameters:
         - in: path
-          name: id
+          name: user_uuid
           required: true
-          description: ID of the user to update failed attempts.
+          description: UUID of the user to update failed attempts.
           schema:
-            type: integer
-            example: 1
+            type: string
+            example: "123e4567-e89b-12d3-a456-426614174000"
       responses:
         '200':
           description: Failed attempts updated successfully.
@@ -174,7 +180,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: User not found
+                    example: "User not found"
         '403':
           description: Account is locked due to multiple failed attempts.
           content:
@@ -184,7 +190,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Account is locked due to multiple failed attempts
+                    example: "Account is locked due to multiple failed attempts"
         '500':
           description: Internal server error.
           content:
@@ -202,34 +208,35 @@ paths:
                     type: integer
                     example: 500
 
-  /users/{id}/check-lock-status:
+  /users/{user_uuid}/check-lock-status:
     get:
       summary: Check if a user's account is locked.
       description: Returns lock status of the user account.
       operationId: checkLockStatus
       parameters:
         - in: path
-          name: id
+          name: user_uuid
           required: true
-          description: ID of the user to check.
+          description: UUID of the user to check.
           schema:
-            type: integer
-            example: 1
+            type: string
+            example: "123e4567-e89b-12d3-a456-426614174000"
       responses:
         '200':
           description: Lock status retrieved successfully.
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Account is not locked
-                  isLocked:
-                    type: integer
-                    description: 1 if locked, 0 if not, -1 if error
-                    example: 0
+              schema: 
+                $ref: "#/components/schemas/ACCOUNT_LOCKING_MESSAGES"
+              examples:
+                ACCOUNT_NOT_LOCKED:
+                  value:
+                    message: Account is not locked
+                    isLocked: 0
+                ACCOUNT_LOCKED:
+                  value:
+                    message: Account is locked
+                    isLocked: 1
         '404':
           description: User not found.
           content:
@@ -239,7 +246,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: User not found
+                    example: "User not found"
                   isLocked:
                     type: integer
                     example: -1
@@ -252,18 +259,35 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Error checking lock status
+                    example: "Error checking lock status"
                   isLocked:
                     type: integer
                     example: -1
+
 components:
   schemas:
+    ACCOUNT_LOCKING_MESSAGES:
+      type: object
+      properties:
+        message:
+          type: string
+        isLocked:
+          type: integer
+    ERROR_CREATE_USER: 
+      type: object
+      properties:
+        message:
+          type: string                       
+        error:
+          type: string
+        statusCode:
+          type: integer
     User:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
+        uuid:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
         email:
           type: string
           format: email

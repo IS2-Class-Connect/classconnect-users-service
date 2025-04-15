@@ -12,6 +12,7 @@ import { ERROR_SERVER, ERROR_USER } from '../constants/error.constants';
 
 const UNIQUE_CONSTRAINT_FAILED = 'P2002';
 const ERROR_EMAIL = 'Email already exists';
+const ERROR_UUID = 'UUID already exists';
 
 /**
  * Handles database operations related to users using Prisma.
@@ -33,7 +34,14 @@ export class UserRepository implements IRepository<User> {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === UNIQUE_CONSTRAINT_FAILED) {
-          throw new ConflictException(ERROR_EMAIL);
+          const target = (error.meta?.target as string[]) || [];
+          let errorMessage = "";
+          if (target.includes('email')) {
+            errorMessage = ERROR_EMAIL;
+          } else if (target.includes('uuid')) {
+            errorMessage = ERROR_UUID;
+          }
+          throw new ConflictException(errorMessage);
         }
       }
       throw new InternalServerErrorException(ERROR_SERVER);
@@ -41,8 +49,8 @@ export class UserRepository implements IRepository<User> {
   }
 
   // Check if the user's account is locked
-  async isAccountLocked(userId: number): Promise<boolean> {
-    const user = await this.findById(userId);
+  async isAccountLocked(userUuid: string): Promise<boolean> {
+    const user = await this.findById(userUuid);
 
     if (!user) {
       throw new NotFoundException(ERROR_USER);
@@ -52,14 +60,14 @@ export class UserRepository implements IRepository<User> {
   }
 
   // Find a user by ID
-  async findById(userId: number): Promise<User | null> {
-    return await this.prisma.prisma.user.findUnique({ where: { id: userId } });
+  async findById(userUuid: string): Promise<User | null> {
+    return await this.prisma.prisma.user.findUnique({ where: { uuid: userUuid } });
   }
   // Save method to update the user in the database
   async save(user: User): Promise<User> {
     try {
       return await this.prisma.prisma.user.update({
-        where: { id: user.id },
+        where: { uuid: user.uuid },
         data: {
           failedAttempts: user.failedAttempts,
           accountLocked: user.accountLocked,
@@ -76,16 +84,16 @@ export class UserRepository implements IRepository<User> {
    * Updates the latitude and longitude of an existing user.
    * Throws NotFoundException if the user does not exist.
    */
-  async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {
+  async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
     try {
-      const user = await this.findById(userId);
+      const user = await this.findById(userUuid);
 
       if (!user) {
         throw new NotFoundException(ERROR_USER);
       }
 
       return await this.prisma.prisma.user.update({
-        where: { id: userId },
+        where: { uuid: userUuid },
         data: { latitude, longitude },
       });
     } catch (error) {
