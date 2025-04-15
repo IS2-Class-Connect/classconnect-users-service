@@ -112,6 +112,37 @@ describe('UserRepository', () => {
     await expect(userRepository.create(userData)).rejects.toThrow(ConflictException);
   });
 
+
+  it('should throw ConflictException if email already exists', async () => {
+    const userData: User = {
+      uuid: "123e4567-e89b-12d3-a456-426614174000",
+      name: 'Username',
+      email: 'user2@gmail.com',
+      urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+      provider: 'google.com',
+      latitude: null,
+      longitude: null,
+      failedAttempts: 0,
+      accountLocked: false,
+      lastFailedAt: null,
+      lockUntil: null,
+    };
+
+    const prismaError = {
+      code: 'P2002',
+      meta: {
+        target: ['uuid'],
+      },
+      name: 'PrismaClientKnownRequestError',
+    };
+
+    Object.setPrototypeOf(prismaError, PrismaClientKnownRequestError.prototype);
+
+    prismaService.prisma.user.create = jest.fn().mockRejectedValue(prismaError);
+
+    await expect(userRepository.create(userData)).rejects.toThrow(ConflictException);
+  });
+
   describe('setLocation', () => {
     it('should update user location if user exists', async () => {
       const userUuid = "123e4567-e89b-12d3-a456-426614174000";
