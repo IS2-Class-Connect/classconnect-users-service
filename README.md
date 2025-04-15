@@ -174,6 +174,7 @@ $ npm run format:check
     curl --location 'http://localhost:3001/users' \
     --header 'Content-Type: application/json' \
     --data-raw '{
+    "uuid": "123e4567-e89b-12d3-a456-426614174000",
     "email": "user@gmail.com",
     "name": "Username",
     "urlProfilePhoto": "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
@@ -183,7 +184,7 @@ $ npm run format:check
 
 - To add user's location
 ```bash
-    curl --location --request PATCH 'http://localhost:3001/users/{user_id}/location' \
+    curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/location' \
     --header 'Content-Type: application/json' \
     --data '{
         "latitude" : 34.6037,
@@ -193,14 +194,14 @@ $ npm run format:check
 
 - To update number of failed attempts when a user logs in
 ```bash
-curl --location --request PATCH 'http://localhost:3001/users/{user_id}/failed-attempts' \
+curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/failed-attempts' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
 
 - To check if a user is blocked
 ```bash
-curl --location 'http://localhost:3001/users/{user_id}/check-lock-status' \
+curl --location 'http://localhost:3001/users/{user_uuid}/check-lock-status' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
