@@ -179,7 +179,7 @@ $ npm run format:check
 ## Endpoints
 - To test the API, you can use tools like Postman or send curl requests.
 
-- To create a user using curl:
+- To create a user:
 
 ```bash
     curl --location 'http://localhost:3001/users' \
@@ -192,7 +192,7 @@ $ npm run format:check
     }'
 ```
 
-- To get a user by id using curl:
+- To get a user by id:
 
 ```bash
     curl --location --request GET 'http://localhost:3001/users/{user_id}' \
@@ -201,6 +201,16 @@ $ npm run format:check
     
 ```
 
+To update a user's email:
+
+```bash
+    curl --location --request PATCH 'http://localhost:3001/users/{user_id}/email' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "email": "newemail@example.com"
+}'
+    
+```
 
 - To add user's location
 ```bash
