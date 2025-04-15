@@ -13,6 +13,7 @@ const mockUserRepository = {
   setLocation: jest.fn(),
   findById: jest.fn(),
   save: jest.fn(),
+  setEmail: jest.fn(),
 };
 
 describe('UserService', () => {
@@ -276,6 +277,42 @@ describe('UserService', () => {
 
       await expect(userService.findById(userId)).rejects.toThrow(NotFoundException);
       expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
+    });
+  });
+  describe('setEmail', () => {
+    it('should update the email of an existing user', async () => {
+      const userId = 1;
+      const newEmail = 'newemail@example.com';
+      const updatedUser: User = {
+        id: userId,
+        email: newEmail,
+        name: 'Test User',
+        urlProfilePhoto: 'https://example.com/photo.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        lastFailedAt: null,
+        lockUntil: null,
+        accountLocked: false,
+      };
+
+      mockUserRepository.setEmail.mockResolvedValue(updatedUser);
+
+      const result = await userService.setEmail(userId, newEmail);
+
+      expect(mockUserRepository.setEmail).toHaveBeenCalledWith(userId, newEmail);
+      expect(result).toEqual(updatedUser);
+    });
+
+    it('should throw NotFoundException when the user does not exist', async () => {
+      const userId = 999;
+      const newEmail = 'nonexistent@example.com';
+
+      mockUserRepository.setEmail.mockRejectedValue(new NotFoundException('User not found'));
+
+      await expect(userService.setEmail(userId, newEmail)).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.setEmail).toHaveBeenCalledWith(userId, newEmail);
     });
   });
 });
