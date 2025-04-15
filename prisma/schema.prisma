@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  uuid String @id @db.Uuid
+  uuid String @id 
   email    String @unique
   name     String
   urlProfilePhoto String
