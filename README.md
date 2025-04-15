@@ -66,6 +66,12 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+### With Docker
+
+```bash
+$ docker compose -f docker-compose.yml up --build
+```
+
 ## Database Configuration
 
 By default, this template is configured to use **PostgreSQL**. You can modify the database configuration in the `prisma/schema.prisma` file to switch to **MongoDB** or another database if required.
@@ -114,6 +120,11 @@ To run tests with coverage:
 
 ```bash
 $ npm run test:cov
+```
+To run tests with Docker:
+
+```bash
+$ docker compose -f docker-compose-test.yml up --build
 ```
 
 Tests will automatically run on every push or pull request to `main` via GitHub Actions.
