@@ -10,17 +10,17 @@ describe('UserController', () => {
   let app: INestApplication;
   const userService = {
     create: jest.fn((user: User) => Promise.resolve(user)),
-    setLocation: jest.fn((userId: number, latitude: number, longitude: number) =>
+    setLocation: jest.fn((userId: string, latitude: number, longitude: number) =>
       Promise.resolve({ ...userData, latitude, longitude }),
     ),
-    increaseFailedAttempts: jest.fn((userId: number) =>
+    increaseFailedAttempts: jest.fn((userId: string) =>
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
-    isAccountLocked: jest.fn((userId: number) => Promise.resolve(false)),
+    isAccountLocked: jest.fn((userId: string) => Promise.resolve(false)),
   };
 
   const userData: User = {
-    id: 1,
+    uuid: "123e4567-e89b-12d3-a456-426614174000",
     name: 'Username',
     email: 'user@gmail.com',
     urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',

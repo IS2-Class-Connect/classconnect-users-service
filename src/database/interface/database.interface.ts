@@ -10,7 +10,7 @@ export interface IRepository<T> {
   /**
    * Updates and returns the location of an existing entity.
    */
-  setLocation(id: number, latitude: number, longitude: number): Promise<T>;
+  setLocation(id: string, latitude: number, longitude: number): Promise<T>;
 
   /**
    * Saves and returns an updated entity.
@@ -20,10 +20,10 @@ export interface IRepository<T> {
   /**
    * Finds and returns an entity by its ID.
    */
-  findById(id: number): Promise<T | null>;
+  findById(id: string): Promise<T | null>;
 
   /**
    * Checks whether the account of an entity is locked.
    */
-  isAccountLocked(id: number): Promise<boolean>;
+  isAccountLocked(id: string): Promise<boolean>;
 }

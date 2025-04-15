@@ -32,7 +32,7 @@ export class UserService implements IService<User> {
   /**
    * Sets the location for a user.
    */
-  async setLocation(userId: number, latitude: number, longitude: number): Promise<User> {
+  async setLocation(userId: string, latitude: number, longitude: number): Promise<User> {
     return this.userRepository.setLocation(userId, latitude, longitude);
   }
 
@@ -40,7 +40,7 @@ export class UserService implements IService<User> {
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
    */
-  async increaseFailedAttempts(userId: number): Promise<User> {
+  async increaseFailedAttempts(userId: string): Promise<User> {
     let user: User | null;
 
     try {
@@ -85,7 +85,7 @@ export class UserService implements IService<User> {
   /**
    *  Check if a user is blocked
    */
-  async isAccountLocked(id: number): Promise<boolean> {
+  async isAccountLocked(id: string): Promise<boolean> {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException(ERROR_USER);

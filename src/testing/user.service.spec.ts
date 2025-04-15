@@ -32,7 +32,7 @@ describe('UserService', () => {
 
   it('should create a user', async () => {
     const userData: User = {
-      id: 1,
+      uuid: "123e4567-e89b-12d3-a456-426614174000",
       name: 'Username',
       email: 'user@gmail.com',
       urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -56,11 +56,11 @@ describe('UserService', () => {
 
   describe('setLocation', () => {
     it('should update the user location if user exists', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
       const updatedUser: User = {
-        id: userId,
+        uuid: userId,
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -83,7 +83,7 @@ describe('UserService', () => {
     });
 
     it('should throw NotFoundException if user does not exist', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
@@ -96,7 +96,7 @@ describe('UserService', () => {
     });
 
     it('should throw InternalServerErrorException if there is an internal server error', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
@@ -113,7 +113,7 @@ describe('UserService', () => {
 
   describe('increaseFailedAttempts', () => {
     const baseUser: User = {
-      id: 1,
+      uuid: "123e4567-e89b-12d3-a456-426614174000",
       name: 'Username',
       email: 'user@gmail.com',
       urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -129,8 +129,8 @@ describe('UserService', () => {
     it('should throw NotFoundException if user is not found', async () => {
       mockUserRepository.findById.mockResolvedValue(null);
 
-      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(NotFoundException);
-      expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
+      await expect(userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.findById).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
 
     it('should throw ForbiddenException if account is locked', async () => {
@@ -141,7 +141,7 @@ describe('UserService', () => {
 
       mockUserRepository.findById.mockResolvedValue(lockedUser);
 
-      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(ForbiddenException);
+      await expect(userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(ForbiddenException);
     });
 
     it('should reset failedAttempts if lastFailedAt was more than 10 minutes ago', async () => {
@@ -160,7 +160,7 @@ describe('UserService', () => {
       mockUserRepository.findById.mockResolvedValue(oldFailUser);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
-      const result = await userService.increaseFailedAttempts(1);
+      const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
 
       expect(result.failedAttempts).toBe(0);
       expect(mockUserRepository.save).toHaveBeenCalled();
@@ -182,7 +182,7 @@ describe('UserService', () => {
       mockUserRepository.findById.mockResolvedValue(recentFailUser);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
-      const result = await userService.increaseFailedAttempts(1);
+      const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
 
       expect(result.failedAttempts).toBe(3);
       expect(mockUserRepository.save).toHaveBeenCalled();
@@ -198,7 +198,7 @@ describe('UserService', () => {
       mockUserRepository.findById.mockResolvedValue(userNearLimit);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
-      const result = await userService.increaseFailedAttempts(1);
+      const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
 
       expect(result.lockUntil).toBeInstanceOf(Date);
       expect(result.failedAttempts).toBeGreaterThanOrEqual(5);
@@ -210,14 +210,14 @@ describe('UserService', () => {
         new InternalServerErrorException('Internal server error'),
       );
 
-      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(
+      await expect(userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(
         InternalServerErrorException,
       );
     });
 
     it('should throw InternalServerErrorException if save throws', async () => {
       const userData: User = {
-        id: 1,
+        uuid: "123e4567-e89b-12d3-a456-426614174000",
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -235,7 +235,7 @@ describe('UserService', () => {
         new InternalServerErrorException('Internal server error'),
       );
 
-      await expect(userService.increaseFailedAttempts(1)).rejects.toThrow(
+      await expect(userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(
         InternalServerErrorException,
       );
     });
@@ -243,7 +243,7 @@ describe('UserService', () => {
 
   describe('isAccountLocked', () => {
     const mockUser: User = {
-      id: 1,
+      uuid: "123e4567-e89b-12d3-a456-426614174000",
       name: 'Username',
       email: 'user@gmail.com',
       urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -259,24 +259,24 @@ describe('UserService', () => {
     it('should return true if the account is locked', async () => {
       mockUserRepository.findById.mockResolvedValue({ ...mockUser, accountLocked: true });
 
-      const result = await userService.isAccountLocked(1);
+      const result = await userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000");
       expect(result).toBe(true);
-      expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
+      expect(mockUserRepository.findById).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
 
     it('should return false if the account is not locked', async () => {
       mockUserRepository.findById.mockResolvedValue({ ...mockUser, accountLocked: false });
 
-      const result = await userService.isAccountLocked(1);
+      const result = await userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000");
       expect(result).toBe(false);
-      expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
+      expect(mockUserRepository.findById).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
 
     it('should throw NotFoundException if the user does not exist', async () => {
       mockUserRepository.findById.mockResolvedValue(null);
 
-      await expect(userService.isAccountLocked(1)).rejects.toThrow(NotFoundException);
-      expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
+      await expect(userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.findById).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
   });
 });

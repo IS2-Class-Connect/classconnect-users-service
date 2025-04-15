@@ -36,7 +36,7 @@ describe('UserRepository', () => {
   describe('create', () => {
     it('should create and return a user', async () => {
       const userData: User = {
-        id: 1,
+        uuid: "123e4567-e89b-12d3-a456-426614174000",
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -61,7 +61,7 @@ describe('UserRepository', () => {
 
     it('should throw an error if creation fails', async () => {
       const userData: User = {
-        id: 1,
+        uuid: "123e4567-e89b-12d3-a456-426614174000",
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -76,7 +76,7 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.create = jest
         .fn()
-        .mockRejectedValue(new Error('Internal server error'));
+        .mockRejectedValue(new InternalServerErrorException('Internal server error'));
 
       await expect(userRepository.create(userData)).rejects.toThrowError('Internal server error');
     });
@@ -84,7 +84,7 @@ describe('UserRepository', () => {
 
   it('should throw ConflictException if email already exists', async () => {
     const userData: User = {
-      id: 1,
+      uuid: "123e4567-e89b-12d3-a456-426614174000",
       name: 'Username',
       email: 'user@gmail.com',
       urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -114,12 +114,12 @@ describe('UserRepository', () => {
 
   describe('setLocation', () => {
     it('should update user location if user exists', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
       const userData: User = {
-        id: userId,
+        uuid: userId,
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -141,15 +141,15 @@ describe('UserRepository', () => {
       const result = await userRepository.setLocation(userId, latitude, longitude);
 
       expect(result).toEqual(updatedUser);
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
       expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
-        where: { id: userId },
+        where: { uuid: userId },
         data: { latitude, longitude },
       });
     });
 
     it('should throw NotFoundException if user does not exist', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
@@ -159,16 +159,16 @@ describe('UserRepository', () => {
         NotFoundException,
       );
 
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
     });
 
     it('should throw InternalServerErrorException if update fails', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
       const userData: User = {
-        id: userId,
+        uuid: userId,
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -183,15 +183,15 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
 
-      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Database error'));
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new InternalServerErrorException('Internal server error'));
 
       await expect(userRepository.setLocation(userId, latitude, longitude)).rejects.toThrow(
         InternalServerErrorException,
       );
 
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
       expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
-        where: { id: userId },
+        where: { uuid: userId },
         data: { latitude, longitude },
       });
     });
@@ -199,9 +199,9 @@ describe('UserRepository', () => {
 
   describe('findById', () => {
     it('should return a user if found', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const userData: User = {
-        id: userId,
+        uuid: userId,
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -219,25 +219,25 @@ describe('UserRepository', () => {
       const result = await userRepository.findById(userId);
 
       expect(result).toEqual(userData);
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
     });
 
     it('should return null if user is not found', async () => {
-      const userId = 99;
+      const userId = "123e4567-e89b-12d3-a456-426614174004";
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
 
       const result = await userRepository.findById(userId);
 
       expect(result).toBeNull();
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
     });
   });
 
   describe('save', () => {
     it('should update and return the user', async () => {
       const userData: User = {
-        id: 1,
+        uuid: "123e4567-e89b-12d3-a456-426614174000",
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -256,7 +256,7 @@ describe('UserRepository', () => {
 
       expect(result).toEqual(userData);
       expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
-        where: { id: userData.id },
+        where: { uuid: userData.uuid },
         data: {
           failedAttempts: userData.failedAttempts,
           accountLocked: userData.accountLocked,
@@ -268,7 +268,7 @@ describe('UserRepository', () => {
 
     it('should throw an Error if update fails', async () => {
       const userData: User = {
-        id: 1,
+        uuid: "123e4567-e89b-12d3-a456-426614174000",
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -291,9 +291,9 @@ describe('UserRepository', () => {
   });
   describe('isAccountLocked', () => {
     it('should return true if account is locked', async () => {
-      const userId = 1;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const user: User = {
-        id: userId,
+        uuid: userId,
         name: 'Test User',
         email: 'locked@example.com',
         urlProfilePhoto: '',
@@ -311,13 +311,13 @@ describe('UserRepository', () => {
       const result = await userRepository.isAccountLocked(userId);
 
       expect(result).toBe(true);
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
     });
 
     it('should return false if account is not locked', async () => {
-      const userId = 2;
+      const userId = "123e4567-e89b-12d3-a456-426614174000";
       const user: User = {
-        id: userId,
+        uuid: userId,
         name: 'Unlocked User',
         email: 'unlocked@example.com',
         urlProfilePhoto: '',
@@ -335,16 +335,16 @@ describe('UserRepository', () => {
       const result = await userRepository.isAccountLocked(userId);
 
       expect(result).toBe(false);
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
     });
 
     it('should throw NotFoundException if user does not exist', async () => {
-      const userId = 999;
+      const userId = "123e4567-e89b-12d3-a456-426614174005";
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
 
       await expect(userRepository.isAccountLocked(userId)).rejects.toThrow(NotFoundException);
-      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
     });
   });
 });
