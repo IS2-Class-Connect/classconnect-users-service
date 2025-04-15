@@ -12,6 +12,7 @@ import { ERROR_SERVER, ERROR_USER } from '../constants/error.constants';
 
 const UNIQUE_CONSTRAINT_FAILED = 'P2002';
 const ERROR_EMAIL = 'Email already exists';
+const ERROR_UUID = 'UUID already exists';
 
 /**
  * Handles database operations related to users using Prisma.
@@ -33,7 +34,14 @@ export class UserRepository implements IRepository<User> {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === UNIQUE_CONSTRAINT_FAILED) {
-          throw new ConflictException(ERROR_EMAIL);
+          const target = (error.meta?.target as string[]) || [];
+          let errorMessage = "";
+          if (target.includes('email')) {
+            errorMessage = ERROR_EMAIL;
+          } else if (target.includes('uuid')) {
+            errorMessage = ERROR_UUID;
+          }
+          throw new ConflictException(errorMessage);
         }
       }
       throw new InternalServerErrorException(ERROR_SERVER);
