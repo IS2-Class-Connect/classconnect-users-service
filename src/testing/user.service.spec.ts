@@ -243,4 +243,39 @@ describe('UserService', () => {
       expect(mockUserRepository.findById).toHaveBeenCalledWith(1);
     });
   });
+
+  describe('findById', () => {
+    it('should return a user when the user exists', async () => {
+      const userId = 1;
+      const user: User = {
+        id: userId,
+        email: 'test@example.com',
+        name: 'Test User',
+        urlProfilePhoto: 'https://example.com/photo.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        lastFailedAt: null,
+        lockUntil: null,
+        accountLocked: false,
+      };
+
+      mockUserRepository.findById.mockResolvedValue(user);
+
+      const result = await userService.findById(userId);
+
+      expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(user);
+    });
+
+    it('should throw NotFoundException when the user does not exist', async () => {
+      const userId = 999;
+
+      mockUserRepository.findById.mockRejectedValue(new NotFoundException());
+
+      await expect(userService.findById(userId)).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.findById).toHaveBeenCalledWith(userId);
+    });
+  });
 });
