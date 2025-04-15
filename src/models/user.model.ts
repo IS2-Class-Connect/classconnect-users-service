@@ -2,7 +2,7 @@
  * Represents a user entity with location, profile information, and failed login attempt tracking.
  */
 export interface User {
-  id: number;
+  uuid: string;
   email: string;
   name: string;
   urlProfilePhoto: string;
