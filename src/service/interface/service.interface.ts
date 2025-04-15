@@ -10,15 +10,15 @@ export interface IService<T> {
   /**
    * Handles updating and returning the location of an existing entity.
    */
-  setLocation(id: string, latitude: number, longitude: number): Promise<T>;
+  setLocation(userid: string, latitude: number, longitude: number): Promise<T>;
 
   /**
    * Handles increasing and returning the failed login attempts of an entity.
    */
-  increaseFailedAttempts(id: string): Promise<T>;
+  increaseFailedAttempts(userid: string): Promise<T>;
 
   /**
    * Checks if the entity is blocked.
    */
-  isAccountLocked(id: string): Promise<boolean>;
+  isAccountLocked(userid: string): Promise<boolean>;
 }

@@ -10,15 +10,15 @@ export interface IController<T> {
   /**
    * Handles updating and returning the location of an existing entity.
    */
-  updateLocation(id: string, latitude: number, longitude: number): Promise<T>;
+  updateLocation(userid: string, latitude: number, longitude: number): Promise<T>;
 
   /**
    * Handles increasing and returning the failed login attempts of an entity.
    */
-  increaseFailedAttempts(id: string): Promise<T>;
+  increaseFailedAttempts(userid: string): Promise<T>;
 
   /**
    * Checks whether the account of an entity is locked.
    */
-  checkLockStatus(id: string): Promise<{ message: string }>;
+  checkLockStatus(userid: string): Promise<{ message: string }>;
 }

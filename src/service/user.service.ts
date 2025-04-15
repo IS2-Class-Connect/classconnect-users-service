@@ -32,19 +32,19 @@ export class UserService implements IService<User> {
   /**
    * Sets the location for a user.
    */
-  async setLocation(userId: string, latitude: number, longitude: number): Promise<User> {
-    return this.userRepository.setLocation(userId, latitude, longitude);
+  async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
+    return this.userRepository.setLocation(userUuid, latitude, longitude);
   }
 
   /**
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
    */
-  async increaseFailedAttempts(userId: string): Promise<User> {
+  async increaseFailedAttempts(userUuid: string): Promise<User> {
     let user: User | null;
 
     try {
-      user = await this.userRepository.findById(userId);
+      user = await this.userRepository.findById(userUuid);
     } catch (error) {
       throw new InternalServerErrorException(ERROR_SERVER);
     }

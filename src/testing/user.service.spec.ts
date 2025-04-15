@@ -56,11 +56,11 @@ describe('UserService', () => {
 
   describe('setLocation', () => {
     it('should update the user location if user exists', async () => {
-      const userId = "123e4567-e89b-12d3-a456-426614174000";
+      const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
       const updatedUser: User = {
-        uuid: userId,
+        uuid: userUuid,
         name: 'Username',
         email: 'user@gmail.com',
         urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
@@ -75,28 +75,28 @@ describe('UserService', () => {
 
       mockUserRepository.setLocation.mockResolvedValue(updatedUser);
 
-      const result = await userService.setLocation(userId, latitude, longitude);
+      const result = await userService.setLocation(userUuid, latitude, longitude);
 
       expect(result).toEqual(updatedUser);
-      expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userId, latitude, longitude);
+      expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userUuid, latitude, longitude);
       expect(mockUserRepository.setLocation).toHaveBeenCalledTimes(1);
     });
 
     it('should throw NotFoundException if user does not exist', async () => {
-      const userId = "123e4567-e89b-12d3-a456-426614174000";
+      const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
       mockUserRepository.setLocation.mockRejectedValue(new NotFoundException('User not found'));
 
-      await expect(userService.setLocation(userId, latitude, longitude)).rejects.toThrow(
+      await expect(userService.setLocation(userUuid, latitude, longitude)).rejects.toThrow(
         NotFoundException,
       );
-      expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userId, latitude, longitude);
+      expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userUuid, latitude, longitude);
     });
 
     it('should throw InternalServerErrorException if there is an internal server error', async () => {
-      const userId = "123e4567-e89b-12d3-a456-426614174000";
+      const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const latitude = 34.6037;
       const longitude = 58.3816;
 
@@ -104,10 +104,10 @@ describe('UserService', () => {
         new InternalServerErrorException('Internal server error'),
       );
 
-      await expect(userService.setLocation(userId, latitude, longitude)).rejects.toThrow(
+      await expect(userService.setLocation(userUuid, latitude, longitude)).rejects.toThrow(
         InternalServerErrorException,
       );
-      expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userId, latitude, longitude);
+      expect(mockUserRepository.setLocation).toHaveBeenCalledWith(userUuid, latitude, longitude);
     });
   });
 

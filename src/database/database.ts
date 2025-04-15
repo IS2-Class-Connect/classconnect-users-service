@@ -41,8 +41,8 @@ export class UserRepository implements IRepository<User> {
   }
 
   // Check if the user's account is locked
-  async isAccountLocked(userId: string): Promise<boolean> {
-    const user = await this.findById(userId);
+  async isAccountLocked(userUuid: string): Promise<boolean> {
+    const user = await this.findById(userUuid);
 
     if (!user) {
       throw new NotFoundException(ERROR_USER);
@@ -52,8 +52,8 @@ export class UserRepository implements IRepository<User> {
   }
 
   // Find a user by ID
-  async findById(userId: string): Promise<User | null> {
-    return await this.prisma.prisma.user.findUnique({ where: { uuid: userId } });
+  async findById(userUuid: string): Promise<User | null> {
+    return await this.prisma.prisma.user.findUnique({ where: { uuid: userUuid } });
   }
   // Save method to update the user in the database
   async save(user: User): Promise<User> {
@@ -76,16 +76,16 @@ export class UserRepository implements IRepository<User> {
    * Updates the latitude and longitude of an existing user.
    * Throws NotFoundException if the user does not exist.
    */
-  async setLocation(userId: string, latitude: number, longitude: number): Promise<User> {
+  async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
     try {
-      const user = await this.findById(userId);
+      const user = await this.findById(userUuid);
 
       if (!user) {
         throw new NotFoundException(ERROR_USER);
       }
 
       return await this.prisma.prisma.user.update({
-        where: { uuid: userId },
+        where: { uuid: userUuid },
         data: { latitude, longitude },
       });
     } catch (error) {

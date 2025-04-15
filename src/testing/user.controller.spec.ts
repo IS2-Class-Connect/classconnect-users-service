@@ -10,13 +10,13 @@ describe('UserController', () => {
   let app: INestApplication;
   const userService = {
     create: jest.fn((user: User) => Promise.resolve(user)),
-    setLocation: jest.fn((userId: string, latitude: number, longitude: number) =>
+    setLocation: jest.fn((userUuid: string, latitude: number, longitude: number) =>
       Promise.resolve({ ...userData, latitude, longitude }),
     ),
-    increaseFailedAttempts: jest.fn((userId: string) =>
+    increaseFailedAttempts: jest.fn((userUuid: string) =>
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
-    isAccountLocked: jest.fn((userId: string) => Promise.resolve(false)),
+    isAccountLocked: jest.fn((userUuid: string) => Promise.resolve(false)),
   };
 
   const userData: User = {
