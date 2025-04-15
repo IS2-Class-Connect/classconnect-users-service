@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, NotFoundException } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { Express } from 'express';
 
@@ -12,6 +12,9 @@ describe('UserController', () => {
     create: jest.fn((user: User) => Promise.resolve(user)),
     setLocation: jest.fn((userId: number, latitude: number, longitude: number) =>
       Promise.resolve({ ...userData, latitude, longitude }),
+    ),
+    setEmail: jest.fn((userId: number, newEmail: string) =>
+      Promise.resolve({ ...userData, email: newEmail }),
     ),
     increaseFailedAttempts: jest.fn((userId: number) =>
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
@@ -157,6 +160,47 @@ describe('UserController', () => {
       expect(userService.findById).toHaveBeenCalledWith(999);
     });
   });
+  
+  describe('updateEmail', () => {
+    it('should update the email of an existing user', async () => {
+      const newEmail = 'newemail@example.com';
+      const updatedUser: User = {
+        id: 1,
+        email: newEmail,
+        name: 'Test User',
+        urlProfilePhoto: 'https://example.com/photo.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        lastFailedAt: null,
+        lockUntil: null,
+        accountLocked: false,
+      };
+      userService.setEmail = jest.fn().mockResolvedValue(updatedUser);
+
+      const response = await request(app.getHttpServer() as Express)
+      .patch('/users/1/email')
+      .send(newEmail)
+      .expect(200);
+
+      expect(response.body.email).toBe(newEmail);
+      expect(response.body).toEqual(updatedUser);
+    });
+
+    it('should return 404 when the user does not exist', async () => {
+      userService.setEmail = jest.fn().mockRejectedValue(new NotFoundException('User not found'));
+  
+      const response = await request(app.getHttpServer() as Express)
+        .patch('/users/999/email')
+        .send("")
+        .expect(404);
+  
+        expect(response.body.message).toBe('User not found');
+        expect(userService.setEmail).toHaveBeenCalledWith(999, undefined);
+    });
+  });
+  
   afterAll(async () => {
     await app.close();
   });

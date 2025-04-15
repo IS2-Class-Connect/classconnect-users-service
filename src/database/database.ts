@@ -98,23 +98,15 @@ export class UserRepository implements IRepository<User> {
    * Throws NotFoundException if the user does not exist.
    */
   async setEmail(userId: number, newEmail: string): Promise<User> {
-    try {
-      const user = await this.findById(userId);
+    const user = await this.findById(userId);
 
-      if (!user) {
-        throw new NotFoundException(ERROR_USER);
-      }
-
-      return await this.prisma.prisma.user.update({
-        where: { id: userId },
-        data: { email: newEmail },
-      });
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
-      throw new InternalServerErrorException(ERROR_SERVER);
+    if (!user) {
+      throw new NotFoundException(ERROR_USER);
     }
+
+    return await this.prisma.prisma.user.update({
+      where: { id: userId },
+      data: { email: newEmail },
+    });
   }
 }
