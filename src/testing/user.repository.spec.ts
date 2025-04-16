@@ -344,6 +344,85 @@ describe('UserRepository', () => {
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
     });
   });
+
+  describe('setEmail', () => {
+    it('should update the email of an existing user', async () => {
+      const userId = 1;
+      const newEmail = 'Updated Name';
+      const user: User = {
+        id: userId,
+        email: newEmail,
+        name: 'newEmail',
+        urlProfilePhoto: 'https://example.com/photo.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        lastFailedAt: null,
+        lockUntil: null,
+        accountLocked: false,
+      };
+
+      const updatedUser = { ...user, newEmail };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
+
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userRepository.setEmail(userId, newEmail);
+
+      expect(result).toEqual(updatedUser);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { email: newEmail},
+      });
+    });
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+      const userId = 999;
+      const newEmail = 'Nonexistent User';
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      await expect(userRepository.setEmail(userId, newEmail)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+    it('should throw InternalServerErrorException if update fails', async () => {
+      const userId = 1;
+      const newEmail = 'Updated Name';
+      const userData: User = {
+        id: userId,
+        name: 'Username',
+        email: newEmail,
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
+      };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
+
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Database error'));
+
+      await expect(userRepository.setEmail(userId, newEmail)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { email: newEmail },
+      });
+    });
+  });
   describe('setName', () => {
     it('should update the name of an existing user', async () => {
       const userId = 1;
