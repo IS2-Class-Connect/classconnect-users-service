@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Patch, Get, Param, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Get,
+  Param,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
@@ -13,6 +22,7 @@ export class UserController implements IController<User> {
   /* Create a new user.*/
   @Post()
   async create(@Body() body: User): Promise<User> {
+    logger.log(`Creating new user with body ${body}`);
     return await this.userService.create(body);
   }
 
@@ -23,12 +33,16 @@ export class UserController implements IController<User> {
     @Body('latitude') latitude: number,
     @Body('longitude') longitude: number,
   ): Promise<User> {
+    logger.log(
+      `Updating user ${userUuid} location with latitude ${latitude} and logitude ${longitude}`,
+    );
     return await this.userService.setLocation(userUuid, latitude, longitude);
   }
 
   /* Increment the number of failed login attempts for a user. */
   @Patch(':uuid/failed-attempts')
   async increaseFailedAttempts(@Param('uuid') userUuid: string): Promise<User> {
+    logger.log(`Increment the number of user ${userUuid} failed login attempts`);
     return await this.userService.increaseFailedAttempts(userUuid);
   }
 
@@ -37,20 +51,24 @@ export class UserController implements IController<User> {
   async checkLockStatus(
     @Param('uuid') userUuid: string,
   ): Promise<{ message: string; isLocked: number }> {
+    logger.log(`Checking user ${userUuid} account lock status`);
     try {
       const isLocked = await this.userService.isAccountLocked(userUuid);
 
+      logger.log(`Checking succesfull, lock status: ${isLocked}`);
       return {
         message: isLocked ? 'Account is locked' : 'Account is not locked',
         isLocked: isLocked ? 1 : 0,
       };
     } catch (error) {
       if (error instanceof NotFoundException) {
+        logger.error(`User ${userUuid} not found`);
         return {
           message: 'User not found',
           isLocked: -1,
         };
       }
+      logger.error("Unexpected error while trying to check user's account lock status");
       return {
         message: 'Error checking lock status',
         isLocked: -1,
@@ -58,3 +76,5 @@ export class UserController implements IController<User> {
     }
   }
 }
+
+const logger = new Logger(UserController.name);

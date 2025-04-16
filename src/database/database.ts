@@ -3,6 +3,7 @@ import {
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { IRepository } from './interface/database.interface';
@@ -33,9 +34,12 @@ export class UserRepository implements IRepository<User> {
       });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
+        logger.error(
+          `Known Prisma Client error with code ${error.code}. See Prisma error documentation https://www.prisma.io/docs/orm/reference/error-reference for details`,
+        );
         if (error.code === UNIQUE_CONSTRAINT_FAILED) {
           const target = (error.meta?.target as string[]) || [];
-          let errorMessage = "";
+          let errorMessage = '';
           if (target.includes('email')) {
             errorMessage = ERROR_EMAIL;
           } else if (target.includes('uuid')) {
@@ -44,6 +48,7 @@ export class UserRepository implements IRepository<User> {
           throw new ConflictException(errorMessage);
         }
       }
+      logger.error('An unexpected error has ocurred');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
@@ -53,6 +58,7 @@ export class UserRepository implements IRepository<User> {
     const user = await this.findById(userUuid);
 
     if (!user) {
+      logger.error(`User ${userUuid} not found`);
       throw new NotFoundException(ERROR_USER);
     }
 
@@ -76,6 +82,7 @@ export class UserRepository implements IRepository<User> {
         },
       });
     } catch (error) {
+      logger.debug('An unexpected error has ocurred');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
@@ -98,10 +105,14 @@ export class UserRepository implements IRepository<User> {
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
+        logger.error(`User ${userUuid} not found`);
         throw error;
       }
 
+      logger.error('An unexpected error has ocurred');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
 }
+
+const logger = new Logger(UserRepository.name);
