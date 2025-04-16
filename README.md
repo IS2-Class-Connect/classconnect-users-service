@@ -212,6 +212,17 @@ To update a user's email:
     
 ```
 
+To update a user's name:
+
+```bash
+   curl --location --request PATCH 'http://localhost:3001/users/{user_id}/name' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "name": "New Name"
+}'
+    
+```
+
 - To add user's location
 ```bash
     curl --location --request PATCH 'http://localhost:3001/users/{user_id}/location' \
