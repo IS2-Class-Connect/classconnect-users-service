@@ -69,8 +69,7 @@ export class UserService implements IService<User> {
     if (user.lastFailedAt && user.lastFailedAt.getTime() > tenMinutesAgo) {
       user.failedAttempts += 1;
     } else {
-      user.failedAttempts = 0;
-      user.accountLocked = false;
+      user.failedAttempts = 1;
     }
 
     user.lastFailedAt = new Date();
@@ -78,6 +77,8 @@ export class UserService implements IService<User> {
     if (user.failedAttempts >= MAX_FAILED_ATTEMPTS) {
       user.lockUntil = new Date(currentTime + LOCK_DURATION);
       user.accountLocked = true;
+    }else{
+      user.accountLocked = false;
     }
 
     try {

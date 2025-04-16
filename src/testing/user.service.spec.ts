@@ -153,7 +153,7 @@ describe('UserService', () => {
 
       const expectedUser = {
         ...oldFailUser,
-        failedAttempts: 0,
+        failedAttempts: 1,
         lastFailedAt: expect.any(Date),
       };
 
@@ -162,7 +162,7 @@ describe('UserService', () => {
 
       const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
 
-      expect(result.failedAttempts).toBe(0);
+      expect(result.failedAttempts).toBe(1);
       expect(mockUserRepository.save).toHaveBeenCalled();
     });
 
