@@ -390,5 +390,36 @@ describe('UserRepository', () => {
 
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
     });
+    it('should throw InternalServerErrorException if update fails', async () => {
+      const userId = 1;
+      const newName = 'Updated Name';
+      const userData: User = {
+        id: userId,
+        name: 'Username',
+        email: 'user@gmail.com',
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
+      };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
+
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Database error'));
+
+      await expect(userRepository.setName(userId, newName)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { name: newName },
+      });
+    });
   });
 });
