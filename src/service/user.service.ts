@@ -46,6 +46,13 @@ export class UserService implements IService<User> {
   }
 
   /**
+ * Updates the name of a user.
+ */
+async setName(userId: number, newName: string): Promise<User> {
+  return this.userRepository.setName(userId, newName);
+}
+
+  /**
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
    */

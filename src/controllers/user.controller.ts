@@ -44,6 +44,15 @@ export class UserController implements IController<User> {
     return await this.userService.setEmail(Number(userId), newEmail);
   }
 
+  /* Update the name of a user. */
+@Patch(':id/name')
+async updateName(
+  @Param('id') userId: string,
+  @Body('name') newName: string,
+): Promise<User> {
+  return await this.userService.setName(Number(userId), newName);
+}
+
   /* Increment the number of failed login attempts for a user. */
   @Patch(':id/failed-attempts')
   async increaseFailedAttempts(@Param('id') userId: string): Promise<User> {

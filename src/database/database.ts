@@ -109,4 +109,21 @@ export class UserRepository implements IRepository<User> {
       data: { email: newEmail },
     });
   }
+
+  /**
+   * Updates the name of an existing user.
+   * Throws NotFoundException if the user does not exist.
+   */
+  async setName(userId: number, newName: string): Promise<User> { 
+    const user = await this.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(ERROR_USER);
+    }
+
+    return await this.prisma.prisma.user.update({
+      where: { id: userId },
+      data: { name: newName },
+    });
+  }
 }
