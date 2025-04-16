@@ -344,4 +344,51 @@ describe('UserRepository', () => {
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
     });
   });
+  describe('setName', () => {
+    it('should update the name of an existing user', async () => {
+      const userId = 1;
+      const newName = 'Updated Name';
+      const user: User = {
+        id: userId,
+        email: 'test@example.com',
+        name: newName,
+        urlProfilePhoto: 'https://example.com/photo.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        lastFailedAt: null,
+        lockUntil: null,
+        accountLocked: false,
+      };
+
+      const updatedUser = { ...user, newName };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
+
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userRepository.setName(userId, newName);
+
+      expect(result).toEqual(updatedUser);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { id: userId },
+        data: { name: newName},
+      });
+    });
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+      const userId = 999;
+      const newName = 'Nonexistent User';
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      await expect(userRepository.setName(userId, newName)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } });
+    });
+  });
 });

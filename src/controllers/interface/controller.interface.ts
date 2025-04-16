@@ -21,6 +21,11 @@ export interface IController<T> {
   updateEmail(id: string, newEmail: string): Promise<T>;
 
   /**
+   * Handles updating and returning the name of an existing entity.
+   */
+  updateName(id: string, newName: string): Promise<T>;
+
+  /**
    * Handles increasing and returning the failed login attempts of an entity.
    */
   increaseFailedAttempts(id: string): Promise<T>;

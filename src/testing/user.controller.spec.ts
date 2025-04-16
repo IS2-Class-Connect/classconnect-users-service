@@ -21,6 +21,9 @@ describe('UserController', () => {
     ),
     isAccountLocked: jest.fn((userId: number) => Promise.resolve(false)),
     findById: jest.fn((userId: number) => Promise.resolve(userData)),
+    setName: jest.fn((userId: number, newName: string) =>
+      Promise.resolve({ ...userData, name: newName }),
+    ),
   };
 
   const userData: User = {
@@ -177,7 +180,7 @@ describe('UserController', () => {
         lockUntil: null,
         accountLocked: false,
       };
-      userService.setEmail = jest.fn().mockResolvedValue(updatedUser);
+      userService.setEmail.mockResolvedValue(updatedUser);
 
       const response = await request(app.getHttpServer() as Express)
       .patch('/users/1/email')
@@ -189,7 +192,7 @@ describe('UserController', () => {
     });
 
     it('should return 404 when the user does not exist', async () => {
-      userService.setEmail = jest.fn().mockRejectedValue(new NotFoundException('User not found'));
+      userService.setEmail.mockRejectedValue(new NotFoundException('User not found'));
   
       const response = await request(app.getHttpServer() as Express)
         .patch('/users/999/email')
@@ -198,6 +201,49 @@ describe('UserController', () => {
   
         expect(response.body.message).toBe('User not found');
         expect(userService.setEmail).toHaveBeenCalledWith(999, undefined);
+    });
+  });
+
+  describe('updateName', () => {
+    it('should update the name of an existing user', async () => {
+      const newName = 'Updated Name';
+      const updatedUser: User = {
+        id: 1,
+        email: 'test@example.com',
+        name: newName,
+        urlProfilePhoto: 'https://example.com/photo.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        lastFailedAt: null,
+        lockUntil: null,
+        accountLocked: false,
+      };
+
+      userService.setName.mockResolvedValue(updatedUser);
+
+      const response = await request(app.getHttpServer() as Express)
+        .patch('/users/1/name')
+        .send({ name: newName })
+        .expect(200);
+  
+
+        expect(response.body.name).toBe(newName);
+        expect(response.body).toEqual(updatedUser);
+    });
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+
+      userService.setName.mockRejectedValue(new NotFoundException('User not found'));
+
+      const response = await request(app.getHttpServer() as Express)
+      .patch('/users/999/name')
+      .send("")
+      .expect(404);
+
+      expect(response.body.message).toBe('User not found');
+      expect(userService.setName).toHaveBeenCalledWith(999, undefined);
     });
   });
   
