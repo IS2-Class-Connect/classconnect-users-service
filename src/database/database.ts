@@ -82,7 +82,7 @@ export class UserRepository implements IRepository<User> {
         },
       });
     } catch (error) {
-      console.debug('An unexpected error has ocurred');
+      logger.debug('An unexpected error has ocurred');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
@@ -109,7 +109,7 @@ export class UserRepository implements IRepository<User> {
         throw error;
       }
 
-      console.error('An unexpected error has ocurred');
+      logger.error('An unexpected error has ocurred');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }

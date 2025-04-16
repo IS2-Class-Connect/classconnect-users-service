@@ -93,7 +93,7 @@ export class UserService implements IService<User> {
   async isAccountLocked(id: string): Promise<boolean> {
     const user = await this.userRepository.findById(id);
     if (!user) {
-      console.error(`User ${id} not found`);
+      logger.error(`User ${id} not found`);
       throw new NotFoundException(ERROR_USER);
     }
     return user.accountLocked;

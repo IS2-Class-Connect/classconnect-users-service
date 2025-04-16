@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user.module';
-import { PrismaModule } from 'prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 /**
  * The root module of the application.
