@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { IService } from './interface/service.interface';
 import { UserRepository } from '../database/database';
@@ -44,18 +45,22 @@ export class UserService implements IService<User> {
     let user: User | null;
 
     try {
+      logger.debug(`Finding user ${userUuid}`);
       user = await this.userRepository.findById(userUuid);
     } catch (error) {
+      logger.error(error instanceof Error ? error.message : 'An unexpected error has ocurred.');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
 
     if (!user) {
+      logger.error(`User ${userUuid} not found`);
       throw new NotFoundException(ERROR_USER);
     }
 
     const currentTime = Date.now();
 
     if (user.lockUntil && user.lockUntil > new Date()) {
+      logger.debug('Account is locked');
       throw new ForbiddenException(ERROR_LOCKED_ACCOUNT);
     }
 
@@ -88,8 +93,11 @@ export class UserService implements IService<User> {
   async isAccountLocked(id: string): Promise<boolean> {
     const user = await this.userRepository.findById(id);
     if (!user) {
+      console.error(`User ${id} not found`);
       throw new NotFoundException(ERROR_USER);
     }
     return user.accountLocked;
   }
 }
+
+const logger = new Logger(UserService.name);

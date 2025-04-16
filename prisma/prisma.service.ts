@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { IPrismaService } from './prisma.interface';
 
@@ -14,19 +14,19 @@ export class PrismaService implements IPrismaService, OnModuleInit {
     this._prisma = new PrismaClient();
   }
 
-
   get prisma(): PrismaClient {
     return this._prisma;
   }
- 
+
   async onModuleInit() {
     await this._prisma.$connect();
-    console.log('Prisma client connected');
+    logger.log('Prisma client connected');
   }
-
 
   async onModuleDestroy() {
-    await this._prisma.$disconnect(); 
-    console.log('Prisma client disconnected');
+    await this._prisma.$disconnect();
+    logger.log('Prisma client disconnected');
   }
 }
+
+const logger = new Logger(PrismaService.name);

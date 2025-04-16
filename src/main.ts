@@ -29,11 +29,13 @@ export async function bootstrap() {
 
   try {
     await app.listen(port, host);
-    Logger.log(`Server is running at http://${host}:${port}`);
-    Logger.log(`Database connected at ${databaseUrl}`);
+    logger.log(`Server is running at http://${host}:${port}`);
+    logger.log(`Database connected at ${databaseUrl}`);
   } catch (error) {
-    Logger.error('Error starting the application', error);
+    logger.error('Error starting the application', error);
   }
 }
 
 bootstrap().catch((error) => Logger.error('Error during application startup', error));
+
+const logger = new Logger('Main');
