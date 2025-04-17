@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: classconnect_test_container
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "${PORT_TEST}:${PORT}"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
+      NODE_ENV: test
+
+  db:
+    image: postgres:15
+    container_name: classconnect_test_postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${DB_PORT_TEST}:${DB_PORT}"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+    tmpfs: 
+      - /var/lib/postgresql/data
+
+
+volumes:
+  pgdata_test:
