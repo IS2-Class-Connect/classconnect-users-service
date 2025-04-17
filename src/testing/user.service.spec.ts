@@ -280,6 +280,21 @@ describe('UserService', () => {
       await expect(userService.getAccountLockStatus("user@gmail.com")).rejects.toThrow(NotFoundException);
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("user@gmail.com");
     });
+
+    it('should return false and lockUntil null if lock has expired', async () => {
+      const pastDate = new Date(Date.now() - 1000); 
+    
+      mockUserRepository.findByEmail.mockResolvedValue({
+        ...mockUser,
+        accountLocked: true,
+        lockUntil: pastDate,
+      });
+    
+      const result = await userService.getAccountLockStatus("user@gmail.com");
+    
+      expect(result).toStrictEqual({ accountLocked: false, lockUntil: null });
+    });
+    
   });
 
   describe('findByUuid', () => {
