@@ -13,10 +13,10 @@ describe('UserController', () => {
     setLocation: jest.fn((userUuid: string, latitude: number, longitude: number) =>
       Promise.resolve({ ...userData, latitude, longitude }),
     ),
-    increaseFailedAttempts: jest.fn((userUuid: string) =>
+    increaseFailedAttempts: jest.fn((email: string) =>
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
-    isAccountLocked: jest.fn((userUuid: string) => Promise.resolve(false)),
+    isAccountLocked: jest.fn((email: string) => Promise.resolve(false)),
     findByUuid: jest.fn((userUuid: string) => Promise.resolve(userData)), 
   };
 

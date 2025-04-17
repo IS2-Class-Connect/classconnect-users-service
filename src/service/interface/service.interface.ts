@@ -15,12 +15,12 @@ export interface IService<T> {
   /**
    * Handles increasing and returning the failed login attempts of an entity.
    */
-  increaseFailedAttempts(useriUuid: string): Promise<T>;
+  increaseFailedAttempts(email: string): Promise<T>;
 
   /**
    * Checks if the entity is blocked.
    */
-  isAccountLocked(useriUuid: string): Promise<boolean>;
+  isAccountLocked(email: string): Promise<boolean>;
 
   /**
    * Handles returning an entity by its ID.

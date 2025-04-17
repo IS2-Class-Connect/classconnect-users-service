@@ -15,12 +15,12 @@ export interface IController<T> {
   /**
    * Handles increasing and returning the failed login attempts of an entity.
    */
-  increaseFailedAttempts(useriUuid: string): Promise<T>;
+  increaseFailedAttempts(email: string): Promise<T>;
 
   /**
    * Checks whether the account of an entity is locked.
    */
-  checkLockStatus(useriUuid: string): Promise<{ message: string }>;
+  checkLockStatus(email: string): Promise<{ message: string }>;
 
   /**
    * Handles returning an user information.
