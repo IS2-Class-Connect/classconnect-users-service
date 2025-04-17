@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
 import { UserRepository } from '../database/database';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 /**
  * UserModule is responsible for handling user-related functionality.
@@ -9,6 +10,7 @@ import { UserRepository } from '../database/database';
  * for dependency injection and exposes PrismaService if needed elsewhere.
  */
 @Module({
+  imports: [PrismaModule],
   controllers: [UserController],
   providers: [UserService, UserRepository],
 })
