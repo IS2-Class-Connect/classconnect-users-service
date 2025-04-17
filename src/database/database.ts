@@ -55,7 +55,7 @@ export class UserRepository implements IRepository<User> {
 
   // Check if the user's account is locked
   async isAccountLocked(userUuid: string): Promise<boolean> {
-    const user = await this.findById(userUuid);
+    const user = await this.findByUuid(userUuid);
 
     if (!user) {
       logger.error(`User ${userUuid} not found`);
@@ -65,8 +65,8 @@ export class UserRepository implements IRepository<User> {
     return user.accountLocked;
   }
 
-  // Find a user by ID
-  async findById(userUuid: string): Promise<User | null> {
+  // Find a user by uuid
+  async findByUuid(userUuid: string): Promise<User | null> {
     return await this.prisma.prisma.user.findUnique({ where: { uuid: userUuid } });
   }
   // Save method to update the user in the database
@@ -93,7 +93,7 @@ export class UserRepository implements IRepository<User> {
    */
   async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
     try {
-      const user = await this.findById(userUuid);
+      const user = await this.findByUuid(userUuid);
 
       if (!user) {
         throw new NotFoundException(ERROR_USER);

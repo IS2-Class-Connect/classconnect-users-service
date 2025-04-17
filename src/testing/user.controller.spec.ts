@@ -17,6 +17,7 @@ describe('UserController', () => {
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
     isAccountLocked: jest.fn((userUuid: string) => Promise.resolve(false)),
+    findByUuid: jest.fn((userUuid: string) => Promise.resolve(userData)), 
   };
 
   const userData: User = {
@@ -112,7 +113,7 @@ describe('UserController', () => {
 
       const response = await request(app.getHttpServer() as Express)
         .get('/users/999/check-lock-status')
-        .expect(200); // Still 200 because the controller returns a handled response
+        .expect(200); 
 
       expect(response.body).toEqual({
         message: 'User not found',
@@ -133,6 +134,33 @@ describe('UserController', () => {
       });
     });
   });
+  describe('/users/:uuid (GET)', () => {
+
+  it('/users/:uuid (GET) should return user data when found', async () => {
+    userService.findByUuid = jest.fn().mockResolvedValue(userData);
+  
+    const response = await request(app.getHttpServer() as Express)
+      .get(`/users/${userData.uuid}`)
+      .expect(200);
+  
+    expect(response.body).toEqual(userData);
+  });
+  
+  it('/users/:uuid (GET) should return 404 when user not found', async () => {
+    const NotFoundException = require('@nestjs/common').NotFoundException;
+    userService.findByUuid = jest.fn().mockRejectedValue(new NotFoundException('User not found'));
+  
+    const response = await request(app.getHttpServer() as Express)
+      .get('/users/unknown-uuid')
+      .expect(404);
+  
+      expect(response.body).toEqual({
+        message: 'User not found',
+        error: 'Not Found',
+        statusCode: 404,
+      });
+  });
+});
 
   afterAll(async () => {
     await app.close();

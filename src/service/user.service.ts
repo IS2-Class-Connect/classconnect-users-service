@@ -46,7 +46,7 @@ export class UserService implements IService<User> {
 
     try {
       logger.debug(`Finding user ${userUuid}`);
-      user = await this.userRepository.findById(userUuid);
+      user = await this.userRepository.findByUuid(userUuid);
     } catch (error) {
       logger.error(error instanceof Error ? error.message : 'An unexpected error has ocurred.');
       throw new InternalServerErrorException(ERROR_SERVER);
@@ -91,14 +91,28 @@ export class UserService implements IService<User> {
   /**
    *  Check if a user is blocked
    */
-  async isAccountLocked(id: string): Promise<boolean> {
-    const user = await this.userRepository.findById(id);
+  async isAccountLocked(userUuid: string): Promise<boolean> {
+    const user = await this.userRepository.findByUuid(userUuid);
     if (!user) {
-      logger.error(`User ${id} not found`);
+      logger.error(`User ${userUuid} not found`);
       throw new NotFoundException(ERROR_USER);
     }
     return user.accountLocked;
   }
+  /**
+   *  Returns users data
+   */
+  async findByUuid(userUuid: string): Promise<User | null> { 
+    const user = await this.userRepository.findByUuid(userUuid);
+    if (!user) {
+      logger.error(`User ${userUuid} not found`);
+      throw new NotFoundException(ERROR_USER);
+    }
+    return user;
+  }
+
 }
+
+
 
 const logger = new Logger(UserService.name);

@@ -75,6 +75,16 @@ export class UserController implements IController<User> {
       };
     }
   }
+
+  @Get(':uuid')
+  async findByUuid( @Param('uuid') userUuid: string,): Promise<User> {
+    const user = await this.userService.findByUuid(userUuid);
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+    return user;
+  }
+
 }
 
 const logger = new Logger(UserController.name);

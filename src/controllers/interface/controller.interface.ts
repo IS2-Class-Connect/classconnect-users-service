@@ -21,4 +21,10 @@ export interface IController<T> {
    * Checks whether the account of an entity is locked.
    */
   checkLockStatus(useriUuid: string): Promise<{ message: string }>;
+
+  /**
+   * Handles returning an user information.
+   */
+  findByUuid(userUuid: string): Promise<T>;
+  
 }

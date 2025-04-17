@@ -20,7 +20,7 @@ export interface IRepository<T> {
   /**
    * Finds and returns an entity by its ID.
    */
-  findById(useriUuid: string): Promise<T | null>;
+  findByUuid(useriUuid: string): Promise<T | null>;
 
   /**
    * Checks whether the account of an entity is locked.
