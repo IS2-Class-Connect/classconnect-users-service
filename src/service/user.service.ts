@@ -88,6 +88,23 @@ export class UserService implements IService<User> {
     }
   }
 
+/**
+ * Evaluate lock status
+ */
+  private evaluateLockStatus(user: User): { accountLocked: boolean; lockUntil: Date | null } {
+    const now = Date.now();
+    const lockTime = user.lockUntil ? new Date(user.lockUntil).getTime() : null;
+    const isLockExpired = lockTime !== null && now > lockTime;
+  
+    const accountLocked = user.accountLocked && !isLockExpired;
+  
+    let lockUntil = user.lockUntil;
+    if (isLockExpired) {
+      lockUntil = null;
+    }
+  
+    return { accountLocked, lockUntil };
+  }
   /**
    *  Check if a user is blocked
    */
@@ -97,9 +114,10 @@ export class UserService implements IService<User> {
       logger.error(`User ${email} not found`);
       throw new NotFoundException(ERROR_USER);
     }
+    const { accountLocked, lockUntil } = this.evaluateLockStatus(user);
     return {
-      accountLocked: user.accountLocked,
-      lockUntil: user.lockUntil
+      accountLocked:accountLocked,
+      lockUntil: lockUntil
     }  }
   /**
    *  Returns users data
