@@ -203,19 +203,19 @@ paths:
                     type: integer
                     example: 500
 
-  /users/{user_uuid}/failed-attempts:
+  /users/{user_email}/failed-attempts:
     patch:
       summary: Increment the number of failed login attempts for a user.
       description: Increases the failed login attempt counter and locks the account if needed.
       operationId: increaseFailedAttempts
       parameters:
         - in: path
-          name: user_uuid
+          name: user_email
           required: true
-          description: UUID of the user to update failed attempts.
+          description: Email of the user to update failed attempts.
           schema:
             type: string
-            example: "123e4567-e89b-12d3-a456-426614174000"
+            example: "user@gmail.com"
       responses:
         '200':
           description: Failed attempts updated successfully.
@@ -260,19 +260,19 @@ paths:
                     type: integer
                     example: 500
 
-  /users/{user_uuid}/check-lock-status:
+  /users/{user_email}/check-lock-status:
     get:
       summary: Check if a user's account is locked.
       description: Returns lock status of the user account.
       operationId: checkLockStatus
       parameters:
         - in: path
-          name: user_uuid
+          name: user_email
           required: true
-          description: UUID of the user to check.
+          description: email of the user to check.
           schema:
             type: string
-            example: "123e4567-e89b-12d3-a456-426614174000"
+            example: "user@gmail.com"
       responses:
         '200':
           description: Lock status retrieved successfully.
