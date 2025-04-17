@@ -206,6 +206,12 @@ curl --location 'http://localhost:3001/users/{user_uuid}/check-lock-status' \
 --data ''
 ```
 
+-To get user by uuid: 
+```bash
+curl --location 'http://localhost:3001/users/{user_uuid}' \
+--header 'Content-Type: application/json' \
+--data ''
+```
 ## Codecov
 
 [![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)
