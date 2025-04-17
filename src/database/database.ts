@@ -69,6 +69,12 @@ export class UserRepository implements IRepository<User> {
   async findByUuid(userUuid: string): Promise<User | null> {
     return await this.prisma.prisma.user.findUnique({ where: { uuid: userUuid } });
   }
+
+  // Find a user by email
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.prisma.prisma.user.findUnique({ where: { email: email } });
+  }  
+  
   // Save method to update the user in the database
   async save(user: User): Promise<User> {
     try {

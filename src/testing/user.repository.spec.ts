@@ -264,6 +264,44 @@ describe('UserRepository', () => {
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
     });
   });
+  describe('findByEmail', () => {
+    it('should return a user if found', async () => {
+      const userUuid = "123e4567-e89b-12d3-a456-426614174000";
+      const userEmail= 'user@gmail.com';
+      const userData: User = {
+        uuid: userUuid,
+        name: 'Username',
+        email: userEmail,
+        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+        provider: 'google.com',
+        latitude: null,
+        longitude: null,
+        failedAttempts: 0,
+        accountLocked: false,
+        lastFailedAt: null,
+        lockUntil: null,
+      };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
+
+      const result = await userRepository.findByEmail(userEmail);
+
+      expect(result).toEqual(userData);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: userEmail } });
+    });
+
+    it('should return null if user is not found', async () => {
+      const userUuid = "123e4567-e89b-12d3-a456-426614174004";
+      const userEmail= 'user@gmail.com';
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      const result = await userRepository.findByEmail(userEmail);
+
+      expect(result).toBeNull();
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: userEmail } });
+    });
+  });
 
   describe('save', () => {
     it('should update and return the user', async () => {

@@ -23,7 +23,12 @@ export interface IRepository<T> {
   findByUuid(useriUuid: string): Promise<T | null>;
 
   /**
+   * Finds and returns an entity by its email.
+   */
+  findByEmail(email: string): Promise<T | null>;
+
+  /**
    * Checks whether the account of an entity is locked.
    */
-  isAccountLocked(useriUuid: string): Promise<boolean>;
+  isAccountLocked(email: string): Promise<boolean>;
 }

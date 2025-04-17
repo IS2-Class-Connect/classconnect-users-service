@@ -41,19 +41,19 @@ export class UserService implements IService<User> {
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
    */
-  async increaseFailedAttempts(userUuid: string): Promise<User> {
+  async increaseFailedAttempts(email: string): Promise<User> {
     let user: User | null;
 
     try {
-      logger.debug(`Finding user ${userUuid}`);
-      user = await this.userRepository.findByUuid(userUuid);
+      logger.debug(`Finding user ${email}`);
+      user = await this.userRepository.findByEmail(email);
     } catch (error) {
       logger.error(error instanceof Error ? error.message : 'An unexpected error has ocurred.');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
 
     if (!user) {
-      logger.error(`User ${userUuid} not found`);
+      logger.error(`User ${email} not found`);
       throw new NotFoundException(ERROR_USER);
     }
 
@@ -91,10 +91,10 @@ export class UserService implements IService<User> {
   /**
    *  Check if a user is blocked
    */
-  async isAccountLocked(userUuid: string): Promise<boolean> {
-    const user = await this.userRepository.findByUuid(userUuid);
+  async isAccountLocked(email: string): Promise<boolean> {
+    const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      logger.error(`User ${userUuid} not found`);
+      logger.error(`User ${email} not found`);
       throw new NotFoundException(ERROR_USER);
     }
     return user.accountLocked;
@@ -112,7 +112,5 @@ export class UserService implements IService<User> {
   }
 
 }
-
-
 
 const logger = new Logger(UserService.name);

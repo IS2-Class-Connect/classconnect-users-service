@@ -12,6 +12,7 @@ const mockUserRepository = {
   create: jest.fn(),
   setLocation: jest.fn(),
   findByUuid: jest.fn(),
+  findByEmail: jest.fn(),
   save: jest.fn(),
 };
 
@@ -127,10 +128,10 @@ describe('UserService', () => {
     };
 
     it('should throw NotFoundException if user is not found', async () => {
-      mockUserRepository.findByUuid.mockResolvedValue(null);
+      mockUserRepository.findByEmail.mockResolvedValue(null);
 
       await expect(userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(NotFoundException);
-      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
 
     it('should throw ForbiddenException if account is locked', async () => {
@@ -139,7 +140,7 @@ describe('UserService', () => {
         lockUntil: new Date(Date.now() + 5 * 60 * 1000),
       };
 
-      mockUserRepository.findByUuid.mockResolvedValue(lockedUser);
+      mockUserRepository.findByEmail.mockResolvedValue(lockedUser);
 
       await expect(userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(ForbiddenException);
     });
@@ -157,7 +158,7 @@ describe('UserService', () => {
         lastFailedAt: expect.any(Date),
       };
 
-      mockUserRepository.findByUuid.mockResolvedValue(oldFailUser);
+      mockUserRepository.findByEmail.mockResolvedValue(oldFailUser);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
       const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
@@ -179,7 +180,7 @@ describe('UserService', () => {
         lastFailedAt: expect.any(Date),
       };
 
-      mockUserRepository.findByUuid.mockResolvedValue(recentFailUser);
+      mockUserRepository.findByEmail.mockResolvedValue(recentFailUser);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
       const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
@@ -195,7 +196,7 @@ describe('UserService', () => {
         lastFailedAt: new Date(Date.now() - 1 * 60 * 1000),
       };
 
-      mockUserRepository.findByUuid.mockResolvedValue(userNearLimit);
+      mockUserRepository.findByEmail.mockResolvedValue(userNearLimit);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
       const result = await userService.increaseFailedAttempts("123e4567-e89b-12d3-a456-426614174000");
@@ -206,7 +207,7 @@ describe('UserService', () => {
     });
 
     it('should throw InternalServerErrorException if findByUuid throws', async () => {
-      mockUserRepository.findByUuid.mockRejectedValue(
+      mockUserRepository.findByEmail.mockRejectedValue(
         new InternalServerErrorException('Internal server error'),
       );
 
@@ -230,7 +231,7 @@ describe('UserService', () => {
         lockUntil: null,
       };
 
-      mockUserRepository.findByUuid.mockResolvedValue(userData);
+      mockUserRepository.findByEmail.mockResolvedValue(userData);
       mockUserRepository.save.mockRejectedValue(
         new InternalServerErrorException('Internal server error'),
       );
@@ -257,26 +258,26 @@ describe('UserService', () => {
     };
 
     it('should return true if the account is locked', async () => {
-      mockUserRepository.findByUuid.mockResolvedValue({ ...mockUser, accountLocked: true });
+      mockUserRepository.findByEmail.mockResolvedValue({ ...mockUser, accountLocked: true });
 
       const result = await userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000");
       expect(result).toBe(true);
-      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
 
     it('should return false if the account is not locked', async () => {
-      mockUserRepository.findByUuid.mockResolvedValue({ ...mockUser, accountLocked: false });
+      mockUserRepository.findByEmail.mockResolvedValue({ ...mockUser, accountLocked: false });
 
       const result = await userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000");
       expect(result).toBe(false);
-      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
 
     it('should throw NotFoundException if the user does not exist', async () => {
-      mockUserRepository.findByUuid.mockResolvedValue(null);
+      mockUserRepository.findByEmail.mockResolvedValue(null);
 
       await expect(userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(NotFoundException);
-      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
     });
   });
 
@@ -312,5 +313,6 @@ describe('UserService', () => {
       expect(mockUserRepository.findByUuid).toHaveBeenCalledWith(userUuid);
     });
   });
+
   
 });

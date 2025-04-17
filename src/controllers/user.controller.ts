@@ -40,20 +40,20 @@ export class UserController implements IController<User> {
   }
 
   /* Increment the number of failed login attempts for a user. */
-  @Patch(':uuid/failed-attempts')
-  async increaseFailedAttempts(@Param('uuid') userUuid: string): Promise<User> {
-    logger.log(`Increment the number of user ${userUuid} failed login attempts`);
-    return await this.userService.increaseFailedAttempts(userUuid);
+  @Patch(':email/failed-attempts')
+  async increaseFailedAttempts(@Param('email') email: string): Promise<User> {
+    logger.log(`Increment the number of user ${email} failed login attempts`);
+    return await this.userService.increaseFailedAttempts(email);
   }
 
   /* Check if a user's account is locked. */
-  @Get(':uuid/check-lock-status')
+  @Get(':email/check-lock-status')
   async checkLockStatus(
-    @Param('uuid') userUuid: string,
+    @Param('email') email: string,
   ): Promise<{ message: string; isLocked: number }> {
-    logger.log(`Checking user ${userUuid} account lock status`);
+    logger.log(`Checking user ${email} account lock status`);
     try {
-      const isLocked = await this.userService.isAccountLocked(userUuid);
+      const isLocked = await this.userService.isAccountLocked(email);
 
       logger.log(`Checking succesfull, lock status: ${isLocked}`);
       return {
@@ -62,7 +62,7 @@ export class UserController implements IController<User> {
       };
     } catch (error) {
       if (error instanceof NotFoundException) {
-        logger.error(`User ${userUuid} not found`);
+        logger.error(`User ${email} not found`);
         return {
           message: 'User not found',
           isLocked: -1,
