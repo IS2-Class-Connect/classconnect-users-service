@@ -21,4 +21,9 @@ export interface IService<T> {
    * Checks if the entity is blocked.
    */
   isAccountLocked(useriUuid: string): Promise<boolean>;
+
+  /**
+   * Handles returning an entity by its ID.
+   */
+  findByUuid(useriUuid: string): Promise<T | null>;
 }

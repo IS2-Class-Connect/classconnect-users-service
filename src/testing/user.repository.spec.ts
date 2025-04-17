@@ -228,7 +228,7 @@ describe('UserRepository', () => {
     });
   });
 
-  describe('findById', () => {
+  describe('findByUuid', () => {
     it('should return a user if found', async () => {
       const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const userData: User = {
@@ -247,7 +247,7 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
 
-      const result = await userRepository.findById(userUuid);
+      const result = await userRepository.findByUuid(userUuid);
 
       expect(result).toEqual(userData);
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
@@ -258,7 +258,7 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
 
-      const result = await userRepository.findById(userUuid);
+      const result = await userRepository.findByUuid(userUuid);
 
       expect(result).toBeNull();
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
