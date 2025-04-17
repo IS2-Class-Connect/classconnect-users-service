@@ -50,15 +50,16 @@ export class UserController implements IController<User> {
   @Get(':email/check-lock-status')
   async checkLockStatus(
     @Param('email') email: string,
-  ): Promise<{ message: string; isLocked: number }> {
+  ): Promise<{ message: string, isLocked: number, lockedDate: Date|null }> {
     logger.log(`Checking user ${email} account lock status`);
     try {
-      const isLocked = await this.userService.isAccountLocked(email);
+      const { accountLocked, lockUntil } = await this.userService.getAccountLockStatus(email);
 
-      logger.log(`Checking succesfull, lock status: ${isLocked}`);
+      logger.log(`Checking succesfull, lock status: ${accountLocked}`);
       return {
-        message: isLocked ? 'Account is locked' : 'Account is not locked',
-        isLocked: isLocked ? 1 : 0,
+        message: accountLocked ? 'Account is locked' : 'Account is not locked',
+        isLocked: accountLocked ? 1 : 0,
+        lockedDate: lockUntil,
       };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -66,12 +67,14 @@ export class UserController implements IController<User> {
         return {
           message: 'User not found',
           isLocked: -1,
+          lockedDate: null,
         };
       }
       logger.error("Unexpected error while trying to check user's account lock status");
       return {
         message: 'Error checking lock status',
         isLocked: -1,
+        lockedDate: null,
       };
     }
   }

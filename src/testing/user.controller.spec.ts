@@ -16,7 +16,7 @@ describe('UserController', () => {
     increaseFailedAttempts: jest.fn((email: string) =>
       Promise.resolve({ ...userData, failedAttempts: userData.failedAttempts + 1 }),
     ),
-    isAccountLocked: jest.fn((email: string) => Promise.resolve(false)),
+    getAccountLockStatus: jest.fn((email: string) => Promise.resolve(false)),
     findByUuid: jest.fn((userUuid: string) => Promise.resolve(userData)), 
   };
 
@@ -82,7 +82,8 @@ describe('UserController', () => {
 
   describe('/users/:id/check-lock-status (GET)', () => {
     it('should return locked message and isLocked = 1 when account is locked', async () => {
-      userService.isAccountLocked = jest.fn().mockResolvedValue(true);
+      const date= Date.now()
+      userService.getAccountLockStatus = jest.fn().mockResolvedValue( {accountLocked: true,lockUntil: date });
 
       const response = await request(app.getHttpServer() as Express)
         .get('/users/1/check-lock-status')
@@ -91,11 +92,12 @@ describe('UserController', () => {
       expect(response.body).toEqual({
         message: 'Account is locked',
         isLocked: 1,
+        lockedDate: date
       });
     });
 
     it('should return not locked message and isLocked = 0 when account is not locked', async () => {
-      userService.isAccountLocked = jest.fn().mockResolvedValue(false);
+      userService.getAccountLockStatus = jest.fn().mockResolvedValue( {accountLocked: false,lockUntil: null });
 
       const response = await request(app.getHttpServer() as Express)
         .get('/users/1/check-lock-status')
@@ -104,12 +106,13 @@ describe('UserController', () => {
       expect(response.body).toEqual({
         message: 'Account is not locked',
         isLocked: 0,
+        lockedDate: null
       });
     });
 
     it('should return not found message and isLocked = -1 when user does not exist', async () => {
       const NotFoundException = require('@nestjs/common').NotFoundException;
-      userService.isAccountLocked = jest.fn().mockRejectedValue(new NotFoundException());
+      userService.getAccountLockStatus = jest.fn().mockRejectedValue(new NotFoundException());
 
       const response = await request(app.getHttpServer() as Express)
         .get('/users/999/check-lock-status')
@@ -118,11 +121,12 @@ describe('UserController', () => {
       expect(response.body).toEqual({
         message: 'User not found',
         isLocked: -1,
+        lockedDate: null
       });
     });
 
     it('should return error message and isLocked = -1 on unexpected error', async () => {
-      userService.isAccountLocked = jest.fn().mockRejectedValue(new Error('Something went wrong'));
+      userService.getAccountLockStatus = jest.fn().mockRejectedValue(new Error('Something went wrong'));
 
       const response = await request(app.getHttpServer() as Express)
         .get('/users/1/check-lock-status')
@@ -131,6 +135,7 @@ describe('UserController', () => {
       expect(response.body).toEqual({
         message: 'Error checking lock status',
         isLocked: -1,
+        lockedDate: null,
       });
     });
   });

@@ -20,7 +20,7 @@ export interface IService<T> {
   /**
    * Checks if the entity is blocked.
    */
-  isAccountLocked(email: string): Promise<boolean>;
+  getAccountLockStatus(email: string): Promise<{ accountLocked: boolean, lockUntil: Date | null }>;
 
   /**
    * Handles returning an entity by its ID.
