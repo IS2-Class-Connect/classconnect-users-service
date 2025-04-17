@@ -13,6 +13,7 @@ jobs:
     env:
       JWT_SECRET: testsecret
       PORT: 3001
+      DATABASE_URL: "postgresql://postgres.mvdzmgnwcqkxtdoryhsm:GhF3vHeXztTCTw5E@aws-0-us-east-2.pooler.supabase.com:5432/postgres"
 
     steps:
       - name: Checkout code
