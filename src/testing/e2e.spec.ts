@@ -20,22 +20,30 @@ describe('UserController (e2e)', () => {
     prisma = app.get<PrismaService>(PrismaService);
     await app.init();
 
-    await prisma.prisma.user.deleteMany();
-
+    await prisma.prisma.user.deleteMany({
+      where: {
+        uuid: 'eJwvOiUz6YaFSJz9cKkLMNNtMFg21',
+      },
+    });
+  
     newUser = {
       uuid: 'eJwvOiUz6YaFSJz9cKkLMNNtMFg21',
       email: 'emailUser@gmail.com',
       name: 'Username',
       urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
-      provider: 'google.com'
+      provider: 'google.com',
     };
   });
-
+  
   afterAll(async () => {
-    await prisma.prisma.user.deleteMany();
+    await prisma.prisma.user.deleteMany({
+      where: {
+        uuid: 'eJwvOiUz6YaFSJz9cKkLMNNtMFg21',
+      },
+    });
+  
     await app.close();
   });
-
   it('POST /users - should create a new user', async () => {
     const response = await request(app.getHttpServer())
       .post('/users')
