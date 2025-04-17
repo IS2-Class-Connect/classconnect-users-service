@@ -13,6 +13,8 @@
 - [License](#license)
 - [Code Style](#code-style)
 - [Endpoints](#Endpoints)
+- [RUN DOCKER](#RUN-DOCKER)
+- [RUN DOCKER TESTS](#RUN-DOCKER-TESTS)
 - [Codecov](#Codecov)
 
 ## Description
@@ -212,6 +214,17 @@ curl --location 'http://localhost:3001/users/{user_uuid}' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
+
+## RUN DOCKER
+```bash
+docker compose -f docker-compose.yml up --build
+```
+
+## RUN DOCKER TESTS
+```bash
+docker compose -f docker-compose-test.yml up --build
+```
+
 ## Codecov
 
 [![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)
