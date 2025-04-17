@@ -29,6 +29,7 @@ export class UserRepository implements IRepository<User> {
   async create(data: User): Promise<User> {
     try {
       const { ...userData } = data;
+      console.log('Creating user with data:', userData);
       return await this.prisma.prisma.user.create({
         data: userData,
       });
@@ -115,6 +116,60 @@ export class UserRepository implements IRepository<User> {
         throw error;
       }
 
+      logger.error('An unexpected error has ocurred');
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
+  }
+  /**
+   * Updates the email of an existing user.
+   * Throws NotFoundException if the user does not exist.
+   */
+  async setEmail(userUuid: string, newEmail: string): Promise<User> {
+  try {
+    const user = await this.findByUuid(userUuid);
+
+    if (!user) {
+      throw new NotFoundException(ERROR_USER);
+    }
+
+    return await this.prisma.prisma.user.update({
+      where: { uuid: userUuid },
+      data: { email: newEmail},
+
+    });
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      logger.error(`User ${userUuid} not found`);
+      throw error;
+    }
+
+    logger.error('An unexpected error has ocurred');
+    throw new InternalServerErrorException(ERROR_SERVER);
+  }
+}
+
+  /**
+   * Updates the name of an existing user.
+   * Throws NotFoundException if the user does not exist.
+   */
+  async setName(userUuid: string, newName: string): Promise<User> { 
+    try {
+      const user = await this.findByUuid(userUuid);
+  
+      if (!user) {
+        throw new NotFoundException(ERROR_USER);
+      }
+  
+      return await this.prisma.prisma.user.update({
+        where: { uuid: userUuid },
+        data: { name: newName},
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        logger.error(`User ${userUuid} not found`);
+        throw error;
+      }
+  
       logger.error('An unexpected error has ocurred');
       throw new InternalServerErrorException(ERROR_SERVER);
     }

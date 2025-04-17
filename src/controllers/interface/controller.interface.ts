@@ -8,6 +8,16 @@ export interface IController<T> {
   create(data: T): Promise<T>;
 
   /**
+   * Handles updating and returning the email of an existing entity.
+   */
+  updateEmail(useriUuid: string, newEmail: string): Promise<T>;
+
+  /**
+   * Handles updating and returning the name of an existing entity.
+   */
+  updateName(useriUuid: string, newName: string): Promise<T>;
+  
+    /**
    * Handles updating and returning the location of an existing entity.
    */
   updateLocation(useriUuid: string, latitude: number, longitude: number): Promise<T>;

@@ -11,6 +11,16 @@ export interface IRepository<T> {
    * Updates and returns the location of an existing entity.
    */
   setLocation(useriUuid: string, latitude: number, longitude: number): Promise<T>;
+  
+  /**
+   * Updates and returns the email of an existing entity.
+   */
+  setEmail(useriUuid: string, newEmail: string): Promise<T>;
+
+  /**
+   * Updates and returns the name of an existing entity.
+   */
+  setName(useriUuid: string, newName: string): Promise<T>;
 
   /**
    * Saves and returns an updated entity.

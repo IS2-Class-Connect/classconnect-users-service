@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, NotFoundException } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { Express } from 'express';
 
@@ -18,6 +18,13 @@ describe('UserController', () => {
     ),
     isAccountLocked: jest.fn((email: string) => Promise.resolve(false)),
     findByUuid: jest.fn((userUuid: string) => Promise.resolve(userData)), 
+
+    setEmail: jest.fn((userUuid: string, newEmail: string) =>
+      Promise.resolve({ ...userData, email: newEmail }),
+    ),
+    setName: jest.fn((userUuid: string, newName: string) =>
+      Promise.resolve({ ...userData, name: newName }),
+    ),
   };
 
   const userData: User = {
@@ -134,8 +141,8 @@ describe('UserController', () => {
       });
     });
   });
-  describe('/users/:uuid (GET)', () => {
 
+  describe('/users/:uuid (GET)', () => {
   it('/users/:uuid (GET) should return user data when found', async () => {
     userService.findByUuid = jest.fn().mockResolvedValue(userData);
   
@@ -161,7 +168,65 @@ describe('UserController', () => {
       });
   });
 });
+  
+  describe('updateEmail', () => {
+    it('should update the email of an existing user', async () => {
+      const newEmail = 'newemail@example.com';
+      const updatedUser: User = { ...userData, email: newEmail };
+      userService.setEmail.mockResolvedValue({ ...userData, email: newEmail });
 
+      const response = await request(app.getHttpServer() as Express)
+      .patch('/users/1/email')
+      .send(newEmail)
+      .expect(200);
+
+      expect(response.body.email).toBe(newEmail);
+      expect(response.body).toEqual(updatedUser);
+    });
+
+    it('should return 404 when the user does not exist', async () => {
+      userService.setEmail.mockRejectedValue(new NotFoundException('User not found'));
+  
+      const response = await request(app.getHttpServer() as Express)
+        .patch('/users/999/email')
+        .send("")
+        .expect(404);
+  
+        expect(response.body.message).toBe('User not found');
+    });
+  });
+
+  describe('updateName', () => {
+    it('should update the name of an existing user', async () => {
+      const newName = 'Updated Name';
+      const updatedUser: User = { ...userData, name: newName };
+
+      userService.setName.mockResolvedValue(updatedUser);
+
+      const response = await request(app.getHttpServer() as Express)
+        .patch('/users/1/name')
+        .send({ name: newName })
+        .expect(200);
+  
+
+        expect(response.body.name).toBe(newName);
+        expect(response.body).toEqual(updatedUser);
+    });
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+
+      userService.setName.mockRejectedValue(new NotFoundException('User not found'));
+
+      const response = await request(app.getHttpServer() as Express)
+      .patch('/users/999/name')
+      .send("")
+      .expect(404);
+
+      expect(response.body.message).toBe('User not found');
+      expect(userService.setName).toHaveBeenCalledWith("999", undefined);
+    });
+  });
+  
   afterAll(async () => {
     await app.close();
   });

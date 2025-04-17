@@ -1,17 +1,38 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15
+  app:
+    container_name: classconnect_container
     restart: always
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
+      - "${PORT}:${PORT}"
+    depends_on:
+      - db
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: classconnect
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
+    networks:
+      - shared
+  db:
+    image: postgres:15
+    container_name: classconnect_postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5433:${DB_PORT}"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
+    networks:
+      - shared
 volumes:
   pgdata:
+
+networks:
+  shared:
+    external: true
+    name: classconnect_network

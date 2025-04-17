@@ -66,6 +66,12 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+### With Docker
+
+```bash
+$ docker compose -f docker-compose.yml up --build
+```
+
 ## Database Configuration
 
 By default, this template is configured to use **PostgreSQL**. You can modify the database configuration in the `prisma/schema.prisma` file to switch to **MongoDB** or another database if required.
@@ -114,6 +120,11 @@ To run tests with coverage:
 
 ```bash
 $ npm run test:cov
+```
+To run tests with Docker:
+
+```bash
+$ docker compose -f docker-compose-test.yml up --build
 ```
 
 Tests will automatically run on every push or pull request to `main` via GitHub Actions.
@@ -168,7 +179,7 @@ $ npm run format:check
 ## Endpoints
 - To test the API, you can use tools like Postman or send curl requests.
 
-- To create a user using curl:
+- To create a user:
 
 ```bash
     curl --location 'http://localhost:3001/users' \
@@ -180,6 +191,37 @@ $ npm run format:check
     "urlProfilePhoto": "https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg",
     "provider": "google.com"
     }'
+```
+
+- To get a user by id:
+
+```bash
+    curl --location --request GET 'http://localhost:3001/users/{user_id}' \
+    --header 'Content-Type: application/json' \
+    --data '' 
+    
+```
+
+To update a user's email:
+
+```bash
+    curl --location --request PATCH 'http://localhost:3001/users/{user_id}/email' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "email": "newemail@example.com"
+}'
+    
+```
+
+To update a user's name:
+
+```bash
+   curl --location --request PATCH 'http://localhost:3001/users/{user_id}/name' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "name": "New Name"
+}'
+    
 ```
 
 - To add user's location

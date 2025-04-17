@@ -18,6 +18,7 @@ const ERROR_LOCKED_ACCOUNT =
   'Account is locked. Please try again later or contact support to unblock it. ';
 const LOCK_DURATION = 240 * 60 * 1000;
 const MAX_FAILED_ATTEMPTS = 5;
+const TEN_MINUTES = 600000;
 
 @Injectable()
 export class UserService implements IService<User> {
@@ -36,6 +37,20 @@ export class UserService implements IService<User> {
   async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
     return this.userRepository.setLocation(userUuid, latitude, longitude);
   }
+
+  /**
+   * Updates the email for a user.
+   */
+  async setEmail(userUuid: string, newEmail: string): Promise<User> {
+    return this.userRepository.setEmail(userUuid, newEmail);
+  }
+
+  /**
+ * Updates the name of a user.
+ */
+async setName(userUuid: string, newName: string): Promise<User> {
+  return this.userRepository.setName(userUuid, newName);
+}
 
   /**
    * Increments the failed login attempts for a user.
@@ -63,7 +78,6 @@ export class UserService implements IService<User> {
       logger.debug('Account is locked');
       throw new ForbiddenException(ERROR_LOCKED_ACCOUNT);
     }
-
     const tenMinutesAgo = currentTime - 10 * 60 * 1000;
 
     if (user.lastFailedAt && user.lastFailedAt.getTime() > tenMinutesAgo) {

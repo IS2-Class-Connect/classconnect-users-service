@@ -7,6 +7,20 @@ import { ConflictException, NotFoundException, InternalServerErrorException } fr
 
 jest.mock('../../prisma/prisma.service');
 
+const user: User = {
+  uuid: "123e4567-e89b-12d3-a456-426614174000",
+  name: 'Unlocked User',
+  email: 'unlocked@example.com',
+  urlProfilePhoto: '',
+  provider: 'google.com',
+  latitude: null,
+  longitude: null,
+  failedAttempts: 1,
+  accountLocked: false,
+  lastFailedAt: null,
+  lockUntil: null,
+};
+
 describe('UserRepository', () => {
   let userRepository: UserRepository;
   let prismaService: PrismaService;
@@ -414,6 +428,105 @@ describe('UserRepository', () => {
 
       await expect(userRepository.isAccountLocked(userUuid)).rejects.toThrow(NotFoundException);
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
+    });
+  });
+
+  describe('setEmail', () => {
+    const newEmail = 'newemail@example.com';
+    const updatedUser: User = { ...user, email: newEmail };
+    it('should update the email of an existing user', async () => {
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
+
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userRepository.setEmail(updatedUser.uuid, newEmail);
+
+      expect(result).toEqual(updatedUser);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: updatedUser.uuid } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { uuid: updatedUser.uuid },
+        data: { email: newEmail},
+      });
+    });
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+      const userId = "999";
+      const newEmail = 'Nonexistent User';
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      await expect(userRepository.setEmail(userId, newEmail)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
+    });
+    it('should throw InternalServerErrorException if update fails', async () => {
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(updatedUser);
+
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Database error'));
+
+      await expect(userRepository.setEmail(updatedUser.uuid, newEmail)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: updatedUser.uuid } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { uuid: updatedUser.uuid },
+        data: { email: newEmail },
+      });
+    });
+  });
+  describe('setName', () => {
+    const newName = 'Updated Name';
+    const updatedUser: User = { ...user, name: newName };
+    it('should update the name of an existing user', async () => {
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
+
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userRepository.setName(user.uuid, newName);
+
+      expect(result).toEqual(updatedUser);
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: user.uuid } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { uuid: user.uuid },
+        data: { name: newName},
+      });
+    });
+
+    it('should throw NotFoundException if the user does not exist', async () => {
+      const userId = "999";
+      const newName = 'Nonexistent User';
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
+
+      await expect(userRepository.setName(userId, newName)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userId } });
+    });
+    it('should throw InternalServerErrorException if update fails', async () => {
+      const newName = 'Updated Name2';
+      const updatedUser: User = { ...user, name: newName };
+
+      prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(updatedUser);
+
+      prismaService.prisma.user.update = jest.fn().mockRejectedValue(new Error('Database error'));
+
+      await expect(userRepository.setName(updatedUser.uuid, newName)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+
+      expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: updatedUser.uuid } });
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { uuid: updatedUser.uuid },
+        data: { name: newName },
+      });
     });
   });
 });

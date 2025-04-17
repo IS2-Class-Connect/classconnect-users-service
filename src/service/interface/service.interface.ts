@@ -21,6 +21,16 @@ export interface IService<T> {
    * Checks if the entity is blocked.
    */
   isAccountLocked(email: string): Promise<boolean>;
+  
+  /**
+   * Handles updating and returning the email of an existing entity.
+   */
+  setEmail(useriUuid: string, newEmail: string): Promise<T>;
+
+  /**
+   * Handles updating and returning the name of an existing entity.
+   */
+  setName(useriUuid: string, newName: string): Promise<T>;
 
   /**
    * Handles returning an entity by its ID.
