@@ -91,14 +91,16 @@ export class UserService implements IService<User> {
   /**
    *  Check if a user is blocked
    */
-  async isAccountLocked(email: string): Promise<boolean> {
+  async getAccountLockStatus(email: string): Promise<{ accountLocked: boolean, lockUntil: Date | null }> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       logger.error(`User ${email} not found`);
       throw new NotFoundException(ERROR_USER);
     }
-    return user.accountLocked;
-  }
+    return {
+      accountLocked: user.accountLocked,
+      lockUntil: user.lockUntil
+    }  }
   /**
    *  Returns users data
    */

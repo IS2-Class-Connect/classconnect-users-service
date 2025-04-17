@@ -20,7 +20,7 @@ export interface IController<T> {
   /**
    * Checks whether the account of an entity is locked.
    */
-  checkLockStatus(email: string): Promise<{ message: string }>;
+  checkLockStatus(email: string): Promise<{ message: string, isLocked: number, lockedDate: Date|null  }>;
 
   /**
    * Handles returning an user information.
