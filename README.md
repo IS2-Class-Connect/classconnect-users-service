@@ -193,19 +193,10 @@ $ npm run format:check
     }'
 ```
 
-- To get a user by id:
-
-```bash
-    curl --location --request GET 'http://localhost:3001/users/{user_id}' \
-    --header 'Content-Type: application/json' \
-    --data '' 
-    
-```
-
 To update a user's email:
 
 ```bash
-    curl --location --request PATCH 'http://localhost:3001/users/{user_id}/email' \
+    curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/email' \
 --header 'Content-Type: application/json' \
 --data-raw '{
   "email": "newemail@example.com"
@@ -216,7 +207,7 @@ To update a user's email:
 To update a user's name:
 
 ```bash
-   curl --location --request PATCH 'http://localhost:3001/users/{user_id}/name' \
+   curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/name' \
 --header 'Content-Type: application/json' \
 --data-raw '{
   "name": "New Name"

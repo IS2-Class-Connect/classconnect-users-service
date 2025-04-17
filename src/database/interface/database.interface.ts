@@ -40,5 +40,5 @@ export interface IRepository<T> {
   /**
    * Checks whether the account of an entity is locked.
    */
-  isAccountLocked(email: string): Promise<boolean>;
+  getAccountLockStatus(email: string): Promise<boolean>;
 }

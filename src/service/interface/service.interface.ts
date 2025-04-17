@@ -1,3 +1,4 @@
+
 /**
  * Defines a contract for service operations on an entity of type `T`.
  */
@@ -18,11 +19,6 @@ export interface IService<T> {
   increaseFailedAttempts(email: string): Promise<T>;
 
   /**
-   * Checks if the entity is blocked.
-   */
-  isAccountLocked(email: string): Promise<boolean>;
-  
-  /**
    * Handles updating and returning the email of an existing entity.
    */
   setEmail(useriUuid: string, newEmail: string): Promise<T>;
@@ -31,6 +27,11 @@ export interface IService<T> {
    * Handles updating and returning the name of an existing entity.
    */
   setName(useriUuid: string, newName: string): Promise<T>;
+
+  /**
+   * Checks if the entity is blocked.
+   */
+  getAccountLockStatus(email: string): Promise<{ accountLocked: boolean, lockUntil: Date | null }>;
 
   /**
    * Handles returning an entity by its ID.

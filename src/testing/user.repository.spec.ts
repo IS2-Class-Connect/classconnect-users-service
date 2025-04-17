@@ -372,7 +372,7 @@ describe('UserRepository', () => {
       await expect(userRepository.save(userData)).rejects.toThrow('Internal server error');
     });
   });
-  describe('isAccountLocked', () => {
+  describe('getAccountLockStatus', () => {
     it('should return true if account is locked', async () => {
       const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const user: User = {
@@ -391,7 +391,7 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
 
-      const result = await userRepository.isAccountLocked(userUuid);
+      const result = await userRepository.getAccountLockStatus(userUuid);
 
       expect(result).toBe(true);
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
@@ -415,7 +415,7 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
 
-      const result = await userRepository.isAccountLocked(userUuid);
+      const result = await userRepository.getAccountLockStatus(userUuid);
 
       expect(result).toBe(false);
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
@@ -426,7 +426,7 @@ describe('UserRepository', () => {
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
 
-      await expect(userRepository.isAccountLocked(userUuid)).rejects.toThrow(NotFoundException);
+      await expect(userRepository.getAccountLockStatus(userUuid)).rejects.toThrow(NotFoundException);
       expect(prismaService.prisma.user.findUnique).toHaveBeenCalledWith({ where: { uuid: userUuid } });
     });
   });

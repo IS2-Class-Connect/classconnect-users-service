@@ -258,7 +258,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('isAccountLocked', () => {
+  describe('getAccountLockStatus', () => {
     const mockUser: User = {
       uuid: "123e4567-e89b-12d3-a456-426614174000",
       name: 'Username',
@@ -274,27 +274,43 @@ describe('UserService', () => {
     };
 
     it('should return true if the account is locked', async () => {
-      mockUserRepository.findByEmail.mockResolvedValue({ ...mockUser, accountLocked: true });
+      const date = Date.now();
+      mockUserRepository.findByEmail.mockResolvedValue({ ...mockUser, accountLocked: true, lockUntil: date });
 
-      const result = await userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000");
-      expect(result).toBe(true);
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      const result = await userService.getAccountLockStatus("user@gmail.com");
+      expect(result).toStrictEqual({"accountLocked": true, "lockUntil": date});
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("user@gmail.com");
     });
 
     it('should return false if the account is not locked', async () => {
-      mockUserRepository.findByEmail.mockResolvedValue({ ...mockUser, accountLocked: false });
+      mockUserRepository.findByEmail.mockResolvedValue({ ...mockUser, accountLocked: false,lockUntil: null });
 
-      const result = await userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000");
-      expect(result).toBe(false);
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      const result = await userService.getAccountLockStatus("user@gmail.com");
+      expect(result).toStrictEqual({"accountLocked": false, "lockUntil": null});
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("user@gmail.com");
     });
 
     it('should throw NotFoundException if the user does not exist', async () => {
       mockUserRepository.findByEmail.mockResolvedValue(null);
 
-      await expect(userService.isAccountLocked("123e4567-e89b-12d3-a456-426614174000")).rejects.toThrow(NotFoundException);
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("123e4567-e89b-12d3-a456-426614174000");
+      await expect(userService.getAccountLockStatus("user@gmail.com")).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith("user@gmail.com");
     });
+
+    it('should return false and lockUntil null if lock has expired', async () => {
+      const pastDate = new Date(Date.now() - 1000); 
+    
+      mockUserRepository.findByEmail.mockResolvedValue({
+        ...mockUser,
+        accountLocked: true,
+        lockUntil: pastDate,
+      });
+    
+      const result = await userService.getAccountLockStatus("user@gmail.com");
+    
+      expect(result).toStrictEqual({ accountLocked: false, lockUntil: null });
+    });
+    
   });
 
   describe('findByUuid', () => {

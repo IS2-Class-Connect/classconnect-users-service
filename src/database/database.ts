@@ -55,7 +55,7 @@ export class UserRepository implements IRepository<User> {
   }
 
   // Check if the user's account is locked
-  async isAccountLocked(userUuid: string): Promise<boolean> {
+  async getAccountLockStatus(userUuid: string): Promise<boolean> {
     const user = await this.findByUuid(userUuid);
 
     if (!user) {

@@ -285,10 +285,12 @@ paths:
                   value:
                     message: Account is not locked
                     isLocked: 0
+                    lockedDate: null
                 ACCOUNT_LOCKED:
                   value:
                     message: Account is locked
                     isLocked: 1
+                    lockedDate: 2025-04-17T07:00:20.549Z
         '404':
           description: User not found.
           content:
@@ -325,6 +327,10 @@ components:
           type: string
         isLocked:
           type: integer
+        lockedDate:
+            type: string
+            format: date-time
+            nullable: true
     ERROR_CREATE_USER: 
       type: object
       properties:

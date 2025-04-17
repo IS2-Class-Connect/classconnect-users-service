@@ -64,35 +64,38 @@ async updateName(
     return await this.userService.increaseFailedAttempts(email);
   }
 
-  /* Check if a user's account is locked. */
-  @Get(':email/check-lock-status')
-  async checkLockStatus(
-    @Param('email') email: string,
-  ): Promise<{ message: string; isLocked: number }> {
-    logger.log(`Checking user ${email} account lock status`);
-    try {
-      const isLocked = await this.userService.isAccountLocked(email);
+/* Check if a user's account is locked. */
+@Get(':email/check-lock-status')
+async checkLockStatus(
+  @Param('email') email: string,
+): Promise<{ message: string, isLocked: number, lockedDate: Date|null }> {
+  logger.log(`Checking user ${email} account lock status`);
+  try {
+    const { accountLocked, lockUntil } = await this.userService.getAccountLockStatus(email);
 
-      logger.log(`Checking succesfull, lock status: ${isLocked}`);
+    logger.log(`Checking succesfull, lock status: ${accountLocked}`);
+    return {
+      message: accountLocked ? 'Account is locked' : 'Account is not locked',
+      isLocked: accountLocked ? 1 : 0,
+      lockedDate: lockUntil,
+    };
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      logger.error(`User ${email} not found`);
       return {
-        message: isLocked ? 'Account is locked' : 'Account is not locked',
-        isLocked: isLocked ? 1 : 0,
-      };
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        logger.error(`User ${email} not found`);
-        return {
-          message: 'User not found',
-          isLocked: -1,
-        };
-      }
-      logger.error("Unexpected error while trying to check user's account lock status");
-      return {
-        message: 'Error checking lock status',
+        message: 'User not found',
         isLocked: -1,
+        lockedDate: null,
       };
     }
+    logger.error("Unexpected error while trying to check user's account lock status");
+    return {
+      message: 'Error checking lock status',
+      isLocked: -1,
+      lockedDate: null,
+    };
   }
+}
 
   @Get(':uuid')
   async findByUuid( @Param('uuid') userUuid: string,): Promise<User> {
