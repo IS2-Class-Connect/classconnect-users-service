@@ -194,14 +194,14 @@ $ npm run format:check
 
 - To update number of failed attempts when a user logs in
 ```bash
-curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/failed-attempts' \
+curl --location --request PATCH 'http://localhost:3001/users/{user_email}/failed-attempts' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
 
 - To check if a user is blocked
 ```bash
-curl --location 'http://localhost:3001/users/{user_uuid}/check-lock-status' \
+curl --location 'http://localhost:3001/users/{user_email}/check-lock-status' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
