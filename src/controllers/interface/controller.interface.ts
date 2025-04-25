@@ -25,6 +25,6 @@ export interface IController<T> {
   /**
    * Handles returning an user information.
    */
-  findByUuid(userUuid: string): Promise<T>;
+  findByUuid(userUuid: string): Promise<T | null>;
   
 }

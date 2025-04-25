@@ -11,6 +11,7 @@ import {
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
+import { UpdateUserProfileDto } from '../models/user.update.data';
 
 /**
  * Handles user-related endpoints such as creation and location updates.
@@ -48,45 +49,29 @@ export class UserController implements IController<User> {
 
   /* Check if a user's account is locked. */
   @Get(':email/check-lock-status')
-  async checkLockStatus(
-    @Param('email') email: string,
-  ): Promise<{ message: string, isLocked: number, lockedDate: Date|null }> {
-    logger.log(`Checking user ${email} account lock status`);
-    try {
-      const { accountLocked, lockUntil } = await this.userService.getAccountLockStatus(email);
+async checkLockStatus(@Param('email') email: string): Promise<{
+  message: string;
+  isLocked: number;
+  lockedDate: Date | null;
+}> {
+  logger.log(`Checking user ${email} account lock status`);
 
-      logger.log(`Checking succesfull, lock status: ${accountLocked}`);
-      return {
-        message: accountLocked ? 'Account is locked' : 'Account is not locked',
-        isLocked: accountLocked ? 1 : 0,
-        lockedDate: lockUntil,
-      };
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        logger.error(`User ${email} not found`);
-        return {
-          message: 'User not found',
-          isLocked: -1,
-          lockedDate: null,
-        };
-      }
-      logger.error("Unexpected error while trying to check user's account lock status");
-      return {
-        message: 'Error checking lock status',
-        isLocked: -1,
-        lockedDate: null,
-      };
-    }
-  }
+  const { accountLocked, lockUntil } =
+    await this.userService.getAccountLockStatus(email);
+
+  logger.log(`Checking successful, lock status: ${accountLocked}`);
+  return {
+    message: accountLocked ? 'Account is locked' : 'Account is not locked',
+    isLocked: accountLocked ? 1 : 0,
+    lockedDate: lockUntil,
+  };
+}
+
 
   // Returns user details by UUID or throws if not found.
   @Get(':uuid')
-  async findByUuid( @Param('uuid') userUuid: string,): Promise<User> {
-    const user = await this.userService.findByUuid(userUuid);
-    if (!user) {
-      throw new NotFoundException(`User not found`);
-    }
-    return user;
+  async findByUuid( @Param('uuid') userUuid: string,): Promise<User | null > {
+    return await this.userService.findByUuid(userUuid);
   }
 
 // Updates user profile name, email, profile photo URL, and description by UUID.
