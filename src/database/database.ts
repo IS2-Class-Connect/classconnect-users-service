@@ -16,7 +16,6 @@ export class UserRepository implements IRepository<User> {
 
   /**
    * Creates a new user in the database.
-   * Throws ConflictException if the email is already taken.
    */
 
   async create(data: User): Promise<User> {
@@ -48,7 +47,6 @@ export class UserRepository implements IRepository<User> {
 
   /**
    * Updates the latitude and longitude of an existing user.
-   * Throws NotFoundException if the user does not exist.
    */
   async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
     return await this.prisma.prisma.user.update({
@@ -57,7 +55,7 @@ export class UserRepository implements IRepository<User> {
     });
   }
 
-  // Updates user profile fields, checking existence and handling errors.
+  // Updates user profile fields.
 async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<User> {
   return await this.prisma.prisma.user.update({
     where: { uuid },

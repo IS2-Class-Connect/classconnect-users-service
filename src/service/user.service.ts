@@ -36,16 +36,13 @@ export class UserService implements IService<User> {
     try {
       return await this.userRepository.create(data);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === UNIQUE_CONSTRAINT_FAILED) {
-          const target = (error.meta?.target as string[]) || [];
-          if (target.includes('email')) {
-            throw new ConflictException(ERROR_EMAIL);
-          } else if (target.includes('uuid')) {
-            throw new ConflictException(ERROR_UUID);
-          }
+      if ((error as any).code === 'P2002') {
+        const target = (error as any).meta?.target?.[0];
+        if (target === 'email' || target === 'uuid') {
+          throw new ConflictException(`Duplicated ${target}`);
         }
       }
+  
       logger.error('Error while creating user', error instanceof Error ? error.stack : '');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
