@@ -235,7 +235,7 @@ describe('UserService', () => {
   describe('getAccountLockStatus', () => {
 
     it('should return true if the account is locked', async () => {
-      const date = Date.now();
+      const date = new Date(Date.now() + 10 * 60 * 1000);
       mockUserRepository.findByEmail.mockResolvedValue({ ...userData, accountLocked: true, lockUntil: date });
 
       const result = await userService.getAccountLockStatus("user@gmail.com");
