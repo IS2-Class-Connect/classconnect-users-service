@@ -1,7 +1,7 @@
 /**
  * Defines a contract for repository operations on an entity of type `T`.
  */
-export interface IRepository<T> {
+export interface IRepository<T,R> {
   /**
    * Creates and returns a new entity.
    */
@@ -30,5 +30,5 @@ export interface IRepository<T> {
   /**
   * Retrieves all users.
   */
-  findAll(): Promise<T[]> ;
+  findAll(): Promise<R[]> ;
 }

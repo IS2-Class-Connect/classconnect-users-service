@@ -6,12 +6,13 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { IRepository } from './interface/database.interface';
 import { User } from '../models/user.model';
 import { UpdateUserProfileDto } from '../models/user.update.data';
+import { UserPublicInfo } from '../models/user.public.info';
 
 /**
  * Handles database operations related to users using Prisma.
  */
 @Injectable()
-export class UserRepository implements IRepository<User> {
+export class UserRepository implements IRepository<User,UserPublicInfo> {
   constructor(private prisma: PrismaService) {}
 
   
@@ -62,9 +63,16 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
 }
 
   // Retrieves all users.
-  async findAll(): Promise<User[]> {
-  return this.prisma.prisma.user.findMany();
-}
+  async findAll(): Promise<UserPublicInfo[]> {
+    return this.prisma.prisma.user.findMany({
+      select: {
+        name: true,
+        email: true,
+        urlProfilePhoto: true,
+        description: true,
+      },
+    });
+  }
 
 }
 

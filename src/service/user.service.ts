@@ -11,6 +11,7 @@ import { UserRepository } from '../database/database';
 import { User } from '../models/user.model';
 import { ERROR_SERVER, ERROR_USER } from '../constants/error.constants';
 import { UpdateUserProfileDto } from '../models/user.update.data';
+import { UserPublicInfo } from '../models/user.public.info';
 
 /**
  * UserService handles the business logic for user operations.
@@ -23,7 +24,7 @@ const MAX_FAILED_ATTEMPTS = 5;
 const UNIQUE_CONSTRAINT_FAILED = 'P2002';
 
 @Injectable()
-export class UserService implements IService<User> {
+export class UserService implements IService<User,UserPublicInfo> {
   constructor(private readonly userRepository: UserRepository) {}
 
   /**
@@ -160,7 +161,7 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
     return user;
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserPublicInfo[]> {
     try {
       return this.userRepository.findAll();
     } catch (error) {

@@ -3,7 +3,7 @@ import { UpdateUserProfileDto } from '../../models/user.update.data';
 /**
  * Defines a contract for service operations on an entity of type `T`.
  */
-export interface IService<T> {
+export interface IService<T,R> {
   /**
   * Handles creating and returning a new entity.
   */
@@ -37,5 +37,5 @@ export interface IService<T> {
   /**
   * Handles Retrieving all users.
   */
-  getAllUsers(): Promise<T[]>;
+  getAllUsers(): Promise<R[]>;
 }

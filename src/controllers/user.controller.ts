@@ -12,12 +12,13 @@ import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
 import { UpdateUserProfileDto } from '../models/user.update.data';
+import { UserPublicInfo } from '../models/user.public.info';
 
 /**
  * Handles user-related endpoints such as creation and location updates.
  */
 @Controller('users')
-export class UserController implements IController<User> {
+export class UserController implements IController<User,UserPublicInfo> {
   constructor(private readonly userService: UserService) {}
 
   /* Create a new user.*/
@@ -86,7 +87,7 @@ async checkLockStatus(@Param('email') email: string): Promise<{
   
 //Retrieve all users.
   @Get()
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserPublicInfo[]> {
     return this.userService.getAllUsers();
   }
 }

@@ -91,7 +91,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/UserPublic'
         '500':
           description: Internal server error.
           content:
@@ -478,6 +478,23 @@ components:
         description:
           type: string
           example: ""
+    UserPublic:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@gmail.com
+        name:
+          type: string
+          example: Username
+        urlProfilePhoto:
+          type: string
+          format: uri
+          example: https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg
+        description:
+          type: string
+          example: "My description"
     UpdateUserProfile:
       type: object
       properties:

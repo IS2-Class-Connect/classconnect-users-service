@@ -3,7 +3,7 @@ import { UpdateUserProfileDto } from '../../models/user.update.data';
 /**
  * Defines a contract for controller operations on an entity of type `T`.
  */
-export interface IController<T> {
+export interface IController<T,R> {
   /**
    * Handles creating and returning a new entity.
    */
@@ -37,5 +37,5 @@ export interface IController<T> {
   /*
   *Retrieves all users.
   */
-   getAllUsers(): Promise<T[]>;
+   getAllUsers(): Promise<R[]>;
 }
