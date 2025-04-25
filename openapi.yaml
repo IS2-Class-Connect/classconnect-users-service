@@ -55,12 +55,12 @@ paths:
               examples:
                 EMAIL_ERROR:
                   value:
-                    message: Email already exists
+                    message: Duplicated Email
                     error: Conflict
                     statusCode: 409              
                 UUID_ERROR:
                   value:
-                    message: UUID already exists
+                    message: Duplicated UUID
                     error: Conflict
                     statusCode: 409  
         '500':
@@ -317,7 +317,66 @@ paths:
                   isLocked:
                     type: integer
                     example: -1
-
+  /users/{uuid}:
+    patch:
+      summary: Update user profile information.
+      description: Updates the profile details of an existing user by UUID.
+      operationId: updateUserProfile
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of the user to update.
+          schema:
+            type: string
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        description: Fields to update in the user's profile.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserProfile'
+      responses:
+        '200':
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                uuid: "123e4567-e89b-12d3-a456-426614174000"
+                email: updated.user@gmail.com
+                name: Updated Name
+                urlProfilePhoto: https://firebasestorage.googleapis.com/v0/new_photo.jpg
+                provider: google.com
+                latitude: 40.7128
+                longitude: -74.0060
+                failedAttempts: 0
+                accountLocked: false
+                lockUntil: null
+                lastFailedAt: null
+                description: "Updated profile description"
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: User not found
+                error: Not Found
+                statusCode: 404
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Internal server error
+                error: Internal Server Error
+                statusCode: 500
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
@@ -389,3 +448,20 @@ components:
         description:
           type: string
           example: ""
+    UpdateUserProfile:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Updated Name
+        email:
+          type: string
+          format: email
+          example: updated.user@gmail.com
+        urlProfilePhoto:
+          type: string
+          format: uri
+          example: https://firebasestorage.googleapis.com/v0/new_photo.jpg
+        description:
+          type: string
+          example: "Updated profile description"

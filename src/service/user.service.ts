@@ -20,10 +20,7 @@ const ERROR_LOCKED_ACCOUNT =
   'Account is locked. Please try again later or contact support to unblock it. ';
 const LOCK_DURATION = 240 * 60 * 1000;
 const MAX_FAILED_ATTEMPTS = 5;
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 const UNIQUE_CONSTRAINT_FAILED = 'P2002';
-const ERROR_EMAIL = 'Email already exists';
-const ERROR_UUID = 'UUID already exists';
 
 @Injectable()
 export class UserService implements IService<User> {
@@ -36,7 +33,7 @@ export class UserService implements IService<User> {
     try {
       return await this.userRepository.create(data);
     } catch (error) {
-      if ((error as any).code === 'P2002') {
+      if ((error as any).code === UNIQUE_CONSTRAINT_FAILED) {
         const target = (error as any).meta?.target?.[0];
         if (target === 'email' || target === 'uuid') {
           throw new ConflictException(`Duplicated ${target}`);
@@ -64,7 +61,7 @@ export class UserService implements IService<User> {
    * Updates user profile.
    */
 async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<User> {
-  const user = await this.findByUuid(uuid); // Esto ya lanza NotFound si es null
+  const user = await this.findByUuid(uuid); 
   try {
     return await this.userRepository.updateProfileInfo(uuid, updates);
   } catch (error) {
