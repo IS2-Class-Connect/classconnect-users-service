@@ -14,10 +14,9 @@ import { UpdateUserProfileDto } from '../models/user.update.data';
 export class UserRepository implements IRepository<User> {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Creates a new user in the database.
-   */
-
+  
+  //Creates a new user in the database.
+  
   async create(data: User): Promise<User> {
     return await this.prisma.prisma.user.create({ data });
   }
@@ -45,9 +44,8 @@ export class UserRepository implements IRepository<User> {
     });
   }
 
-  /**
-   * Updates the latitude and longitude of an existing user.
-   */
+  //Updates the latitude and longitude of an existing user.
+
   async setLocation(userUuid: string, latitude: number, longitude: number): Promise<User> {
     return await this.prisma.prisma.user.update({
       where: { uuid: userUuid },
@@ -63,7 +61,11 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
   });
 }
 
-  
+  // Retrieves all users.
+  async findAll(): Promise<User[]> {
+  return this.prisma.prisma.user.findMany();
+}
+
 }
 
 const logger = new Logger(UserRepository.name);

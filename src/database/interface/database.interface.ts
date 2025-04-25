@@ -27,4 +27,8 @@ export interface IRepository<T> {
    */
   findByEmail(email: string): Promise<T | null>;
 
+  /**
+  * Retrieves all users.
+  */
+  findAll(): Promise<T[]> ;
 }

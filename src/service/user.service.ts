@@ -70,7 +70,6 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
   }
 }
 
-
   /**
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
@@ -161,6 +160,14 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
     return user;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    try {
+      return this.userRepository.findAll();
+    } catch (error) {
+      logger.error('Error getting all users', error instanceof Error ? error.stack : '');
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
+  }
 }
 
 const logger = new Logger(UserService.name);
