@@ -32,6 +32,7 @@ describe('UserController', () => {
     accountLocked: false,
     lastFailedAt: null,
     lockUntil: null,
+    description:"",
   };
 
   beforeAll(async () => {

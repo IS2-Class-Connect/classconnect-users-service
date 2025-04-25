@@ -11,6 +11,7 @@ export interface User {
   longitude: number | null;
   failedAttempts: number;
   accountLocked: boolean;
+  description: string;
   lockUntil: Date | null;
   lastFailedAt: Date | null;
 }
