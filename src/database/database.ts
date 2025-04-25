@@ -119,6 +119,31 @@ export class UserRepository implements IRepository<User> {
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
+
+  // Updates user profile fields, checking existence and handling errors.
+  async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<User> {
+    try {
+      const user = await this.findByUuid(uuid);
+  
+      if (!user) {
+        throw new NotFoundException(ERROR_USER);
+      }
+  
+      return await this.prisma.prisma.user.update({
+        where: { uuid: uuid },
+        data: updates,
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        logger.error(`User ${uuid} not found`);
+        throw error;
+      }
+  
+      logger.error('An unexpected error occurred while updating user profile info');
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
+  }
+  
 }
 
 const logger = new Logger(UserRepository.name);

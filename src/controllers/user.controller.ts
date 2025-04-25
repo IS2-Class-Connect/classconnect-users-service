@@ -79,6 +79,7 @@ export class UserController implements IController<User> {
     }
   }
 
+  // Returns user details by UUID or throws if not found.
   @Get(':uuid')
   async findByUuid( @Param('uuid') userUuid: string,): Promise<User> {
     const user = await this.userService.findByUuid(userUuid);
@@ -88,6 +89,18 @@ export class UserController implements IController<User> {
     return user;
   }
 
+// Updates user profile name, email, profile photo URL, and description by UUID.
+  @Patch(':uuid')
+  async updateProfileInfo(
+    @Param('uuid') userUuid: string,
+    @Body() body: UpdateUserProfileDto,
+  ): Promise<User> {
+    logger.log(`Updating user ${userUuid} with: ${JSON.stringify(body)}`);
+    return await this.userService.updateProfileInfo(userUuid, body);
+  }
+  
+
 }
+
 
 const logger = new Logger(UserController.name);

@@ -38,6 +38,13 @@ export class UserService implements IService<User> {
   }
 
   /**
+   * Updates user profile.
+   */
+  async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<User> {
+    return this.userRepository.updateProfileInfo(uuid, updates);
+  }
+
+  /**
    * Increments the failed login attempts for a user.
    * If the user exceeds a certain number of failed attempts within a short period (10 minutes), their account will be locked.
    */
