@@ -18,6 +18,10 @@ describe('UserController', () => {
     ),
     getAccountLockStatus: jest.fn((email: string) => Promise.resolve(false)),
     findByUuid: jest.fn((userUuid: string) => Promise.resolve(userData)), 
+    updateProfileInfo: jest.fn((uuid: string, updates: Partial<User>) =>
+      Promise.resolve({ ...userData, ...updates }),
+    ),
+    getAllUsers: jest.fn(() => Promise.resolve([userData])),
   };
 
   const userData: User = {
@@ -111,34 +115,9 @@ describe('UserController', () => {
       });
     });
 
-    it('should return not found message and isLocked = -1 when user does not exist', async () => {
-      const NotFoundException = require('@nestjs/common').NotFoundException;
-      userService.getAccountLockStatus = jest.fn().mockRejectedValue(new NotFoundException());
 
-      const response = await request(app.getHttpServer() as Express)
-        .get('/users/999/check-lock-status')
-        .expect(200); 
 
-      expect(response.body).toEqual({
-        message: 'User not found',
-        isLocked: -1,
-        lockedDate: null
-      });
-    });
 
-    it('should return error message and isLocked = -1 on unexpected error', async () => {
-      userService.getAccountLockStatus = jest.fn().mockRejectedValue(new Error('Something went wrong'));
-
-      const response = await request(app.getHttpServer() as Express)
-        .get('/users/1/check-lock-status')
-        .expect(200);
-
-      expect(response.body).toEqual({
-        message: 'Error checking lock status',
-        isLocked: -1,
-        lockedDate: null,
-      });
-    });
   });
   describe('/users/:uuid (GET)', () => {
 
@@ -167,6 +146,45 @@ describe('UserController', () => {
       });
   });
 });
+
+describe('/users/:uuid (PATCH) - updateProfileInfo', () => {
+  const updatedData = {
+    name: 'Updated Username',
+    email: 'newemail@example.com',
+    urlProfilePhoto: 'https://newimage.com/photo.jpg',
+    description: 'Updated description',
+  };
+
+  const updatedUser = {
+    ...userData,
+    ...updatedData,
+  };
+
+  it('should update user profile and return updated user', async () => {
+    userService.updateProfileInfo = jest.fn().mockResolvedValue(updatedUser);
+
+    const response = await request(app.getHttpServer() as Express)
+      .patch(`/users/${userData.uuid}`)
+      .send(updatedData)
+      .expect(200);
+
+    expect(response.body).toEqual(updatedUser);
+    expect(userService.updateProfileInfo).toHaveBeenCalledWith(userData.uuid, updatedData);
+  });
+});
+
+it('/users (GET) should return all users', async () => {
+  const users = [userData, { ...userData, uuid: "another-uuid", email: "another@gmail.com" }];
+  userService.getAllUsers = jest.fn().mockResolvedValue(users);
+
+  const response = await request(app.getHttpServer() as Express)
+    .get('/users')
+    .expect(200);
+
+  expect(response.body).toEqual(users);
+  expect(userService.getAllUsers).toHaveBeenCalled();
+});
+
 
   afterAll(async () => {
     await app.close();

@@ -1,7 +1,9 @@
+import { UpdateUserProfileDto } from '../../models/user.update.data';
+
 /**
  * Defines a contract for controller operations on an entity of type `T`.
  */
-export interface IController<T> {
+export interface IController<T,R> {
   /**
    * Handles creating and returning a new entity.
    */
@@ -25,6 +27,15 @@ export interface IController<T> {
   /**
    * Handles returning an user information.
    */
-  findByUuid(userUuid: string): Promise<T>;
+  findByUuid(userUuid: string): Promise<T | null>;
   
+  /*
+  *Updates user profile name, email, profile photo URL, and description by UUID.
+  */
+  updateProfileInfo(userUuid: string, updates: UpdateUserProfileDto): Promise<T | null>;
+
+  /*
+  *Retrieves all users.
+  */
+   getAllUsers(): Promise<R[]>;
 }

@@ -212,6 +212,26 @@ curl --location 'http://localhost:3001/users/{user_uuid}' \
 --header 'Content-Type: application/json' \
 --data ''
 ```
+
+-To update user name, email, urlProfilePhoto and description by uuid: 
+```bash
+curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "name": "Updated Name",
+  "email": "updated.user@gmail.com",
+  "urlProfilePhoto": "https://firebasestorage.googleapis.com/v0/new_photo.jpg",
+  "description": "Updated profile description"
+}'
+```
+
+-To get all users: 
+```bash
+curl --location 'http://localhost:3001/users' \
+--header 'Content-Type: application/json' \
+--data ''
+```
+
 ## Codecov
 
 [![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)

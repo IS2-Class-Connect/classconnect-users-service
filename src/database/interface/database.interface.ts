@@ -1,7 +1,7 @@
 /**
  * Defines a contract for repository operations on an entity of type `T`.
  */
-export interface IRepository<T> {
+export interface IRepository<T,R> {
   /**
    * Creates and returns a new entity.
    */
@@ -28,7 +28,7 @@ export interface IRepository<T> {
   findByEmail(email: string): Promise<T | null>;
 
   /**
-   * Checks whether the account of an entity is locked.
-   */
-  getAccountLockStatus(email: string): Promise<boolean>;
+  * Retrieves all users.
+  */
+  findAll(): Promise<R[]> ;
 }
