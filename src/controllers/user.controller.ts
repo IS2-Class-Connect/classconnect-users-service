@@ -84,6 +84,7 @@ async checkLockStatus(@Param('email') email: string): Promise<{
     return await this.userService.updateProfileInfo(userUuid, body);
   }
   
+//Retrieve all users.
   @Get()
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();

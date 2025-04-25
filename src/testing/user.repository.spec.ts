@@ -15,6 +15,7 @@ describe('UserRepository', () => {
         create: jest.fn(),
         findUnique: jest.fn(),
         update: jest.fn(),
+        findMany: jest.fn(),
       },
     };
 
@@ -241,4 +242,46 @@ describe('UserRepository', () => {
       });
     });
   });
+  describe('findAll', () => {
+    it('should return all users', async () => {
+      const users: User[] = [
+        {
+          uuid: 'uuid1',
+          name: 'User One',
+          email: 'user1@example.com',
+          urlProfilePhoto: '',
+          provider: 'google.com',
+          latitude: null,
+          longitude: null,
+          failedAttempts: 0,
+          accountLocked: false,
+          lastFailedAt: null,
+          lockUntil: null,
+          description: '',
+        },
+        {
+          uuid: 'uuid2',
+          name: 'User Two',
+          email: 'user2@example.com',
+          urlProfilePhoto: '',
+          provider: 'google.com',
+          latitude: null,
+          longitude: null,
+          failedAttempts: 0,
+          accountLocked: false,
+          lastFailedAt: null,
+          lockUntil: null,
+          description: '',
+        },
+      ];
+  
+      prismaService.prisma.user.findMany = jest.fn().mockResolvedValue(users);
+  
+      const result = await userRepository.findAll();
+  
+      expect(result).toEqual(users);
+      expect(prismaService.prisma.user.findMany).toHaveBeenCalledTimes(1);
+    });
+  });
+  
 });

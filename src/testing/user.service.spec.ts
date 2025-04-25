@@ -21,6 +21,7 @@ const mockUserRepository = {
   findByEmail: jest.fn(),
   save: jest.fn(),
   updateProfileInfo: jest.fn(),
+  findAll: jest.fn(),
 };
 
 describe('UserService', () => {
@@ -339,6 +340,26 @@ describe('UserService', () => {
       await expect(userService.updateProfileInfo(uuid, updates)).rejects.toThrow(NotFoundException);
     });
         
+  });
+
+  describe('getAllUsers', () => {
+    it('should return all users successfully', async () => {
+      const users: User[] = [userData];
+  
+      mockUserRepository.findAll = jest.fn().mockResolvedValue(users);
+  
+      const result = await userService.getAllUsers();
+  
+      expect(result).toEqual(users);
+      expect(mockUserRepository.findAll).toHaveBeenCalled();
+    });
+  
+    it('should throw InternalServerErrorException when repository fails', async () => {
+      mockUserRepository.findAll = jest.fn().mockRejectedValue(new InternalServerErrorException('Internal server error'));
+  
+      await expect(userService.getAllUsers()).rejects.toThrow(InternalServerErrorException);
+      expect(mockUserRepository.findAll).toHaveBeenCalled();
+    });
   });
   
 });

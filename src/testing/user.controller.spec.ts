@@ -21,6 +21,7 @@ describe('UserController', () => {
     updateProfileInfo: jest.fn((uuid: string, updates: Partial<User>) =>
       Promise.resolve({ ...userData, ...updates }),
     ),
+    getAllUsers: jest.fn(() => Promise.resolve([userData])),
   };
 
   const userData: User = {
@@ -171,6 +172,19 @@ describe('/users/:uuid (PATCH) - updateProfileInfo', () => {
     expect(userService.updateProfileInfo).toHaveBeenCalledWith(userData.uuid, updatedData);
   });
 });
+
+it('/users (GET) should return all users', async () => {
+  const users = [userData, { ...userData, uuid: "another-uuid", email: "another@gmail.com" }];
+  userService.getAllUsers = jest.fn().mockResolvedValue(users);
+
+  const response = await request(app.getHttpServer() as Express)
+    .get('/users')
+    .expect(200);
+
+  expect(response.body).toEqual(users);
+  expect(userService.getAllUsers).toHaveBeenCalled();
+});
+
 
   afterAll(async () => {
     await app.close();
