@@ -25,6 +25,7 @@ model User {
   lastFailedAt     DateTime? 
   lockUntil        DateTime? 
   accountLocked  Boolean   @default(false)
+  description String @default("")
   createdAt DateTime @default(now())
   lastSession DateTime @default(now())
 }

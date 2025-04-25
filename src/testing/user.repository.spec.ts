@@ -47,6 +47,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.create = jest.fn().mockResolvedValue(userData);
@@ -72,6 +73,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.create = jest
@@ -95,6 +97,7 @@ describe('UserRepository', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      description:"",
     };
 
     const prismaError = {
@@ -126,6 +129,7 @@ describe('UserRepository', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      description:"",
     };
 
     const prismaError = {
@@ -161,6 +165,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       const updatedUser = { ...userData, latitude, longitude };
@@ -210,6 +215,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
@@ -243,6 +249,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
@@ -280,6 +287,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
@@ -317,6 +325,7 @@ describe('UserRepository', () => {
         accountLocked: true,
         lastFailedAt: new Date(),
         lockUntil: new Date(Date.now() + 15 * 60 * 1000),
+        description:"",
       };
 
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(userData);
@@ -348,6 +357,7 @@ describe('UserRepository', () => {
         accountLocked: true,
         lastFailedAt: new Date(),
         lockUntil: new Date(),
+        description:"",
       };
 
       prismaService.prisma.user.update = jest
@@ -373,6 +383,7 @@ describe('UserRepository', () => {
         accountLocked: true,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);
@@ -397,6 +408,7 @@ describe('UserRepository', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(user);

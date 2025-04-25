@@ -44,6 +44,7 @@ describe('UserService', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      description:"",
     };
 
     mockUserRepository.create.mockResolvedValue(userData);
@@ -72,6 +73,7 @@ describe('UserService', () => {
         accountLocked: false,
         lastFailedAt: null,
         lockUntil: null,
+        description:"",
       };
 
       mockUserRepository.setLocation.mockResolvedValue(updatedUser);
@@ -125,6 +127,7 @@ describe('UserService', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      description:"",
     };
 
     it('should throw NotFoundException if user is not found', async () => {
@@ -229,6 +232,7 @@ describe('UserService', () => {
         accountLocked: false,
         lastFailedAt: new Date(Date.now() - 5 * 60 * 1000),
         lockUntil: null,
+        description:"",
       };
 
       mockUserRepository.findByEmail.mockResolvedValue(userData);
@@ -255,6 +259,7 @@ describe('UserService', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      description:"",
     };
 
     it('should return true if the account is locked', async () => {
@@ -311,6 +316,7 @@ describe('UserService', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      description:"",
     };
   
     it('should return the user if found', async () => {
