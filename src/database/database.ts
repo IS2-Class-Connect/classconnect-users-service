@@ -66,6 +66,7 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
   async findAll(): Promise<UserPublicInfo[]> {
     return this.prisma.prisma.user.findMany({
       select: {
+        uuid: true,
         name: true,
         email: true,
         urlProfilePhoto: true,
