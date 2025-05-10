@@ -4,8 +4,10 @@ services:
   postgres:
     image: postgres:15
     restart: always
+    networks:
+      - my-network
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
@@ -13,5 +15,24 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  users:
+    container_name: users
+    build: .
+    networks:
+      - my-network
+    ports:
+      - 3001:3001
+    environment:
+      DATABASE_URL: postgresql://user:pass@postgres:5432/classconnect
+      PORT: 3001
+      JWT_SECRET: your_jwt_secret_here
+    depends_on:
+      - postgres
+
 volumes:
   pgdata:
+
+networks:
+  my-network:
+    name: classconnect_net
+    external: true
