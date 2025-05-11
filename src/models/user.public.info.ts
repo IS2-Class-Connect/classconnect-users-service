@@ -5,5 +5,6 @@ export interface UserPublicInfo {
     urlProfilePhoto: string | null;
     description: string | null;
     accountLockedByAdmins: boolean;
+    createdAt: Date;
   }
   
