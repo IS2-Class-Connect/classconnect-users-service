@@ -14,6 +14,12 @@ services:
       POSTGRES_DB: classconnect
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "classconnect"]
+      interval: 10s
+      retries: 10
+      start_period: 20s
+      timeout: 5s
 
   users:
     container_name: users
@@ -27,7 +33,8 @@ services:
       PORT: 3001
       JWT_SECRET: your_jwt_secret_here
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata:
