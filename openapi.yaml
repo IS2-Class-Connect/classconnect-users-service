@@ -498,6 +498,14 @@ components:
         description:
           type: string
           example: "My description"
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-05-11T23:44:53.936Z"
+        accountLockedByAdmins:
+          type: boolean
+          example: false
     UpdateUserProfile:
       type: object
       properties:
@@ -515,3 +523,15 @@ components:
         description:
           type: string
           example: "Updated profile description"
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Internal server error"
+        error:
+          type: string
+          example: "Internal Server Error"
+        statusCode:
+          type: integer
+          example: 500
