@@ -29,4 +29,4 @@ RUN npm run build
 EXPOSE 3001
 
 # Define the command to run the application
-CMD ["npm", "run", "start:dev"]
+CMD ["sh", "entrypoint.sh"]
