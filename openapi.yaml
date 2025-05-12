@@ -407,6 +407,55 @@ paths:
                 message: Internal server error
                 error: Internal Server Error
                 statusCode: 500
+  /users/{uuid}/lock-status:
+    patch:
+      summary: Update user lock status.
+      description: Allows an admin to lock or unlock a user's account.
+      operationId: updateUserLockStatus
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: UUID of the user to lock/unlock.
+          schema:
+            type: string
+            example: "DcRx7dtmKKRKlcEyPff1IiwwI2h1"
+      requestBody:
+        description: Object indicating whether the account should be locked.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountLockedByAdmins:
+                  type: boolean
+                  example: true
+              required:
+                - accountLockedByAdmins
+      responses:
+        '200':
+          description: User lock status updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: User not found
+                error: Not Found
+                statusCode: 404
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
@@ -478,6 +527,9 @@ components:
         description:
           type: string
           example: ""
+        accountLockedByAdmins:
+          type: boolean
+          example: false
     UserPublic:
       type: object
       properties:
