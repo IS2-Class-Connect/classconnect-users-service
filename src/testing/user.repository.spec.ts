@@ -25,8 +25,23 @@ describe('UserRepository', () => {
 
     userRepository = module.get<UserRepository>(UserRepository);
     prismaService = module.get<PrismaService>(PrismaService);
-  });
 
+
+  });
+    const userData: User = {
+      uuid: "123e4567-e89b-12d3-a456-426614174000",
+      name: 'Username',
+      email: 'user@gmail.com',
+      urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',        provider: 'google.com',
+      latitude: null,
+      longitude: null,
+      failedAttempts: 0,
+      accountLocked: false,
+      lastFailedAt: null,
+      lockUntil: null,
+      description:"",
+      accountLockedByAdmins: false,
+      };
   it('should be defined', () => {
     expect(userRepository).toBeDefined();
     expect(prismaService).toBeDefined();
@@ -34,21 +49,6 @@ describe('UserRepository', () => {
 
   describe('create', () => {
     it('should create and return a user', async () => {
-      const userData: User = {
-        uuid: "123e4567-e89b-12d3-a456-426614174000",
-        name: 'Username',
-        email: 'user@gmail.com',
-        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
-        provider: 'google.com',
-        latitude: null,
-        longitude: null,
-        failedAttempts: 0,
-        accountLocked: false,
-        lastFailedAt: null,
-        lockUntil: null,
-        description:"",
-      };
-
       prismaService.prisma.user.create = jest.fn().mockResolvedValue(userData);
 
       const result = await userRepository.create(userData);
@@ -64,20 +64,6 @@ describe('UserRepository', () => {
   describe('findByUuid', () => {
     it('should return a user if found', async () => {
       const userUuid = "123e4567-e89b-12d3-a456-426614174000";
-      const userData: User = {
-        uuid: userUuid,
-        name: 'Username',
-        email: 'user@gmail.com',
-        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
-        provider: 'google.com',
-        latitude: null,
-        longitude: null,
-        failedAttempts: 0,
-        accountLocked: false,
-        lastFailedAt: null,
-        lockUntil: null,
-        description:"",
-      };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
 
@@ -118,6 +104,7 @@ describe('UserRepository', () => {
         lastFailedAt: null,
         lockUntil: null,
         description: '',
+        accountLockedByAdmins: false,
       };
   
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
@@ -155,6 +142,7 @@ describe('UserRepository', () => {
         lastFailedAt: null,
         lockUntil: null,
         description: updates.description,
+        accountLockedByAdmins: false,
       };
   
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
@@ -173,20 +161,6 @@ describe('UserRepository', () => {
     it('should return a user if found', async () => {
       const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const userEmail= 'user@gmail.com';
-      const userData: User = {
-        uuid: userUuid,
-        name: 'Username',
-        email: userEmail,
-        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
-        provider: 'google.com',
-        latitude: null,
-        longitude: null,
-        failedAttempts: 0,
-        accountLocked: false,
-        lastFailedAt: null,
-        lockUntil: null,
-        description:"",
-      };
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
 
@@ -211,20 +185,7 @@ describe('UserRepository', () => {
 
   describe('save', () => {
     it('should update and return the user', async () => {
-      const userData: User = {
-        uuid: "123e4567-e89b-12d3-a456-426614174000",
-        name: 'Username',
-        email: 'user@gmail.com',
-        urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
-        provider: 'google.com',
-        latitude: null,
-        longitude: null,
-        failedAttempts: 2,
-        accountLocked: true,
-        lastFailedAt: new Date(),
-        lockUntil: new Date(Date.now() + 15 * 60 * 1000),
-        description:"",
-      };
+
 
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(userData);
 
@@ -258,6 +219,7 @@ describe('UserRepository', () => {
           lastFailedAt: null,
           lockUntil: null,
           description: '',
+          accountLockedByAdmins: false,
         },
         {
           uuid: 'uuid2',
@@ -272,6 +234,7 @@ describe('UserRepository', () => {
           lastFailedAt: null,
           lockUntil: null,
           description: '',
+          accountLockedByAdmins: false,
         },
       ];
   
@@ -283,5 +246,38 @@ describe('UserRepository', () => {
       expect(prismaService.prisma.user.findMany).toHaveBeenCalledTimes(1);
     });
   });
-  
+
+  describe('setBlockStatus', () => {
+  it('should update the accountLockedByAdmins field and return the updated user', async () => {
+    const userUuid = '123e4567-e89b-12d3-a456-426614174000';
+    const blockStatus = true;
+
+    const updatedUser: User = {
+      uuid: userUuid,
+      name: 'Username',
+      email: 'user@gmail.com',
+      urlProfilePhoto: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+      provider: 'google.com',
+      latitude: null,
+      longitude: null,
+      failedAttempts: 0,
+      accountLocked: false,
+      lastFailedAt: null,
+      lockUntil: null,
+      description: '',
+      accountLockedByAdmins: blockStatus,
+    };
+
+    prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+
+    const result = await userRepository.setBlockStatus(userUuid, blockStatus);
+
+    expect(result).toEqual(updatedUser);
+    expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+      where: { uuid: userUuid },
+      data: { accountLockedByAdmins: blockStatus },
+    });
+  });
+});
+
 });

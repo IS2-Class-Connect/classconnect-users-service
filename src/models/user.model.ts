@@ -14,4 +14,5 @@ export interface User {
   description: string;
   lockUntil: Date | null;
   lastFailedAt: Date | null;
+  accountLockedByAdmins: boolean;
 }

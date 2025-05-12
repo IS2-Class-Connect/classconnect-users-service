@@ -22,6 +22,7 @@ const mockUserRepository = {
   save: jest.fn(),
   updateProfileInfo: jest.fn(),
   findAll: jest.fn(),
+  setBlockStatus: jest.fn(),
 };
 
 describe('UserService', () => {
@@ -51,6 +52,8 @@ describe('UserService', () => {
     lastFailedAt: null,
     lockUntil: null,
     description:"",
+    accountLockedByAdmins: false,
+
   };
 
   describe('create', () => {
@@ -311,6 +314,7 @@ describe('UserService', () => {
       accountLocked: false,
       lastFailedAt: null,
       lockUntil: null,
+      accountLockedByAdmins: false,
     };
   
     it('should update the user profile info and return the updated user', async () => {
@@ -360,6 +364,37 @@ describe('UserService', () => {
       await expect(userService.getAllUsers()).rejects.toThrow(InternalServerErrorException);
       expect(mockUserRepository.findAll).toHaveBeenCalled();
     });
+    });
+  describe('setBlockStatus', () => {
+    const userUuid = '123e4567-e89b-12d3-a456-426614174000';
+
+    it('should set block status and return the updated user', async () => {
+      const updatedUser = { ...userData, accountLockedByAdmins: true };
+      mockUserRepository.findByUuid.mockResolvedValue(userData);
+      mockUserRepository.setBlockStatus = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userService.setBlockStatus(userUuid, true);
+
+      expect(result).toEqual(updatedUser);
+      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith(userUuid);
+      expect(mockUserRepository.setBlockStatus).toHaveBeenCalledWith(userUuid, true);
+    });
+
+    it('should throw InternalServerErrorException if repository throws', async () => {
+      mockUserRepository.findByUuid.mockResolvedValue(userData);
+      mockUserRepository.setBlockStatus = jest.fn().mockRejectedValue(new Error('DB error'));
+
+      await expect(userService.setBlockStatus(userUuid, true)).rejects.toThrow(InternalServerErrorException);
+      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith(userUuid);
+      expect(mockUserRepository.setBlockStatus).toHaveBeenCalledWith(userUuid, true);
+    });
+
+    it('should throw NotFoundException if user is not found', async () => {
+      mockUserRepository.findByUuid.mockResolvedValue(null);
+
+      await expect(userService.setBlockStatus(userUuid, true)).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith(userUuid);
+    });
   });
-  
+
 });
