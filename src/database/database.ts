@@ -71,6 +71,8 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
         email: true,
         urlProfilePhoto: true,
         description: true,
+        accountLockedByAdmins: true,
+        createdAt:true,
       },
     });
   }

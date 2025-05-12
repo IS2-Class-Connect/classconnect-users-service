@@ -4,5 +4,7 @@ export interface UserPublicInfo {
     email: string;
     urlProfilePhoto: string | null;
     description: string | null;
+    accountLockedByAdmins: boolean;
+    createdAt: Date;
   }
   
