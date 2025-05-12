@@ -12,7 +12,7 @@ export interface IController<T,R> {
   /**
    * Handles updating and returning the location of an existing entity.
    */
-  updateLocation(useriUuid: string, latitude: number, longitude: number): Promise<T>;
+  updateLocation(userUuid: string, latitude: number, longitude: number): Promise<T>;
 
   /**
    * Handles increasing and returning the failed login attempts of an entity.
@@ -38,4 +38,9 @@ export interface IController<T,R> {
   *Retrieves all users.
   */
    getAllUsers(): Promise<R[]>;
+
+  /**
+   * Handles updating the lock status of an existing entity.
+   */
+  updateLockStatus(userUuid: string, locked: boolean): Promise<T>;
 }

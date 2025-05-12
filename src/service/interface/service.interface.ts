@@ -38,4 +38,9 @@ export interface IService<T,R> {
   * Handles Retrieving all users.
   */
   getAllUsers(): Promise<R[]>;
+
+  /**
+   * Handles the block status of an existing entity.
+   */
+  setBlockStatus(userUuid: string, blockStatus: boolean): Promise<T>;
 }

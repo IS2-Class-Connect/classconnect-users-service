@@ -232,6 +232,13 @@ curl --location 'http://localhost:3001/users' \
 --data ''
 ```
 
+-To change lock status of a user by uuid.
+```bash
+curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/lock-status' \
+--header 'Content-Type: application/json' \
+--data ''
+```
+
 ## Codecov
 
 [![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)

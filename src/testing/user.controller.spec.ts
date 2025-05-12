@@ -22,6 +22,9 @@ describe('UserController', () => {
       Promise.resolve({ ...userData, ...updates }),
     ),
     getAllUsers: jest.fn(() => Promise.resolve([userData])),
+    setBlockStatus: jest.fn((uuid: string, locked: boolean) =>
+      Promise.resolve({ ...userData, accountLocked: locked }),
+    ),
   };
 
   const userData: User = {
@@ -37,6 +40,7 @@ describe('UserController', () => {
     lastFailedAt: null,
     lockUntil: null,
     description:"",
+    accountLockedByAdmins: false,
   };
 
   beforeAll(async () => {
@@ -184,6 +188,53 @@ it('/users (GET) should return all users', async () => {
   expect(response.body).toEqual(users);
   expect(userService.getAllUsers).toHaveBeenCalled();
 });
+  describe('/users/:uuid/lock-status (PATCH)', () => {
+    it('should block the user', async () => {
+      const locked = true;
+      const expectedUser = { ...userData, accountLocked: locked };
+
+      userService.setBlockStatus = jest.fn().mockResolvedValue(expectedUser);
+
+      const response = await request(app.getHttpServer() as Express)
+        .patch(`/users/${userData.uuid}/lock-status`)
+        .send({ locked })
+        .expect(200);
+
+      expect(response.body).toEqual(expectedUser);
+      expect(userService.setBlockStatus).toHaveBeenCalledWith(userData.uuid, locked);
+    });
+
+    it('should unblock the user', async () => {
+      const locked = false;
+      const expectedUser = { ...userData, accountLocked: locked };
+
+      userService.setBlockStatus = jest.fn().mockResolvedValue(expectedUser);
+
+      const response = await request(app.getHttpServer() as Express)
+        .patch(`/users/${userData.uuid}/lock-status`)
+        .send({ locked })
+        .expect(200);
+
+      expect(response.body).toEqual(expectedUser);
+      expect(userService.setBlockStatus).toHaveBeenCalledWith(userData.uuid, locked);
+    });
+
+    it('should return 404 if user not found', async () => {
+      const NotFoundException = require('@nestjs/common').NotFoundException;
+      userService.setBlockStatus = jest.fn().mockRejectedValue(new NotFoundException('User not found'));
+
+      const response = await request(app.getHttpServer() as Express)
+        .patch('/users/non-existent-uuid/lock-status')
+        .send({ locked: true })
+        .expect(404);
+
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'User not found',
+        error: 'Not Found',
+      });
+    });
+  });
 
 
   afterAll(async () => {

@@ -10,7 +10,7 @@ export interface IRepository<T,R> {
   /**
    * Updates and returns the location of an existing entity.
    */
-  setLocation(useriUuid: string, latitude: number, longitude: number): Promise<T>;
+  setLocation(userUuid: string, latitude: number, longitude: number): Promise<T>;
 
   /**
    * Saves and returns an updated entity.
@@ -20,7 +20,7 @@ export interface IRepository<T,R> {
   /**
    * Finds and returns an entity by its ID.
    */
-  findByUuid(useriUuid: string): Promise<T | null>;
+  findByUuid(userUuid: string): Promise<T | null>;
 
   /**
    * Finds and returns an entity by its email.
@@ -31,4 +31,10 @@ export interface IRepository<T,R> {
   * Retrieves all users.
   */
   findAll(): Promise<R[]> ;
+
+  /**
+   * Updates and returns the block status of an existing entity.
+   */
+  setBlockStatus(userUuid: string, blockStatus: boolean): Promise<T>;
+
 }
