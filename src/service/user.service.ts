@@ -169,6 +169,20 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
+
+  /**
+   * Sets the block status for a user.
+   */
+  async setBlockStatus(userUuid: string, blockStatus: boolean): Promise<User> {
+    const user = await this.findByUuid(userUuid);
+    try {
+      return await this.userRepository.setBlockStatus(userUuid, blockStatus);
+    } catch (error) {
+      logger.error('Error setting block status', error instanceof Error ? error.stack : '');
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
+  }
+
 }
 
 const logger = new Logger(UserService.name);

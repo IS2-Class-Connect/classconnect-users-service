@@ -90,7 +90,18 @@ async checkLockStatus(@Param('email') email: string): Promise<{
   async getAllUsers(): Promise<UserPublicInfo[]> {
     return this.userService.getAllUsers();
   }
+
+  //Updates lock status of a users.
+  @Patch(':uuid/lock-status')
+  async updateLockStatus(
+    @Param('uuid') userUuid: string,
+    @Body('locked') locked: boolean,
+  ): Promise<User> {
+    logger.log(
+      `Updating lock status of user ${userUuid} to ${locked ? 'locked' : 'unlocked'}`
+    );
+    return await this.userService.setBlockStatus(userUuid, locked);
+  }
+
 }
-
-
 const logger = new Logger(UserController.name);

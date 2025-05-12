@@ -77,6 +77,14 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
     });
   }
 
+  //Updates the block status of an existing user.
+  async setBlockStatus(userUuid: string, blockStatus: boolean): Promise<User> {
+    return await this.prisma.prisma.user.update({
+      where: { uuid: userUuid },
+      data: { accountLockedByAdmins: blockStatus },
+    });
+  }
+
 }
 
 const logger = new Logger(UserRepository.name);
