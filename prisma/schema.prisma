@@ -30,3 +30,13 @@ model User {
   createdAt DateTime @default(now())
   lastSession DateTime @default(now())
 }
+
+
+model Feedback {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  answer          String
+  comment_feedback String
+  rating           Int
+  userId           String
+}

@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Logger } from '@nestjs/common';
 import { ChatService } from '../service/chat.service';
+import { Feedback } from '../models/feedback.model';
 
 @Controller('users/chat')
 export class ChatController {
@@ -18,4 +19,12 @@ export class ChatController {
     const answer = await this.chatService.ask(question);
     return { answer };
   }
+
+  @Post('/feedback')
+  async feedback(@Body() body: Feedback
+  ): Promise<Feedback>{
+    this.logger.log(`Adding feedback`);
+    return await this.chatService.addFeedback(body);
+  }
+
 }

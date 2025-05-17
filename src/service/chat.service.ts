@@ -1,5 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
+import { Feedback } from 'src/models/feedback.model';
+import { ChatRepository } from '../database/chat_database';
+import {
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { ERROR_SERVER } from '../constants/error.constants';
+
 
 @Injectable()
 export class ChatService {
@@ -7,7 +14,7 @@ export class ChatService {
   private genAI: GoogleGenerativeAI;
   private chatSession: ChatSession;
 
-  constructor() {
+  constructor(private readonly chatRepository: ChatRepository) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is not set');
@@ -49,6 +56,19 @@ export class ChatService {
     } catch (error) {
       this.logger.error('Error querying Gemini', error);
       throw new Error('Error querying Gemini AI');
+    }
+  }
+
+
+  /**
+   * Adds a new feedback.
+   */
+  async addFeedback(data: Feedback): Promise<Feedback> {
+    try {
+      return await this.chatRepository.addFeedback(data);
+    } catch (error) {
+      this.logger.error('Error while adding feedbacl', error instanceof Error ? error.stack : '');
+      throw new InternalServerErrorException(ERROR_SERVER);
     }
   }
 }
