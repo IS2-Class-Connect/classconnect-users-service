@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
 import { Feedback } from 'src/models/feedback.model';
-import { UnknownQuestion } from '../models/unknown-questions';
 import { ChatRepository } from '../database/chat_database';
 import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ERROR_SERVER } from '../constants/error.constants';
+import { UnknownQuestions } from '../models/unknown.questions.model';
 
 
 @Injectable()
@@ -52,6 +52,37 @@ export class ChatService {
       const result = await this.chatSession.sendMessage(question);
       const response = await result.response;
       const text = response.text().trim();
+      const unknownResponses = [
+        'no entiendo',
+        'no puedo ayudarte',
+        'no tengo suficiente información',
+        'no sé',
+        'no estoy seguro',
+        'no tengo una respuesta',
+        'no puedo responder',
+        'no tengo datos',
+        'no tengo conocimiento sobre eso',
+        'no comprendo',
+        'no tengo información suficiente',
+        'no fue entrenado para',
+        'no logro interpretar',
+        'no encuentro una respuesta',
+        'no puedo procesar',
+        'no tengo contexto suficiente',
+        'no estoy capacitado para',
+        'soy una ia y no puedo',
+        'soy un modelo de lenguaje',
+        'como modelo de lenguaje',
+        'no tengo capacidad para'
+      ];
+      const textLower = text.toLowerCase();
+      const isUnknownResponse = unknownResponses.some(phrase =>
+        textLower.includes(phrase)
+      );
+
+      if (isUnknownResponse) {
+        this.addAnUnknownQuestion(question)
+      }
 
       this.logger.log(`Received answer from Gemini.`);
       return text;
@@ -77,9 +108,9 @@ export class ChatService {
   /**
    * Adds an unknown question.
    */
-  async addAnUnknownQuestion(data: UnknownQuestion): Promise<UnknownQuestion> {
+  async addAnUnknownQuestion(unknownQuestion: string): Promise<UnknownQuestions> {
     try {
-      return await this.chatRepository.addUnknownQuestions(data);
+      return await this.chatRepository.addUnknownQuestions(unknownQuestion);
     } catch (error) {
       this.logger.error('Error while adding unknown question', error instanceof Error ? error.stack : '');
       throw new InternalServerErrorException(ERROR_SERVER);

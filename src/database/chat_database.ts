@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Feedback } from '../models/feedback.model';
-import { UnknownQuestion } from '../models/unknown-questions';
+import { UnknownQuestions } from '../models/unknown.questions.model';
 
 /**
  * Handles database operations related to feedback using Prisma.
@@ -19,8 +19,12 @@ export class ChatRepository {
   }
 
   //Adds a new unknown question in the database.
-  async addUnknownQuestions(data: UnknownQuestion): Promise<UnknownQuestion> {
-    return await this.prisma.prisma.unknownQuestions.create({ data });
+  async addUnknownQuestions(unknownQuestion: string): Promise<UnknownQuestions> {
+    return await this.prisma.prisma.unknownQuestions.create({
+      data: {
+        question: unknownQuestion
+      }
+    });
   }
 
 }

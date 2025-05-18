@@ -35,7 +35,6 @@ model UnknownQuestions {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   question  String
-  userId    String
 }
 
 model Feedback {
