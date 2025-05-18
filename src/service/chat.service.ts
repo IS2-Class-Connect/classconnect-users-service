@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
 import { Feedback } from 'src/models/feedback.model';
+import { UnknownQuestion } from '../models/unknown-questions';
 import { ChatRepository } from '../database/chat_database';
 import {
   InternalServerErrorException,
@@ -31,7 +32,8 @@ export class ChatService {
           parts: [
             {
               //ejemplo de contexto q se le podria pasar, falta mejorar.
-              text: "Sos un asistente de soporte para la plataforma de estudio. Responde de forma clara, precisa y amigable. Usa la información disponible para proporcionar respuestas útiles y relevantes. No hables de nada que no sea relacionado al estudio. Incluí sugerencias y recursos adicionales cuando sea pertinente.",
+              text: "Sos un asistente de soporte para la plataforma de estudio. Responde de forma clara, precisa y amigable. Usa la información disponible para proporcionar respuestas útiles y relevantes. No hables de nada que no sea relacionado al estudio. Incluí sugerencias y recursos adicionales cuando sea pertinente. Si no sabes algo, respondé algo entre las líneas de: 'no entiendo', 'no puedo ayudarte', 'no tengo suficiente información', 'no sé', 'no estoy seguro', 'no tengo una respuesta', 'no puedo responder', 'no tengo datos', 'no tengo conocimiento sobre eso', 'no comprendo', 'no tengo información suficiente', 'no fue entrenado para', 'no logro interpretar', 'no encuentro una respuesta', 'no puedo procesar', 'no tengo contexto suficiente', 'no estoy capacitado para', 'soy una ia y no puedo', 'soy un modelo de lenguaje', 'como modelo de lenguaje', 'no tengo capacidad para'.",
+
             },
           ],
         },
@@ -67,7 +69,19 @@ export class ChatService {
     try {
       return await this.chatRepository.addFeedback(data);
     } catch (error) {
-      this.logger.error('Error while adding feedbacl', error instanceof Error ? error.stack : '');
+      this.logger.error('Error while adding feedback', error instanceof Error ? error.stack : '');
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
+  }
+
+  /**
+   * Adds an unknown question.
+   */
+  async addAnUnknownQuestion(data: UnknownQuestion): Promise<UnknownQuestion> {
+    try {
+      return await this.chatRepository.addUnknownQuestions(data);
+    } catch (error) {
+      this.logger.error('Error while adding unknown question', error instanceof Error ? error.stack : '');
       throw new InternalServerErrorException(ERROR_SERVER);
     }
   }

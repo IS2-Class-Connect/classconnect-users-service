@@ -31,6 +31,12 @@ model User {
   lastSession DateTime @default(now())
 }
 
+model UnknownQuestions {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  question  String
+  userId    String
+}
 
 model Feedback {
   id               String   @id @default(cuid())
