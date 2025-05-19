@@ -16,7 +16,7 @@ export class ChatService {
   private chatSession: ChatSession;
 
   constructor(private readonly chatRepository: ChatRepository) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || 'gemini_api_key';
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is not set');
     }
