@@ -1,14 +1,14 @@
-version: '3.8'
-
 services:
-  postgres:
+  db_users:
+    container_name: db_users
     image: postgres:15
     restart: always
     networks:
       - my-network
     ports:
-      - 5432:5432
+      - 54321:54321
     environment:
+      PGPORT: 54321
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: classconnect
@@ -29,11 +29,11 @@ services:
     ports:
       - 3001:3001
     environment:
-      DATABASE_URL: postgresql://user:pass@postgres:5432/classconnect
+      DATABASE_URL: postgresql://user:pass@db_users:54321/classconnect
       PORT: 3001
       JWT_SECRET: your_jwt_secret_here
     depends_on:
-      postgres:
+      db_users:
         condition: service_healthy
 
 volumes:
