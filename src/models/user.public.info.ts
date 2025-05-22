@@ -6,5 +6,5 @@ export interface UserPublicInfo {
     description: string | null;
     accountLockedByAdmins: boolean;
     createdAt: Date;
+    pushToken: string | null;
   }
-  

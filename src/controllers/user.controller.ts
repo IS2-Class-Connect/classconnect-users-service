@@ -21,14 +21,14 @@ import { UserPublicInfo } from '../models/user.public.info';
 export class UserController implements IController<User,UserPublicInfo> {
   constructor(private readonly userService: UserService) {}
 
-  /* Create a new user.*/
+  // Create a new user.
   @Post()
   async create(@Body() body: User): Promise<User> {
     logger.log(`Creating new user with body ${body}`);
     return await this.userService.create(body);
   }
 
-  /* Update the location of a user.*/
+  // Update the location of a user.
   @Patch(':uuid/location')
   async updateLocation(
     @Param('uuid') userUuid: string,
@@ -41,33 +41,32 @@ export class UserController implements IController<User,UserPublicInfo> {
     return await this.userService.setLocation(userUuid, latitude, longitude);
   }
 
-  /* Increment the number of failed login attempts for a user. */
+  // Increment the number of failed login attempts for a user.
   @Patch(':email/failed-attempts')
   async increaseFailedAttempts(@Param('email') email: string): Promise<User> {
     logger.log(`Increment the number of user ${email} failed login attempts`);
     return await this.userService.increaseFailedAttempts(email);
   }
 
-  /* Check if a user's account is locked. */
+  // Check if a user's account is locked.
   @Get(':email/check-lock-status')
-async checkLockStatus(@Param('email') email: string): Promise<{
-  message: string;
-  isLocked: number;
-  lockedDate: Date | null;
-}> {
-  logger.log(`Checking user ${email} account lock status`);
+  async checkLockStatus(@Param('email') email: string): Promise<{
+    message: string;
+    isLocked: number;
+    lockedDate: Date | null;
+  }> {
+    logger.log(`Checking user ${email} account lock status`);
 
-  const { accountLocked, lockUntil } =
-    await this.userService.getAccountLockStatus(email);
+    const { accountLocked, lockUntil } =
+      await this.userService.getAccountLockStatus(email);
 
-  logger.log(`Checking successful, lock status: ${accountLocked}`);
-  return {
-    message: accountLocked ? 'Account is locked' : 'Account is not locked',
-    isLocked: accountLocked ? 1 : 0,
-    lockedDate: lockUntil,
-  };
-}
-
+    logger.log(`Checking successful, lock status: ${accountLocked}`);
+    return {
+      message: accountLocked ? 'Account is locked' : 'Account is not locked',
+      isLocked: accountLocked ? 1 : 0,
+      lockedDate: lockUntil,
+    };
+  }
 
   // Returns user details by UUID or throws if not found.
   @Get(':uuid')
@@ -75,7 +74,7 @@ async checkLockStatus(@Param('email') email: string): Promise<{
     return await this.userService.findByUuid(userUuid);
   }
 
-// Updates user profile name, email, profile photo URL, and description by UUID.
+  // Updates user profile name, email, profile photo URL, and description by UUID.
   @Patch(':uuid')
   async updateProfileInfo(
     @Param('uuid') userUuid: string,
@@ -85,13 +84,13 @@ async checkLockStatus(@Param('email') email: string): Promise<{
     return await this.userService.updateProfileInfo(userUuid, body);
   }
   
-//Retrieve all users.
+  // Retrieve all users.
   @Get()
   async getAllUsers(): Promise<UserPublicInfo[]> {
     return this.userService.getAllUsers();
   }
 
-  //Updates lock status of a users.
+  // Updates lock status of a users.
   @Patch(':uuid/lock-status')
   async updateLockStatus(
     @Param('uuid') userUuid: string,
@@ -103,5 +102,12 @@ async checkLockStatus(@Param('email') email: string): Promise<{
     return await this.userService.setBlockStatus(userUuid, locked);
   }
 
+  // Updates the user's token for push notifications.
+  @Patch(':uuid/push-token')
+  async updatePushToken(@Param('uuid') uuid: string, @Body('pushToken') pushToken: string): Promise<User> {
+    logger.log(`Updating push toekn for user ${uuid}`);
+    return await this.userService.setPushToken(uuid, pushToken);
+  }
 }
+
 const logger = new Logger(UserController.name);

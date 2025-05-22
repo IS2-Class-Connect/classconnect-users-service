@@ -183,6 +183,17 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
     }
   }
 
+  /**
+   * Sets the push token for a user.
+   */
+  async setPushToken(uuid: string, pushToken: string): Promise<User> {
+    try {
+      return await this.userRepository.setPushToken(uuid, pushToken);
+    } catch (error) {
+      logger.error('Error setting push token', error);
+      throw new InternalServerErrorException(ERROR_SERVER);
+    }
+  }
 }
 
 const logger = new Logger(UserService.name);
