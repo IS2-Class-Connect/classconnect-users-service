@@ -23,6 +23,7 @@ const mockUserRepository = {
   updateProfileInfo: jest.fn(),
   findAll: jest.fn(),
   setBlockStatus: jest.fn(),
+  setPushToken: jest.fn(),
 };
 
 describe('UserService', () => {
@@ -53,7 +54,7 @@ describe('UserService', () => {
     lockUntil: null,
     description:"",
     accountLockedByAdmins: false,
-
+    pushToken: null,
   };
 
   describe('create', () => {
@@ -315,6 +316,7 @@ describe('UserService', () => {
       lastFailedAt: null,
       lockUntil: null,
       accountLockedByAdmins: false,
+      pushToken: null,
     };
   
     it('should update the user profile info and return the updated user', async () => {
@@ -397,4 +399,27 @@ describe('UserService', () => {
     });
   });
 
+  describe('setPushToken', () => {
+    const uuid = '123e4567-e89b-12d3-a456-426614174000';
+    const updates = { pushToken: 'push-token' };
+    const updatedUser: User = { ...userData, pushToken: updates.pushToken };
+    
+    it('should update push token for user', async () => {
+      mockUserRepository.findByUuid = jest.fn().mockResolvedValue(userData);
+      mockUserRepository.setPushToken = jest.fn().mockResolvedValue(updatedUser);
+
+      const result = await userService.setPushToken(uuid, updates.pushToken);
+
+      expect(result).toEqual(updatedUser);
+      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith(uuid);
+      expect(mockUserRepository.setPushToken).toHaveBeenCalledWith(uuid, updates.pushToken);
+    });
+
+    it('should throw NotFoundException if user is not found', async () => {
+      mockUserRepository.findByUuid.mockResolvedValue(null);
+
+      await expect(userService.setPushToken(uuid, updates.pushToken)).rejects.toThrow(NotFoundException);
+      expect(mockUserRepository.findByUuid).toHaveBeenCalledWith(uuid);
+    })
+  });
 });

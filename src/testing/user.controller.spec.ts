@@ -41,6 +41,7 @@ describe('UserController', () => {
     lockUntil: null,
     description:"",
     accountLockedByAdmins: false,
+    pushToken: null,
   };
 
   beforeAll(async () => {
