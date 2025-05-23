@@ -285,4 +285,21 @@ describe('UserRepository', () => {
       });
     });
   });
+
+  describe('setPushToken', () => {
+    const uuid = '123e4567-e89b-12d3-a456-426614174000';
+    const updates = { pushToken: 'push-token' };
+    const updatedUser: User = { ...userData, pushToken: updates.pushToken };
+
+    it('should update the pushToken field and return the updated user', async () => {
+      prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
+      const result = await userRepository.setPushToken(uuid, updates.pushToken);
+
+      expect(result).toEqual(updatedUser);
+      expect(prismaService.prisma.user.update).toHaveBeenCalledWith({
+        where: { uuid: uuid },
+        data: { pushToken: updates.pushToken },
+      });
+    })
+  });
 });
