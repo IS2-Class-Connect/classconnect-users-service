@@ -187,6 +187,7 @@ async updateProfileInfo(uuid: string, updates: UpdateUserProfileDto): Promise<Us
    * Sets the push token for a user.
    */
   async setPushToken(uuid: string, pushToken: string): Promise<User> {
+    const user = await this.findByUuid(uuid); 
     try {
       return await this.userRepository.setPushToken(uuid, pushToken);
     } catch (error) {

@@ -15,4 +15,5 @@ export interface User {
   lockUntil: Date | null;
   lastFailedAt: Date | null;
   accountLockedByAdmins: boolean;
+  pushToken: string | null;
 }
