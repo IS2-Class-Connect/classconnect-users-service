@@ -105,7 +105,7 @@ export class UserController implements IController<User,UserPublicInfo> {
   // Updates the user's token for push notifications.
   @Patch(':uuid/push-token')
   async updatePushToken(@Param('uuid') uuid: string, @Body('pushToken') pushToken: string): Promise<User> {
-    logger.log(`Updating push toekn for user ${uuid}`);
+    logger.log(`Updating push token for user ${uuid}`);
     return await this.userService.setPushToken(uuid, pushToken);
   }
 }
