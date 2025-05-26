@@ -34,7 +34,7 @@ model User {
   // push notifications configuration
   pushTaskAssignment    Boolean @default(true)
   pushMessageReceived   Boolean @default(true)
-  emailDeadlineReminder Boolean @default(true)
+  pushDeadlineReminder  Boolean @default(true)
 
   // email notifications configuration
   emailEnrollment          Boolean @default(true)
