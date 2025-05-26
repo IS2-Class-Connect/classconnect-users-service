@@ -6,7 +6,7 @@ export interface UpdateUserProfileDto {
     description?:              string;
     pushTaskAssignment?:       boolean;
     pushMessageReceived?:      boolean;
-    emailDeadlineReminder?:    boolean;
+    pushDeadlineReminder?:    boolean;
     emailEnrollment?:          boolean;
     emailAssistantAssignment?: boolean;
   }

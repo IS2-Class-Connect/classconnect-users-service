@@ -74,7 +74,7 @@ export class UserRepository implements IRepository<User, UserPublicInfo> {
         pushToken: true,
         pushTaskAssignment: true,
         pushMessageReceived: true,
-        emailDeadlineReminder: true,
+        pushDeadlineReminder: true,
         emailEnrollment: true,
         emailAssistantAssignment: true,
       },

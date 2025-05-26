@@ -18,7 +18,7 @@ export interface User {
   pushToken:                string | null;
   pushTaskAssignment:       boolean;
   pushMessageReceived:      boolean;
-  emailDeadlineReminder:    boolean;
+  pushDeadlineReminder:    boolean;
   emailEnrollment:          boolean;
   emailAssistantAssignment: boolean;
 }

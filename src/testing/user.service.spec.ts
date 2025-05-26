@@ -57,7 +57,7 @@ describe('UserService', () => {
     pushToken: null,
     pushTaskAssignment: true,
     pushMessageReceived: true,
-    emailDeadlineReminder: true,
+    pushDeadlineReminder: true,
     emailEnrollment: true,
     emailAssistantAssignment: true,
   };
@@ -312,7 +312,7 @@ describe('UserService', () => {
       pushToken: null,
       pushTaskAssignment: true,
       pushMessageReceived: true,
-      emailDeadlineReminder: true,
+      pushDeadlineReminder: true,
       emailEnrollment: true,
       emailAssistantAssignment: true,
     };
