@@ -42,6 +42,11 @@ describe('UserController', () => {
     description:"",
     accountLockedByAdmins: false,
     pushToken: null,
+    pushTaskAssignment: true,
+    pushMessageReceived: true,
+    emailDeadlineReminder: true,
+    emailEnrollment: true,
+    emailAssistantAssignment: true,
   };
 
   beforeAll(async () => {

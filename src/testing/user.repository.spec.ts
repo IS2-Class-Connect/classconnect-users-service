@@ -42,6 +42,11 @@ describe('UserRepository', () => {
     description: "",
     accountLockedByAdmins: false,
     pushToken: null,
+    pushTaskAssignment: true,
+    pushMessageReceived: true,
+    emailDeadlineReminder: true,
+    emailEnrollment: true,
+    emailAssistantAssignment: true,
   };
   it('should be defined', () => {
     expect(userRepository).toBeDefined();
@@ -107,6 +112,11 @@ describe('UserRepository', () => {
         description: '',
         accountLockedByAdmins: false,
         pushToken: null,
+        pushTaskAssignment: true,
+        pushMessageReceived: true,
+        emailDeadlineReminder: true,
+        emailEnrollment: true,
+        emailAssistantAssignment: true,
       };
 
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
@@ -146,6 +156,11 @@ describe('UserRepository', () => {
         description: updates.description,
         accountLockedByAdmins: false,
         pushToken: null,
+        pushTaskAssignment: true,
+        pushMessageReceived: true,
+        emailDeadlineReminder: true,
+        emailEnrollment: true,
+        emailAssistantAssignment: true,
       };
 
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
@@ -162,7 +177,6 @@ describe('UserRepository', () => {
 
   describe('findByEmail', () => {
     it('should return a user if found', async () => {
-      const userUuid = "123e4567-e89b-12d3-a456-426614174000";
       const userEmail = 'user@gmail.com';
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(userData);
@@ -174,7 +188,6 @@ describe('UserRepository', () => {
     });
 
     it('should return null if user is not found', async () => {
-      const userUuid = "123e4567-e89b-12d3-a456-426614174004";
       const userEmail = 'user@gmail.com';
 
       prismaService.prisma.user.findUnique = jest.fn().mockResolvedValue(null);
@@ -224,6 +237,11 @@ describe('UserRepository', () => {
           description: '',
           accountLockedByAdmins: false,
           pushToken: null,
+          pushTaskAssignment: true,
+          pushMessageReceived: true,
+          emailDeadlineReminder: true,
+          emailEnrollment: true,
+          emailAssistantAssignment: true,
         },
         {
           uuid: 'uuid2',
@@ -240,6 +258,11 @@ describe('UserRepository', () => {
           description: '',
           accountLockedByAdmins: false,
           pushToken: null,
+          pushTaskAssignment: true,
+          pushMessageReceived: true,
+          emailDeadlineReminder: true,
+          emailEnrollment: true,
+          emailAssistantAssignment: true,
         },
       ];
 
@@ -272,6 +295,11 @@ describe('UserRepository', () => {
         description: '',
         accountLockedByAdmins: blockStatus,
         pushToken: null,
+        pushTaskAssignment: true,
+        pushMessageReceived: true,
+        emailDeadlineReminder: true,
+        emailEnrollment: true,
+        emailAssistantAssignment: true,
       };
 
       prismaService.prisma.user.update = jest.fn().mockResolvedValue(updatedUser);
