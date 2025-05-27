@@ -55,6 +55,11 @@ describe('UserService', () => {
     description:"",
     accountLockedByAdmins: false,
     pushToken: null,
+    pushTaskAssignment: true,
+    pushMessageReceived: true,
+    pushDeadlineReminder: true,
+    emailEnrollment: true,
+    emailAssistantAssignment: true,
   };
 
   describe('create', () => {
@@ -160,12 +165,6 @@ describe('UserService', () => {
         lastFailedAt: new Date(Date.now() - 11 * 60 * 1000),
       };
 
-      const expectedUser = {
-        ...oldFailUser,
-        failedAttempts: 1,
-        lastFailedAt: expect.any(Date),
-      };
-
       mockUserRepository.findByEmail.mockResolvedValue(oldFailUser);
       mockUserRepository.save.mockImplementation((user) => Promise.resolve(user));
 
@@ -180,12 +179,6 @@ describe('UserService', () => {
         ...userData,
         failedAttempts: 2,
         lastFailedAt: new Date(Date.now() - 5 * 60 * 1000),
-      };
-
-      const expectedUser = {
-        ...recentFailUser,
-        failedAttempts: 3,
-        lastFailedAt: expect.any(Date),
       };
 
       mockUserRepository.findByEmail.mockResolvedValue(recentFailUser);
@@ -317,6 +310,11 @@ describe('UserService', () => {
       lockUntil: null,
       accountLockedByAdmins: false,
       pushToken: null,
+      pushTaskAssignment: true,
+      pushMessageReceived: true,
+      pushDeadlineReminder: true,
+      emailEnrollment: true,
+      emailAssistantAssignment: true,
     };
   
     it('should update the user profile info and return the updated user', async () => {
@@ -344,8 +342,7 @@ describe('UserService', () => {
       mockUserRepository.findByUuid.mockResolvedValue(null);
     
       await expect(userService.updateProfileInfo(uuid, updates)).rejects.toThrow(NotFoundException);
-    });
-        
+    });        
   });
 
   describe('getAllUsers', () => {

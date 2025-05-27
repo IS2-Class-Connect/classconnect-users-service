@@ -5,7 +5,6 @@ import {
   Patch,
   Get,
   Param,
-  NotFoundException,
   Logger,
 } from '@nestjs/common';
 import { UserService } from '../service/user.service';

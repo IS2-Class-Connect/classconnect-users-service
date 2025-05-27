@@ -72,6 +72,11 @@ export class UserRepository implements IRepository<User, UserPublicInfo> {
         accountLockedByAdmins: true,
         createdAt: true,
         pushToken: true,
+        pushTaskAssignment: true,
+        pushMessageReceived: true,
+        pushDeadlineReminder: true,
+        emailEnrollment: true,
+        emailAssistantAssignment: true,
       },
     });
   }

@@ -30,6 +30,15 @@ model User {
   createdAt DateTime @default(now())
   lastSession DateTime @default(now())
   pushToken String?
+
+  // push notifications configuration
+  pushTaskAssignment    Boolean @default(true)
+  pushMessageReceived   Boolean @default(true)
+  pushDeadlineReminder  Boolean @default(true)
+
+  // email notifications configuration
+  emailEnrollment          Boolean @default(true)
+  emailAssistantAssignment Boolean @default(true)
 }
 
 model UnknownQuestions {
