@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
 import { UserRepository } from '../database/database';
+import { AuthService } from '../service/auth.service';
 
 /**
  * UserModule is responsible for handling user-related functionality.
@@ -10,6 +11,6 @@ import { UserRepository } from '../database/database';
  */
 @Module({
   controllers: [UserController],
-  providers: [UserService, UserRepository],
+  providers: [UserService, UserRepository, AuthService],
 })
 export class UserModule {}
