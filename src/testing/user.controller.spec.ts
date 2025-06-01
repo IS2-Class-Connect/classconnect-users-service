@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
+import { AuthService } from '../service/auth.service';
 import { INestApplication } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { Express } from 'express';
@@ -26,7 +27,9 @@ describe('UserController', () => {
       Promise.resolve({ ...userData, accountLocked: locked }),
     ),
   };
-
+  const authService = {
+    verifyToken: jest.fn().mockResolvedValue(true), // Ejemplo
+  };
   const userData: User = {
     uuid: "123e4567-e89b-12d3-a456-426614174000",
     name: 'Username',
@@ -52,7 +55,8 @@ describe('UserController', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService, { provide: UserService, useValue: userService }],
+      providers: [UserService, { provide: UserService, useValue: userService },{ provide: AuthService, useValue: authService }],
+      
     }).compile();
 
     app = moduleFixture.createNestApplication();
