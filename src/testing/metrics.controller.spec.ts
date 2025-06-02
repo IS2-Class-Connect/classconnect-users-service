@@ -5,7 +5,7 @@ import { INestApplication } from '@nestjs/common';
 import { Express } from 'express';
 import { MetricsController } from '../controllers/metrics.controller';
 
-describe('UserController', () => {
+describe('MetricsController', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
