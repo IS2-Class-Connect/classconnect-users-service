@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Logger,
+  Res,
 } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
@@ -13,13 +14,24 @@ import { IController } from './interface/controller.interface';
 import { UpdateUserProfileDto } from '../models/user.update.data';
 import { UserPublicInfo } from '../models/user.public.info';
 import { AuthService } from '../service/auth.service';
+import { Response } from 'express';
+import * as client from 'prom-client';
+
+const cpuGauge = new client.Gauge({
+  name: 'process_cpu_usage_percent',
+  help: 'CPU usage percent',
+});
+const memoryGauge = new client.Gauge({
+  name: 'process_memory_usage_bytes',
+  help: 'Memory usage in bytes',
+});
 
 /**
  * Handles user-related endpoints such as creation and location updates.
  */
 @Controller('users')
-export class UserController implements IController<User,UserPublicInfo> {
-  constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
+export class UserController implements IController<User, UserPublicInfo> {
+  constructor(private readonly userService: UserService, private readonly authService: AuthService) { }
 
   // Create a new user.
   @Post()
@@ -68,9 +80,23 @@ export class UserController implements IController<User,UserPublicInfo> {
     };
   }
 
+  // Returns the metrics for this service.
+  @Get('/metrics')
+  async getMetrics(@Res() res: Response) {
+    const memoryUsage = process.memoryUsage().rss;
+    memoryGauge.set(memoryUsage);
+
+    const cpuUsage = process.cpuUsage();
+    const cpuPercent = ((cpuUsage.user + cpuUsage.system) / 10000); // 10000 = 1% of 1s
+    cpuGauge.set(cpuPercent);
+
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+  }
+
   // Returns user details by UUID or throws if not found.
   @Get(':uuid')
-  async findByUuid( @Param('uuid') userUuid: string,): Promise<User | null > {
+  async findByUuid(@Param('uuid') userUuid: string,): Promise<User | null> {
     return await this.userService.findByUuid(userUuid);
   }
 
@@ -83,7 +109,7 @@ export class UserController implements IController<User,UserPublicInfo> {
     logger.log(`Updating user ${userUuid} with: ${JSON.stringify(body)}`);
     return await this.userService.updateProfileInfo(userUuid, body);
   }
-  
+
   // Retrieve all users.
   @Get()
   async getAllUsers(): Promise<UserPublicInfo[]> {
@@ -112,7 +138,7 @@ export class UserController implements IController<User,UserPublicInfo> {
   @Post('auth/google')
   async loginWithGoogle(@Body('idToken') idToken: string) {
     const user = await this.authService.verifyGoogleToken(idToken);
-    return { user }; 
+    return { user };
   }
 }
 
