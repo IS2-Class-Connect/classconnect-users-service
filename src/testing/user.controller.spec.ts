@@ -27,9 +27,18 @@ describe('UserController', () => {
       Promise.resolve({ ...userData, accountLocked: locked }),
     ),
   };
-  const authService = {
-    verifyToken: jest.fn().mockResolvedValue(true), // Ejemplo
+  const mockGoogleUser = {
+    id: 'google-id-123',
+    email: 'user@gmail.com',
+    name: 'Username',
+    picture: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
   };
+
+  const authService = {
+    verifyToken: jest.fn().mockResolvedValue(true),
+    verifyGoogleToken: jest.fn().mockResolvedValue(mockGoogleUser),
+  };
+
   const userData: User = {
     uuid: "123e4567-e89b-12d3-a456-426614174000",
     name: 'Username',
@@ -128,11 +137,8 @@ describe('UserController', () => {
         lockedDate: null
       });
     });
-
-
-
-
   });
+
   describe('/users/:uuid (GET)', () => {
 
   it('/users/:uuid (GET) should return user data when found', async () => {
@@ -246,6 +252,17 @@ it('/users (GET) should return all users', async () => {
     });
   });
 
+describe('/users/auth/google (Post)', () => {
+  it('/auth/google (POST) should authenticate and return user data', async () => {
+  const response = await request(app.getHttpServer() as Express)
+    .post('/users/auth/google')
+    .send({ idToken: 'valid-google-token' })
+    .expect(201); 
+
+  expect(response.body).toEqual({ user: mockGoogleUser });
+  expect(authService.verifyGoogleToken).toHaveBeenCalledWith('valid-google-token');
+});
+});
 
   afterAll(async () => {
     await app.close();
