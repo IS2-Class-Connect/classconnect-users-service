@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { UserController } from '../controllers/user.controller';
 import { UserService } from '../service/user.service';
+import { AuthService } from '../service/auth.service';
 import { INestApplication } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { Express } from 'express';
@@ -25,6 +26,17 @@ describe('UserController', () => {
     setBlockStatus: jest.fn((uuid: string, locked: boolean) =>
       Promise.resolve({ ...userData, accountLocked: locked }),
     ),
+  };
+  const mockGoogleUser = {
+    id: 'google-id-123',
+    email: 'user@gmail.com',
+    name: 'Username',
+    picture: 'https://firebasestorage.googleapis.com/v0/profile_picture_user.jpg',
+  };
+
+  const authService = {
+    verifyToken: jest.fn().mockResolvedValue(true),
+    verifyGoogleToken: jest.fn().mockResolvedValue(mockGoogleUser),
   };
 
   const userData: User = {
@@ -52,7 +64,8 @@ describe('UserController', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService, { provide: UserService, useValue: userService }],
+      providers: [UserService, { provide: UserService, useValue: userService },{ provide: AuthService, useValue: authService }],
+      
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -124,11 +137,8 @@ describe('UserController', () => {
         lockedDate: null
       });
     });
-
-
-
-
   });
+
   describe('/users/:uuid (GET)', () => {
 
   it('/users/:uuid (GET) should return user data when found', async () => {
@@ -242,6 +252,17 @@ it('/users (GET) should return all users', async () => {
     });
   });
 
+describe('/users/auth/google (Post)', () => {
+  it('/auth/google (POST) should authenticate and return user data', async () => {
+  const response = await request(app.getHttpServer() as Express)
+    .post('/users/auth/google')
+    .send({ idToken: 'valid-google-token' })
+    .expect(201); 
+
+  expect(response.body).toEqual({ user: mockGoogleUser });
+  expect(authService.verifyGoogleToken).toHaveBeenCalledWith('valid-google-token');
+});
+});
 
   afterAll(async () => {
     await app.close();

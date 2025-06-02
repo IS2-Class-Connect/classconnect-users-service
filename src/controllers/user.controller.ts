@@ -12,13 +12,14 @@ import { User } from '../models/user.model';
 import { IController } from './interface/controller.interface';
 import { UpdateUserProfileDto } from '../models/user.update.data';
 import { UserPublicInfo } from '../models/user.public.info';
+import { AuthService } from '../service/auth.service';
 
 /**
  * Handles user-related endpoints such as creation and location updates.
  */
 @Controller('users')
 export class UserController implements IController<User,UserPublicInfo> {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
   // Create a new user.
   @Post()
@@ -106,6 +107,12 @@ export class UserController implements IController<User,UserPublicInfo> {
   async updatePushToken(@Param('uuid') uuid: string, @Body('pushToken') pushToken: string): Promise<User> {
     logger.log(`Updating push token for user ${uuid}`);
     return await this.userService.setPushToken(uuid, pushToken);
+  }
+
+  @Post('auth/google')
+  async loginWithGoogle(@Body('idToken') idToken: string) {
+    const user = await this.authService.verifyGoogleToken(idToken);
+    return { user }; 
   }
 }
 
