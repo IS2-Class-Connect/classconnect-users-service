@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user.module';
 import { ChatModule } from './modules/chat.module';
+import { MetricsModule } from './modules/metrics.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
 /**
@@ -11,6 +12,7 @@ import { PrismaModule } from '../prisma/prisma.module';
  */
 @Module({
   imports: [
+    MetricsModule,
     UserModule,
     ChatModule,
     PrismaModule,
@@ -20,4 +22,4 @@ import { PrismaModule } from '../prisma/prisma.module';
     }),
   ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -6,7 +6,6 @@ import {
   Get,
   Param,
   Logger,
-  Res,
 } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { User } from '../models/user.model';
@@ -14,17 +13,6 @@ import { IController } from './interface/controller.interface';
 import { UpdateUserProfileDto } from '../models/user.update.data';
 import { UserPublicInfo } from '../models/user.public.info';
 import { AuthService } from '../service/auth.service';
-import { Response } from 'express';
-import * as client from 'prom-client';
-
-const cpuGauge = new client.Gauge({
-  name: 'process_cpu_usage_percent',
-  help: 'CPU usage percent',
-});
-const memoryGauge = new client.Gauge({
-  name: 'process_memory_usage_bytes',
-  help: 'Memory usage in bytes',
-});
 
 /**
  * Handles user-related endpoints such as creation and location updates.
@@ -78,13 +66,6 @@ export class UserController implements IController<User, UserPublicInfo> {
       isLocked: accountLocked ? 1 : 0,
       lockedDate: lockUntil,
     };
-  }
-
-  // Returns the metrics for this service.
-  @Get('/metrics')
-  async getMetrics(@Res() res: Response) {
-    res.set('Content-Type', client.register.contentType);
-    res.end(await client.register.metrics());
   }
 
   // Returns user details by UUID or throws if not found.
