@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
-import { responseTimeHistogram, requestCounter } from 'src/controllers/metrics.controller';
+import { responseTimeHistogram, requestCounter, cpuUsageGauge, memoryUsageGauge } from 'src/controllers/metrics.controller';
 import * as dotenv from 'dotenv';
 import {
   Request,
@@ -11,6 +11,26 @@ import {
   NextFunction,
 } from 'express';
 dotenv.config({ path: './.env' });
+
+// Resources fetching for metrics
+let prevCpuUsage = process.cpuUsage();
+let prevHrTime = process.hrtime();
+setInterval(() => {
+  const currCpuUsage = process.cpuUsage(prevCpuUsage);
+  const currHrTime = process.hrtime(prevHrTime);
+
+  prevCpuUsage = process.cpuUsage();
+  prevHrTime = process.hrtime();
+
+  const elapsedHrTimeSeconds = currHrTime[0] + currHrTime[1] / 1e9;
+  const totalCpuMicros = currCpuUsage.user + currCpuUsage.system;
+
+  const cpuPercent = (totalCpuMicros / 1e6 / elapsedHrTimeSeconds) * 100;
+  cpuUsageGauge.set(cpuPercent);
+
+  const memoryUsage = process.memoryUsage();
+  memoryUsageGauge.set(memoryUsage.rss);
+}, 5000);
 
 const PORT = 3001;
 /**
