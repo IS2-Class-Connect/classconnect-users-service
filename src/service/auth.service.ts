@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 
-const CLIENT_ID = '278336937854-pots3anfn9ops568409sn276v4moqnre.apps.googleusercontent.com'; // desde consola de Google
+const CLIENT_ID = process.env.CLIENT_ID || 'client_id';
 
 @Injectable()
 export class AuthService {
