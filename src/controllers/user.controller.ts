@@ -83,13 +83,6 @@ export class UserController implements IController<User, UserPublicInfo> {
   // Returns the metrics for this service.
   @Get('/metrics')
   async getMetrics(@Res() res: Response) {
-    const memoryUsage = process.memoryUsage().rss;
-    memoryGauge.set(memoryUsage);
-
-    const cpuUsage = process.cpuUsage();
-    const cpuPercent = ((cpuUsage.user + cpuUsage.system) / 10000); // 10000 = 1% of 1s
-    cpuGauge.set(cpuPercent);
-
     res.set('Content-Type', client.register.contentType);
     res.end(await client.register.metrics());
   }
