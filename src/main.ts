@@ -12,7 +12,7 @@ import {
 } from 'express';
 dotenv.config({ path: './.env' });
 
-// Resources fetching for metrics
+// Resource fetching for metrics
 let prevCpuUsage = process.cpuUsage();
 let prevHrTime = process.hrtime();
 setInterval(() => {
