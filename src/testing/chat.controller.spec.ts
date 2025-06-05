@@ -22,24 +22,31 @@ describe('ChatController', () => {
     chatService = module.get<ChatService>(ChatService);
   });
 
-    describe('chat()', () => {
+  describe('chat()', () => {
     it('should return an answer from the chat service', async () => {
-        const question = '¿Qué es NestJS?';
-        const expectedAnswer = 'NestJS es un framework para Node.js';
-        mockChatService.ask.mockResolvedValue(expectedAnswer);
+      const question = '¿Qué es NestJS?';
+      const userId = 'gff3LFNFdHTq4CsOWID6CTAu1so2';
+      const token = 'someToken';
+      const expectedAnswer = 'NestJS es un framework para Node.js';
 
-        const result = await controller.chat(question);
+      mockChatService.ask.mockResolvedValue(expectedAnswer);
 
-        expect(result).toEqual({ answer: expectedAnswer });
-        expect(mockChatService.ask).toHaveBeenCalledWith(question);
+      const result = await controller.chat(question, userId, token);
+
+      expect(result).toEqual({ answer: expectedAnswer });
+      expect(mockChatService.ask).toHaveBeenCalledWith(userId, question, token);
     });
 
     it('should throw an error if question is empty', async () => {
-        await expect(controller.chat('   ')).rejects.toThrow(
+      const userId = 'gff3LFNFdHTq4CsOWID6CTAu1so2';
+      const token = 'someToken';
+
+      await expect(controller.chat('   ', userId, token)).rejects.toThrow(
         'Pregunta vacía no permitida',
-        );
+      );
     });
-    });
+  });
+
 
   describe('feedback()', () => {
     it('should return the created feedback', async () => {
@@ -48,7 +55,7 @@ describe('ChatController', () => {
         answer: 'Sí',
         comment_feedback: 'Muy útil',
         rating: 5,
-        userId: 'u1',
+        userId: 'gff3LFNFdHTq4CsOWID6CTAu1so2',
       };
 
       mockChatService.addFeedback.mockResolvedValue(feedback);

@@ -9,14 +9,18 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  async chat(@Body('question') question: string): Promise<{ answer: string }> {
-    this.logger.log(`Received chat question: ${question}`);
+  async chat(@Body('question') question: string, @Body('userId') userId: string, @Body('token') token: string): Promise<{ answer: string }> {
+    this.logger.log(`User ${userId} - Received chat question: ${question}`);
 
     if (!question || question.trim().length === 0) {
       throw new Error('Pregunta vacía no permitida');
     }
+    
+    if (!userId) {
+      throw new Error('userId es requerido');
+    }
 
-    const answer = await this.chatService.ask(question);
+    const answer = await this.chatService.ask(userId, question,token);
     return { answer };
   }
 
