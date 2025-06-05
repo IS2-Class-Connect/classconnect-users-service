@@ -13,24 +13,26 @@ import {
 dotenv.config({ path: './.env' });
 
 // Resource fetching for metrics
-let prevCpuUsage = process.cpuUsage();
-let prevHrTime = process.hrtime();
-setInterval(() => {
-  const currCpuUsage = process.cpuUsage(prevCpuUsage);
-  const currHrTime = process.hrtime(prevHrTime);
+function setupMetricsFetching() {
+  let prevCpuUsage = process.cpuUsage();
+  let prevHrTime = process.hrtime();
+  setInterval(() => {
+    const currCpuUsage = process.cpuUsage(prevCpuUsage);
+    const currHrTime = process.hrtime(prevHrTime);
 
-  prevCpuUsage = process.cpuUsage();
-  prevHrTime = process.hrtime();
+    prevCpuUsage = process.cpuUsage();
+    prevHrTime = process.hrtime();
 
-  const elapsedHrTimeSeconds = currHrTime[0] + currHrTime[1] / 1e9;
-  const totalCpuMicros = currCpuUsage.user + currCpuUsage.system;
+    const elapsedHrTimeSeconds = currHrTime[0] + currHrTime[1] / 1e9;
+    const totalCpuMicros = currCpuUsage.user + currCpuUsage.system;
 
-  const cpuPercent = (totalCpuMicros / 1e6 / elapsedHrTimeSeconds) * 100;
-  cpuUsageGauge.set(cpuPercent);
+    const cpuPercent = (totalCpuMicros / 1e6 / elapsedHrTimeSeconds) * 100;
+    cpuUsageGauge.set(cpuPercent);
 
-  const memoryUsage = process.memoryUsage();
-  memoryUsageGauge.set(memoryUsage.rss);
-}, 5000);
+    const memoryUsage = process.memoryUsage();
+    memoryUsageGauge.set(memoryUsage.rss);
+  }, 5000);
+}
 
 // Middleware for prometheus metrics
 function prometheusMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -62,6 +64,7 @@ export async function bootstrap() {
   const port = configService.get<number>('PORT', PORT);
   const databaseUrl = configService.get<string>('DATABASE_URL');
 
+  setupMetricsFetching();
   app.get(PrismaService);
   app.use(prometheusMiddleware);
 
