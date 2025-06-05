@@ -32,6 +32,18 @@ setInterval(() => {
   memoryUsageGauge.set(memoryUsage.rss);
 }, 5000);
 
+// Middleware for prometheus metrics
+function prometheusMiddleware(req: Request, res: Response, next: NextFunction) {
+  const end = responseTimeHistogram.startTimer();
+
+  res.on('finish', () => {
+    end({ method: req.method, route: req.path, status: res.statusCode.toString() });
+    requestCounter.inc({ method: req.method, route: req.path, status: res.statusCode.toString() });
+  });
+
+  next();
+}
+
 const PORT = 3001;
 /**
  * The `bootstrap` function is responsible for initializing the NestJS application.
@@ -51,18 +63,7 @@ export async function bootstrap() {
   const databaseUrl = configService.get<string>('DATABASE_URL');
 
   app.get(PrismaService);
-
-  // Middleware for prometheus metrics
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    const end = responseTimeHistogram.startTimer();
-
-    res.on('finish', () => {
-      end({ method: req.method, route: req.path, status: res.statusCode.toString() });
-      requestCounter.inc({ method: req.method, route: req.path, status: res.statusCode.toString() });
-    });
-
-    next();
-  });
+  app.use(prometheusMiddleware);
 
   try {
     await app.listen(port, host);
