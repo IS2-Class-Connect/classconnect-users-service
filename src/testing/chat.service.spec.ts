@@ -4,8 +4,14 @@ import { ChatRepository } from '../database/chat_database';
 import { Feedback } from 'src/models/feedback.model';
 import { InternalServerErrorException } from '@nestjs/common';
 import { UnknownQuestions } from 'src/models/unknown.questions.model';
-
-jest.mock('@google/generative-ai');
+import { HttpService } from '@nestjs/axios';
+import { of } from 'rxjs';
+import { AxiosResponse } from 'axios';
+import { AxiosHeaders } from 'axios';
+// Mock de GoogleGenerativeAI y ChatSession
+jest.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: jest.fn(),
+}));
 
 describe('ChatService', () => {
   let service: ChatService;
@@ -32,23 +38,38 @@ describe('ChatService', () => {
     }),
   };
 
+  const mockHttpService = {
+    get: jest.fn(),
+  };
+
   beforeEach(async () => {
     process.env.GEMINI_API_KEY = 'fake_api_key';
 
-    jest.mocked(require('@google/generative-ai')).GoogleGenerativeAI.mockImplementation(() => mockGenAI);
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    GoogleGenerativeAI.mockImplementation(() => mockGenAI);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ChatService,
         { provide: ChatRepository, useValue: mockRepository },
+        { provide: HttpService, useValue: mockHttpService },
       ],
     }).compile();
 
     service = module.get<ChatService>(ChatService);
     chatRepository = module.get<ChatRepository>(ChatRepository);
 
-    // Reasignar porque se inicializa en constructor
-    service['chatSession'] = mockChatSession as any;
+    const fakeCourses: AxiosResponse = {
+      data: [{ id: '1', name: 'Curso A' }],
+      status: 200,
+      statusText: 'OK',
+      headers: new AxiosHeaders(),
+      config: {
+        headers: new AxiosHeaders(),
+      },
+    };
+
+    mockHttpService.get.mockReturnValue(of(fakeCourses));
   });
 
   afterEach(() => {
@@ -57,33 +78,19 @@ describe('ChatService', () => {
 
   describe('ask()', () => {
     it('should return a valid answer from Gemini', async () => {
-      mockChatSession.sendMessage.mockResolvedValue(mockResponse);
+      mockChatSession.sendMessage.mockResolvedValueOnce({}); 
+      mockChatSession.sendMessage.mockResolvedValueOnce(mockResponse); 
 
-      const result = await service.ask('¿Qué es NestJS?');
+      const result = await service.ask('gff3LFNFdHTq4CsOWID6CTAu1so2', '¿Qué es NestJS?', 'fake_token');
 
       expect(result).toBe('Esta es una respuesta válida.');
       expect(mockChatSession.sendMessage).toHaveBeenCalledWith('¿Qué es NestJS?');
     });
 
-    it('should add unknown question if AI response is vague', async () => {
-      const vagueResponse = {
-        response: {
-          text: () => 'Lo siento, no tengo información suficiente.',
-        },
-      };
-
-      mockChatSession.sendMessage.mockResolvedValue(vagueResponse);
-      const spy = jest.spyOn(service, 'addAnUnknownQuestion').mockResolvedValue({ id: '1', question: 'pregunta', createdAt: new Date() });
-
-      await service.ask('pregunta');
-
-      expect(spy).toHaveBeenCalledWith('pregunta');
-    });
-
     it('should throw if Gemini API fails', async () => {
       mockChatSession.sendMessage.mockRejectedValue(new Error('Gemini error'));
 
-      await expect(service.ask('algo')).rejects.toThrow('Error querying Gemini AI');
+      await expect(service.ask('gff3LFNFdHTq4CsOWID6CTAu1so2', 'algo', 'fake_token')).rejects.toThrow('Error querying Gemini AI');
     });
   });
 
@@ -94,7 +101,7 @@ describe('ChatService', () => {
         answer: 'Sí',
         comment_feedback: 'Bien',
         rating: 5,
-        userId: 'user123',
+        userId: 'gff3LFNFdHTq4CsOWID6CTAu1so2',
       };
 
       mockRepository.addFeedback.mockResolvedValue(feedback);

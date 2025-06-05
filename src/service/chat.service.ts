@@ -59,8 +59,6 @@ export class ChatService {
 
     const enrolledJSON = JSON.stringify(enrolled, null, 2);
     const teachingJSON = JSON.stringify(teaching, null, 2);
-    console.log(enrolledJSON)
-    console.log(teachingJSON)
     const chatSession = model.startChat({
       history: [
         {
@@ -181,7 +179,7 @@ export class ChatService {
       );
 
       if (isUnknownResponse) {
-        this.addAnUnknownQuestion(question);
+         await this.addAnUnknownQuestion(question);
       }
 
       this.logger.log(`User ${userId} - Received answer from Gemini.`);
