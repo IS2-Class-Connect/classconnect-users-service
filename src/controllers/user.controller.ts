@@ -18,8 +18,8 @@ import { AuthService } from '../service/auth.service';
  * Handles user-related endpoints such as creation and location updates.
  */
 @Controller('users')
-export class UserController implements IController<User,UserPublicInfo> {
-  constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
+export class UserController implements IController<User, UserPublicInfo> {
+  constructor(private readonly userService: UserService, private readonly authService: AuthService) { }
 
   // Create a new user.
   @Post()
@@ -70,7 +70,7 @@ export class UserController implements IController<User,UserPublicInfo> {
 
   // Returns user details by UUID or throws if not found.
   @Get(':uuid')
-  async findByUuid( @Param('uuid') userUuid: string,): Promise<User | null > {
+  async findByUuid(@Param('uuid') userUuid: string,): Promise<User | null> {
     return await this.userService.findByUuid(userUuid);
   }
 
@@ -83,7 +83,7 @@ export class UserController implements IController<User,UserPublicInfo> {
     logger.log(`Updating user ${userUuid} with: ${JSON.stringify(body)}`);
     return await this.userService.updateProfileInfo(userUuid, body);
   }
-  
+
   // Retrieve all users.
   @Get()
   async getAllUsers(): Promise<UserPublicInfo[]> {
@@ -112,7 +112,7 @@ export class UserController implements IController<User,UserPublicInfo> {
   @Post('auth/google')
   async loginWithGoogle(@Body('idToken') idToken: string) {
     const user = await this.authService.verifyGoogleToken(idToken);
-    return { user }; 
+    return { user };
   }
 }
 

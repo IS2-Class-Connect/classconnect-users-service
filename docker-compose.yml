@@ -38,6 +38,7 @@ services:
 
 volumes:
   pgdata:
+    name: db_users
 
 networks:
   my-network:
