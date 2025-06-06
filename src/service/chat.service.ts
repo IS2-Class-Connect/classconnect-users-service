@@ -175,7 +175,7 @@ export class ChatService {
       ];
       const textLower = text.toLowerCase();
       const isUnknownResponse = unknownResponses.some(phrase =>
-        textLower.includes(phrase)
+        textLower.includes(phrase.toLowerCase())
       );
 
       if (isUnknownResponse) {
