@@ -15,6 +15,12 @@ CREATE TABLE "User" (
     "description" TEXT NOT NULL DEFAULT '',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "lastSession" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "pushToken" TEXT,
+    "pushTaskAssignment" BOOLEAN NOT NULL DEFAULT true,
+    "pushMessageReceived" BOOLEAN NOT NULL DEFAULT true,
+    "pushDeadlineReminder" BOOLEAN NOT NULL DEFAULT true,
+    "emailEnrollment" BOOLEAN NOT NULL DEFAULT true,
+    "emailAssistantAssignment" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("uuid")
 );
