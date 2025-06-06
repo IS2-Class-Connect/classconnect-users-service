@@ -169,7 +169,8 @@ export class ChatService {
         "I'm an AI and I can't",
         "I'm a language model",
         "As a language model",
-        "I don't have the capability to"
+        "I don't have the capability to",
+        "I cannot provide "
       ];
       const textLower = text.toLowerCase();
       const isUnknownResponse = unknownResponses.some(phrase =>
