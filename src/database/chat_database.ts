@@ -15,8 +15,22 @@ export class ChatRepository {
 
   //Adds a new feedback in the database.
   async addFeedback(data: Feedback): Promise<Feedback> {
-    return await this.prisma.prisma.feedback.create({ data });
+    return await this.prisma.prisma.feedback.upsert({
+      where: {
+        user_answer_unique: {
+          userId: data.userId,
+          answer: data.answer,
+        },
+      },
+      update: {
+        comment_feedback: data.comment_feedback,
+        rating: data.rating,
+        createdAt: new Date(),
+      },
+      create: data,
+    });
   }
+
 
   //Adds a new unknown question in the database.
   async addUnknownQuestions(unknownQuestion: string): Promise<UnknownQuestions> {

@@ -54,4 +54,5 @@ model Feedback {
   comment_feedback String
   rating           Int
   userId           String
+  @@unique([userId, answer], name: "user_answer_unique")
 }
