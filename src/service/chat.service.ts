@@ -160,6 +160,7 @@ export class ChatService {
         "I have no knowledge about that",
         "I don't comprehend",
         "I don't have sufficient information",
+        "I don't have information ",
         "I wasn't trained to",
         "I can't interpret",
         "I can't find an answer",
