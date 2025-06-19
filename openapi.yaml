@@ -500,6 +500,53 @@ paths:
                 message: Internal server error
                 error: Internal Server Error
                 statusCode: 500
+  /users/chat:
+    post:
+      summary: Chat endpoint
+      description: Receive a question from a user and get an answer.
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question
+                - userId
+                - token
+              properties:
+                question:
+                  type: string
+                  example: "Can i log in with Google?"
+                userId:
+                  type: string
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTY4MzIzMzAwMCwiZXhwIjoxNjgzMjM2NjAwfQ.sD9gN0gUQJkjMvHe8FAH8DqvAPqH_3v0YzDwFg2nFGBzLGzR6lUcDL2j9Lb9iY2cXuZDJ4RfsXeY5VfYgWDvsc7tw7yRcFZxV1MjAJebdSxVX3OvwzKJj57Ff4uRzUEYyEZVfL3zRwdY3CW2KnMW4C2v43VpFCdKo3M2fNcd9q8M4lU9Fg2XPab4hP2aAZuGz7RzRzMGhMGjPoST4FZ8qGpYpK1t5RzqzGvP5cGgZz9XKZj3L5YgHjM3sZtYWfHzqNVXhv3F6KpKxDZv4LrFd3YcKdY7TfAzP6HfXrMq8D2c3tX7RpTyNqTfRLmJWz4BhvK6zC2HFzJHfWP9wKvh5rT7xWJrCqT4D7mWxqZyHtL4"
+      responses:
+        '200':
+          description: Successful Response with the answer.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    example: "Yes, you can log in using your google account."
+        '400':
+          description: Bad Request - invalid input (e.g. empty question, missing userId)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Not allowed empty question"
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
