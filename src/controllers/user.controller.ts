@@ -109,6 +109,7 @@ export class UserController implements IController<User, UserPublicInfo> {
     return await this.userService.setPushToken(uuid, pushToken);
   }
 
+  //Validates if google token is valid.
   @Post('auth/google')
   async loginWithGoogle(@Body('idToken') idToken: string) {
     const user = await this.authService.verifyGoogleToken(idToken);

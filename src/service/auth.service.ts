@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 
 const CLIENT_ID = process.env.CLIENT_ID || 'client_id';
-
+//Verificates if a google token is valid.
 @Injectable()
 export class AuthService {
   private client: OAuth2Client;

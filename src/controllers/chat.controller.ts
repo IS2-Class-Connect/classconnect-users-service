@@ -8,6 +8,7 @@ export class ChatController {
 
   constructor(private readonly chatService: ChatService) {}
 
+  //Sends a question to the AI.
   @Post()
   async chat(@Body('question') question: string, @Body('userId') userId: string, @Body('token') token: string): Promise<{ answer: string }> {
     this.logger.log(`User ${userId} - Received chat question: ${question}`);
@@ -24,6 +25,7 @@ export class ChatController {
     return { answer };
   }
 
+  //Sends feedback on an AI response.
   @Post('/feedback')
   async feedback(@Body() body: Feedback
   ): Promise<Feedback>{
