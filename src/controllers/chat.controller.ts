@@ -13,11 +13,11 @@ export class ChatController {
     this.logger.log(`User ${userId} - Received chat question: ${question}`);
 
     if (!question || question.trim().length === 0) {
-      throw new Error('Pregunta vacía no permitida');
+      throw new Error('Not allowed empty question');
     }
     
     if (!userId) {
-      throw new Error('userId es requerido');
+      throw new Error('userId is required');
     }
 
     const answer = await this.chatService.ask(userId, question,token);

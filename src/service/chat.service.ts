@@ -139,7 +139,7 @@ export class ChatService {
       const { enrolled, teaching } = await this.getCoursesFromExternalService(userId, token);
       const enrolledJSON = JSON.stringify(enrolled, null, 2);
       const teachingJSON = JSON.stringify(teaching, null, 2);
-       await session.sendMessage(`Actualización de cursos:
+       await session.sendMessage(`Updated courses:
         Enrolled courses:
         ${enrolledJSON}
         Teaching courses:

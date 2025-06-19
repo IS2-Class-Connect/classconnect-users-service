@@ -351,7 +351,7 @@ paths:
     patch:
       summary: Update user profile information.
       description: Updates the profile details of an existing user by UUID.
-      operationId: updateUserProfile
+      operationId: updateProfileInfo
       parameters:
         - name: uuid
           in: path
@@ -456,6 +456,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /auth/google:
+    patch:
+      summary: Validate google token.
+      description: Validates google token.
+      operationId: loginWithGoogle
+      requestBody:
+          description: User details to create a new user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTY4MzIzMzAwMCwiZXhwIjoxNjgzMjM2NjAwfQ.sD9gN0gUQJkjMvHe8FAH8DqvAPqH_3v0YzDwFg2nFGBzLGzR6lUcDL2j9Lb9iY2cXuZDJ4RfsXeY5VfYgWDvsc7tw7yRcFZxV1MjAJebdSxVX3OvwzKJj57Ff4uRzUEYyEZVfL3zRwdY3CW2KnMW4C2v43VpFCdKo3M2fNcd9q8M4lU9Fg2XPab4hP2aAZuGz7RzRzMGhMGjPoST4FZ8qGpYpK1t5RzqzGvP5cGgZz9XKZj3L5YgHjM3sZtYWfHzqNVXhv3F6KpKxDZv4LrFd3YcKdY7TfAzP6HfXrMq8D2c3tX7RpTyNqTfRLmJWz4BhvK6zC2HFzJHfWP9wKvh5rT7xWJrCqT4D7mWxqZyHtL4"
+                required:
+                  - idToken
+      responses:
+        '200':
+          description: Token validated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGoogle'
+        '401':
+          description: Unauthorized - Invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Error validating token
+                error: Unauthorized
+                statusCode: 401
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Internal server error
+                error: Internal Server Error
+                statusCode: 500
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
@@ -587,3 +631,21 @@ components:
         statusCode:
           type: integer
           example: 500
+    UserGoogle:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "117892345678901234567"
+        email:
+          type: string
+          format: email
+          example: user@gmail.com
+        name:
+          type: string
+          example: Username
+        picture:
+          type: string
+          format: uri
+          example: https://lh3.googleusercontent.com/a-/AOh14GikYz8xO8q12345z7fpFZ_abcde=w96-c
+       

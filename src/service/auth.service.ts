@@ -21,7 +21,7 @@ export class AuthService {
       const payload = ticket.getPayload();
 
       if (!payload) {
-        throw new UnauthorizedException('Token inválido');
+        throw new UnauthorizedException('Error validating token');
       }
 
       return {
@@ -32,7 +32,7 @@ export class AuthService {
       };
     } catch (error) {
       console.log(error,idToken)
-      throw new UnauthorizedException('Error validando token');
+      throw new UnauthorizedException('Error validating token');
     }
   }
 }
