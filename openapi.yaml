@@ -587,7 +587,54 @@ paths:
                 message: Internal server error
                 error: Internal Server Error
                 statusCode: 500
-
+  /users/{uuid}/push-token:
+    patch:
+      summary: Update Push Notification Token
+      description: Updates the user's push notification token by UUID.
+      tags:
+        - Users
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pushToken
+              properties:
+                pushToken:
+                  type: string
+                  example: "Rnx8ZqMAYgLksT29FVdJxP0rhLk7"
+      responses:
+        '200':
+          description: Push token successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unexpected error while updating push token"
+                  error:
+                    type: string
+                    example: "Internal Server Error"
+                  statusCode:
+                    type: integer
+                    example: 500
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
