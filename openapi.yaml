@@ -547,6 +547,47 @@ paths:
                 message: Internal server error
                 error: Internal Server Error
                 statusCode: 500
+  /feedback:
+    post:
+      summary: Submit feedback about a chatbot response
+      description: Users can submit feedback about chatbot answers, including rating and optional comments.
+      tags:
+        - Feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+            example:
+              answer: "Yes, the system supports Google login."
+              comment_feedback: "This answer was clear and correct."
+              rating: 4
+              userId: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: Feedback submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+              example:
+                id: "cmbl2f3j20000nx38kgv6i5g3"
+                answer: "Yes, the system supports Google login."
+                comment_feedback: "Thanks!"
+                rating: 5
+                userId: "123e4567-e89b-12d3-a456-426614174000"
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Internal server error
+                error: Internal Server Error
+                statusCode: 500
+
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
@@ -695,4 +736,29 @@ components:
           type: string
           format: uri
           example: https://lh3.googleusercontent.com/a-/AOh14GikYz8xO8q12345z7fpFZ_abcde=w96-c
-       
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "cmbl2f3j20000nx38kgv6i5g3"
+        answer:
+          type: string
+          example: "Yes, you can use this service anytime."
+        comment_feedback:
+          type: string
+          example: "Very helpful response, thank you!"
+        rating:
+          type: number
+          minimum: 1
+          maximum: 5
+          example: 5
+        userId:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      required:
+        - answer
+        - comment_feedback
+        - rating
+        - userId
