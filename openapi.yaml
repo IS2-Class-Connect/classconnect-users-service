@@ -10,6 +10,8 @@ paths:
       summary: Create a new user.
       description: Creates a new user with the provided details.
       operationId: createUser
+      tags:
+        - Users
       requestBody:
         description: User details to create a new user.
         content:
@@ -83,6 +85,8 @@ paths:
       summary: Retrieve all users.
       description: Returns a list of all users.
       operationId: getAllUsers
+      tags:
+        - Users
       responses:
         '200':
           description: List of users retrieved successfully.
@@ -114,6 +118,8 @@ paths:
       summary: Get user by UUID.
       description: Retrieves user information by UUID.
       operationId: getUserByUuid
+      tags:
+        - Users
       parameters:
         - in: path
           name: user_uuid
@@ -167,6 +173,8 @@ paths:
       summary: Update user location.
       description: Updates the latitude and longitude for a user based on their ID.
       operationId: updateUserLocation
+      tags:
+        - Users
       parameters:
         - in: path
           name: user_uuid
@@ -238,6 +246,8 @@ paths:
       summary: Increment the number of failed login attempts for a user.
       description: Increases the failed login attempt counter and locks the account if needed.
       operationId: increaseFailedAttempts
+      tags:
+        - Users
       parameters:
         - in: path
           name: user_email
@@ -295,6 +305,8 @@ paths:
       summary: Check if a user's account is locked.
       description: Returns lock status of the user account.
       operationId: checkLockStatus
+      tags:
+        - Users
       parameters:
         - in: path
           name: user_email
@@ -352,6 +364,8 @@ paths:
       summary: Update user profile information.
       description: Updates the profile details of an existing user by UUID.
       operationId: updateProfileInfo
+      tags:
+        - Users
       parameters:
         - name: uuid
           in: path
@@ -412,6 +426,8 @@ paths:
       summary: Update user lock status.
       description: Allows an admin to lock or unlock a user's account.
       operationId: updateUserLockStatus
+      tags:
+        - Users
       parameters:
         - name: uuid
           in: path
@@ -461,6 +477,8 @@ paths:
       summary: Validate google token.
       description: Validates google token.
       operationId: loginWithGoogle
+      tags:
+        - Users
       requestBody:
           description: User details to create a new user.
           content:
@@ -505,7 +523,7 @@ paths:
       summary: Chat endpoint
       description: Receive a question from a user and get an answer.
       tags:
-        - Chat
+        - CHAT-IA
       requestBody:
         required: true
         content:
@@ -547,12 +565,12 @@ paths:
                 message: Internal server error
                 error: Internal Server Error
                 statusCode: 500
-  /feedback:
+  /users/chat/feedback:
     post:
       summary: Submit feedback about a chatbot response
       description: Users can submit feedback about chatbot answers, including rating and optional comments.
       tags:
-        - Feedback
+        - CHAT-IA
       requestBody:
         required: true
         content:
@@ -620,21 +638,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '500':
-          description: Internal Server Error
+          description: Internal server error.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unexpected error while updating push token"
-                  error:
-                    type: string
-                    example: "Internal Server Error"
-                  statusCode:
-                    type: integer
-                    example: 500
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Internal server error
+                error: Internal Server Error
+                statusCode: 500
 components:
   schemas:
     ACCOUNT_LOCKING_MESSAGES:
