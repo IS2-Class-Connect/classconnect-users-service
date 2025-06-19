@@ -239,6 +239,38 @@ curl --location --request PATCH 'http://localhost:3001/users/{user_uuid}/lock-st
 --data ''
 ```
 
+-To ask a question to the AI chat.
+```bash
+curl --location 'http://localhost:3001/users/chat' \
+--header 'Content-Type: application/json' \
+--data '{
+    "question": "Can i log in with Google?",
+    "userId":"Rnx8ZqMAYgLksT29FVdJxP0rhLk7"
+    }'
+
+```
+
+-To submit feedback on the AI chat response.
+```bash
+curl --location 'http://localhost:3001/users/chat/feedback' \
+--header 'Content-Type: application/json' \
+--data '{
+  "answer": "Yes, the system supports Google login.",
+  "comment_feedback": "Thanks!",
+  "rating": 5,
+  "userId": "Rnx8ZqMAYgLksT29FVdJxP0rhLk7"  
+}'
+```
+
+-To validate google token:
+```bash
+curl --location 'http://localhost:3001/users/auth/google' \
+--header 'Content-Type: application/json' \
+--data '{
+    "idToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTY4MzIzMzAwMCwiZXhwIjoxNjgzMjM2NjAwfQ.sD9gN0gUQJkjMvHe8FAH8DqvAPqH_3v0YzDwFg2nFGBzLGzR6lUcDL2j9Lb9iY2cXuZDJ4RfsXeY5VfYgWDvsc7tw7yRcFZxV1MjAJebdSxVX3OvwzKJj57Ff4uRzUEYyEZVfL3zRwdY3CW2KnMW4C2v43VpFCdKo3M2fNcd9q8M4lU9Fg2XPab4hP2aAZuGz7RzRzMGhMGjPoST4FZ8qGpYpK1t5RzqzGvP5cGgZz9XKZj3L5YgHjM3sZtYWfHzqNVXhv3F6KpKxDZv4LrFd3YcKdY7TfAzP6HfXrMq8D2c3tX7RpTyNqTfRLmJWz4BhvK6zC2HFzJHfWP9wKvh5rT7xWJrCqT4D7mWxqZyHtL4"
+    }'
+```
+
 ## Codecov
 
 [![codecov](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service/graph/badge.svg?token=3VB1IC3IDR)](https://codecov.io/github/IS2-Class-Connect/classconnect-users-service)
