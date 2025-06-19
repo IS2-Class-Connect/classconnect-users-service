@@ -37,4 +37,6 @@ export interface IRepository<T,R> {
    */
   setBlockStatus(userUuid: string, blockStatus: boolean): Promise<T>;
 
+  // Updates the push token of an existing user.
+  setPushToken(uuid: string, pushToken: string): Promise<T>;
 }

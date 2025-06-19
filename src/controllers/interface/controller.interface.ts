@@ -43,4 +43,10 @@ export interface IController<T,R> {
    * Handles updating the lock status of an existing entity.
    */
   updateLockStatus(userUuid: string, locked: boolean): Promise<T>;
+
+    /**
+   * Updates the user's token for push notifications.
+   */
+  updatePushToken(userUuid: string, pushToken: string): Promise<T>;
+
 }

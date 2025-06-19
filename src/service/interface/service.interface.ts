@@ -43,4 +43,9 @@ export interface IService<T,R> {
    * Handles the block status of an existing entity.
    */
   setBlockStatus(userUuid: string, blockStatus: boolean): Promise<T>;
+
+  /**
+   * Sets the push token for a user.
+   */
+  setPushToken(uuid: string, pushToken: string): Promise<T>;
 }

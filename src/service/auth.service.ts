@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 
 const CLIENT_ID = process.env.CLIENT_ID || 'client_id';
-
+//Verificates if a google token is valid.
 @Injectable()
 export class AuthService {
   private client: OAuth2Client;
@@ -21,7 +21,7 @@ export class AuthService {
       const payload = ticket.getPayload();
 
       if (!payload) {
-        throw new UnauthorizedException('Token inválido');
+        throw new UnauthorizedException('Error validating token');
       }
 
       return {
@@ -32,7 +32,7 @@ export class AuthService {
       };
     } catch (error) {
       console.log(error,idToken)
-      throw new UnauthorizedException('Error validando token');
+      throw new UnauthorizedException('Error validating token');
     }
   }
 }

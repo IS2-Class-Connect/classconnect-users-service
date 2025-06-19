@@ -8,22 +8,24 @@ export class ChatController {
 
   constructor(private readonly chatService: ChatService) {}
 
+  //Sends a question to the AI.
   @Post()
   async chat(@Body('question') question: string, @Body('userId') userId: string, @Body('token') token: string): Promise<{ answer: string }> {
     this.logger.log(`User ${userId} - Received chat question: ${question}`);
 
     if (!question || question.trim().length === 0) {
-      throw new Error('Pregunta vacía no permitida');
+      throw new Error('Not allowed empty question');
     }
     
     if (!userId) {
-      throw new Error('userId es requerido');
+      throw new Error('userId is required');
     }
 
     const answer = await this.chatService.ask(userId, question,token);
     return { answer };
   }
 
+  //Sends feedback on an AI response.
   @Post('/feedback')
   async feedback(@Body() body: Feedback
   ): Promise<Feedback>{

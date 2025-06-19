@@ -42,7 +42,7 @@ describe('ChatController', () => {
       const token = 'someToken';
 
       await expect(controller.chat('   ', userId, token)).rejects.toThrow(
-        'Pregunta vacía no permitida',
+        'Not allowed empty question',
       );
     });
   });
