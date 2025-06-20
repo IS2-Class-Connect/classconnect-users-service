@@ -71,6 +71,7 @@ export class UserController implements IController<User, UserPublicInfo> {
   // Returns user details by UUID or throws if not found.
   @Get(':uuid')
   async findByUuid(@Param('uuid') userUuid: string,): Promise<User | null> {
+    logger.log(`Fetching user by UUID: ${userUuid}`);
     return await this.userService.findByUuid(userUuid);
   }
 
@@ -87,6 +88,7 @@ export class UserController implements IController<User, UserPublicInfo> {
   // Retrieve all users.
   @Get()
   async getAllUsers(): Promise<UserPublicInfo[]> {
+    logger.log('Fetching all users');
     return this.userService.getAllUsers();
   }
 
@@ -112,6 +114,7 @@ export class UserController implements IController<User, UserPublicInfo> {
   //Validates if google token is valid.
   @Post('auth/google')
   async loginWithGoogle(@Body('idToken') idToken: string) {
+    logger.log(`Authenticating with Google token`);
     const user = await this.authService.verifyGoogleToken(idToken);
     return { user };
   }
